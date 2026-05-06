@@ -31,8 +31,8 @@ color:#00ffcc;
 
 /* TITLE */
 h1{
-margin-top:20px;
 font-size:40px;
+margin-top:20px;
 background:linear-gradient(90deg,#00ffcc,#5f9cff);
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
@@ -72,6 +72,13 @@ padding:20px;
 border-radius:14px;
 }
 
+.price{
+margin-top:10px;
+color:#00ffcc;
+font-weight:bold;
+}
+
+/* BUTTON */
 button{
 width:100%;
 padding:12px;
@@ -97,6 +104,7 @@ margin:15px auto;
 width:320px;
 word-break:break-all;
 cursor:pointer;
+font-size:12px;
 }
 
 .manager{
@@ -134,14 +142,15 @@ opacity:1;
 transform:translateX(-50%) translateY(-10px);
 }
 
+/* BOTTOM TEXT */
 .bottom{
 padding:20px;
 font-size:12px;
 color:#777;
-line-height:1.4;
+line-height:1.5;
 }
 
-/* ❄️ СНЕГ */
+/* SNOW */
 .snow{
 position:fixed;
 top:-10px;
@@ -149,7 +158,6 @@ color:white;
 opacity:0.7;
 pointer-events:none;
 animation:fall linear infinite;
-z-index:999;
 }
 
 @keyframes fall{
@@ -165,7 +173,7 @@ transform:translateY(110vh);
 <div class="top">@mozgalomovich</div>
 
 <h1>Bio mozgalom</h1>
-<p class="sub">выбор тарифа</p>
+<p class="sub">выбор тарифа и услуг</p>
 
 <div class="socials">
 <a href="https://www.tiktok.com/@mozgalomovich" target="_blank">TikTok</a>
@@ -177,19 +185,19 @@ transform:translateY(110vh);
 
 <div class="card">
 <h3>1 неделя</h3>
-<p>300₽</p>
+<div class="price">300₽ / 4$ / 1.5 TON</div>
 <button onclick="openPay()">купить</button>
 </div>
 
 <div class="card">
 <h3>1 месяц</h3>
-<p>1000₽</p>
+<div class="price">1000₽ / 13$ / 5 TON</div>
 <button onclick="openPay()">купить</button>
 </div>
 
 <div class="card">
 <h3>навсегда</h3>
-<p>4000₽</p>
+<div class="price">4000₽ / 52$ / 20 TON</div>
 <button onclick="openPay()">купить</button>
 </div>
 
@@ -219,7 +227,7 @@ UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv
 <div id="toast" class="toast">Скопировано ✔</div>
 
 <div class="bottom">
-мы являемся командой <b>fullter</b>
+мы являемся командой <b>fullter</b> и гарантируем безопасную обработку платежей и выдачу услуг после подтверждения оплаты
 </div>
 
 <script>
@@ -243,8 +251,8 @@ t.classList.add("show");
 setTimeout(()=>{t.classList.remove("show");},1500);
 }
 
-/* ❄️ СНЕГ */
-for(let i=0;i<50;i++){
+/* SNOW */
+for(let i=0;i<60;i++){
 let snow=document.createElement("div");
 snow.className="snow";
 snow.innerHTML="•";
