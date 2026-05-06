@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bio mozgalom</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI, sans-serif;
+}
+
+body{
+min-height:100vh;
+overflow-y:auto;
+background: radial-gradient(circle at top,#14142a,#0b0b0f 60%,#050508);
+color:white;
+text-align:center;
+}
+
+/* TOP */
+.top{
+padding:20px;
+font-weight:bold;
+font-size:18px;
+color:#00ffcc;
+}
+
+/* TITLE */
+h1{
+margin-top:20px;
+font-size:40px;
+background:linear-gradient(90deg,#00ffcc,#5f9cff);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.sub{
+color:#888;
+margin-top:5px;
+}
+
+/* SOCIALS */
+.socials{
+margin:20px 0;
+}
+
+.socials a{
+display:inline-block;
+margin:8px;
+padding:10px 15px;
+border-radius:10px;
+background:#111118;
+color:#00ffcc;
+text-decoration:none;
+border:1px solid rgba(0,255,200,0.2);
+}
+
+/* CARDS */
+.container{
+padding:20px;
+}
+
+.card{
+background:#111118;
+width:300px;
+margin:15px auto;
+padding:20px;
+border-radius:14px;
+}
+
+button{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+background:linear-gradient(90deg,#00ffcc,#5f9cff);
+cursor:pointer;
+font-weight:bold;
+}
+
+/* PAGE */
+.page{
+display:none;
+padding:20px;
+}
+
+.address{
+background:#1a1a22;
+padding:12px;
+border-radius:10px;
+margin:15px auto;
+width:320px;
+word-break:break-all;
+cursor:pointer;
+}
+
+.manager{
+margin-top:15px;
+color:#ccc;
+font-size:14px;
+line-height:1.4;
+}
+
+.back{
+color:#00ffcc;
+cursor:pointer;
+margin-top:15px;
+display:inline-block;
+}
+
+/* TOAST */
+.toast{
+position:fixed;
+bottom:30px;
+left:50%;
+transform:translateX(-50%);
+background:rgba(0,255,200,0.15);
+border:1px solid rgba(0,255,200,0.4);
+color:#00ffcc;
+padding:10px 20px;
+border-radius:10px;
+opacity:0;
+transition:0.4s;
+pointer-events:none;
+}
+
+.toast.show{
+opacity:1;
+transform:translateX(-50%) translateY(-10px);
+}
+
+.bottom{
+padding:20px;
+font-size:12px;
+color:#777;
+line-height:1.4;
+}
+
+/* ❄️ СНЕГ */
+.snow{
+position:fixed;
+top:-10px;
+color:white;
+opacity:0.7;
+pointer-events:none;
+animation:fall linear infinite;
+z-index:999;
+}
+
+@keyframes fall{
+to{
+transform:translateY(110vh);
+}
+}
+</style>
+</head>
+
+<body>
+
+<div class="top">@mozgalomovich</div>
+
+<h1>Bio mozgalom</h1>
+<p class="sub">выбор тарифа</p>
+
+<div class="socials">
+<a href="https://www.tiktok.com/@mozgalomovich" target="_blank">TikTok</a>
+<a href="https://t.me/bio_mozgalom" target="_blank">Telegram</a>
+</div>
+
+<div id="home">
+<div class="container">
+
+<div class="card">
+<h3>1 неделя</h3>
+<p>300₽</p>
+<button onclick="openPay()">купить</button>
+</div>
+
+<div class="card">
+<h3>1 месяц</h3>
+<p>1000₽</p>
+<button onclick="openPay()">купить</button>
+</div>
+
+<div class="card">
+<h3>навсегда</h3>
+<p>4000₽</p>
+<button onclick="openPay()">купить</button>
+</div>
+
+</div>
+</div>
+
+<div id="pay" class="page">
+
+<h2 style="color:#00ffcc;">TON оплата</h2>
+
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv">
+
+<div class="manager">
+Напишите нашему менеджеру <b>@mozgalomovich</b> в Telegram и скиньте чек / фото подтверждение оплаты
+</div>
+
+<div class="address" onclick="copy()">
+UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv
+</div>
+
+<button onclick="copy()">скопировать адрес</button>
+
+<div class="back" onclick="back()">← назад</div>
+
+</div>
+
+<div id="toast" class="toast">Скопировано ✔</div>
+
+<div class="bottom">
+мы являемся командой <b>fullter</b>
+</div>
+
+<script>
+
+function openPay(){
+document.getElementById("home").style.display="none";
+document.getElementById("pay").style.display="block";
+}
+
+function back(){
+document.getElementById("pay").style.display="none";
+document.getElementById("home").style.display="block";
+}
+
+function copy(){
+navigator.clipboard.writeText("UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv");
+
+let t=document.getElementById("toast");
+t.classList.add("show");
+
+setTimeout(()=>{t.classList.remove("show");},1500);
+}
+
+/* ❄️ СНЕГ */
+for(let i=0;i<50;i++){
+let snow=document.createElement("div");
+snow.className="snow";
+snow.innerHTML="•";
+snow.style.left=Math.random()*100+"vw";
+snow.style.fontSize=(5+Math.random()*10)+"px";
+snow.style.animationDuration=(4+Math.random()*6)+"s";
+document.body.appendChild(snow);
+}
+
+</script>
+
+</body>
+</html>
