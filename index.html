@@ -12,58 +12,95 @@ padding:0;
 width:100%;
 height:100%;
 background:#050508;
-color:white;
 font-family:Arial;
+color:white;
 overflow-x:hidden;
 }
 
-/* 🌌 BACKGROUND */
+*{box-sizing:border-box}
+
+/* фон */
 body::before{
 content:"";
 position:fixed;
 inset:0;
-pointer-events:none;
 background:
 radial-gradient(circle at 15% 20%, rgba(0,255,200,0.12), transparent 40%),
 radial-gradient(circle at 80% 80%, rgba(95,156,255,0.12), transparent 45%),
 radial-gradient(circle at 50% 50%, rgba(255,0,255,0.06), transparent 60%);
+pointer-events:none;
 z-index:0;
 }
 
-/* TITLE */
-h1{
-font-size:42px;
-text-align:center;
-margin-top:15px;
-background:linear-gradient(90deg,#00ffcc,#5f9cff,#ff00ff);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-text-shadow:0 0 25px rgba(0,255,200,0.4);
+/* ❄ снег */
+.snow{
+position:fixed;
+top:-10px;
+color:white;
+opacity:0.6;
+animation:fall linear infinite;
+pointer-events:none;
+z-index:1;
 }
 
-/* LAYOUT */
-.page{display:none}
-.container{padding:20px}
+@keyframes fall{
+to{transform:translateY(110vh);}
+}
 
-/* CARD */
-.card{
+/* страницы */
+.page{
+display:none;
+padding:20px;
 position:relative;
-z-index:1;
+z-index:2;
+}
+
+.page.active{
+display:block;
+}
+
+/* карточки */
+.card{
 background:#111118;
 max-width:340px;
 margin:15px auto;
 padding:20px;
 border-radius:14px;
 border:1px solid rgba(0,255,200,0.2);
-transition:0.25s ease;
-box-shadow:0 0 15px rgba(0,255,200,0.08);
 }
 
-.card:hover{
-transform:translateY(-6px) scale(1.02);
-box-shadow:
-0 0 25px rgba(0,255,200,0.35),
-0 0 60px rgba(95,156,255,0.2);
+/* товары кликабельные */
+.product{
+cursor:pointer;
+transition:0.3s;
+}
+
+.product:hover{
+transform:translateY(-6px) scale(1.03);
+box-shadow:0 0 25px rgba(0,255,200,0.4);
+}
+
+/* НЕОН ОПЛАТА */
+.payGlow{
+animation:glow 1.2s ease-in-out infinite alternate;
+box-shadow:0 0 20px #00ffcc;
+}
+
+@keyframes glow{
+from{box-shadow:0 0 10px #00ffcc;}
+to{box-shadow:0 0 40px #5f9cff;}
+}
+
+/* INPUT FIX (ГЛАВНАЯ ПРОБЛЕМА БЫЛА ТУТ) */
+input{
+width:90%;
+padding:10px;
+border-radius:10px;
+border:none;
+margin-top:10px;
+position:relative;
+z-index:9999;
+pointer-events:auto;
 }
 
 /* BUTTON */
@@ -74,74 +111,47 @@ margin-top:10px;
 border:none;
 border-radius:10px;
 background:linear-gradient(90deg,#00ffcc,#5f9cff);
-font-weight:bold;
 cursor:pointer;
-transition:0.2s;
-box-shadow:0 0 12px rgba(0,255,200,0.25);
 }
 
-button:hover{
-transform:scale(1.05);
-box-shadow:0 0 30px #00ffcc;
+/* title */
+h1{
+text-align:center;
+font-size:42px;
+background:linear-gradient(90deg,#00ffcc,#5f9cff,#ff00ff);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
 }
 
-/* INPUT FIX */
-input{
-width:90%;
-padding:10px;
-border-radius:10px;
-border:none;
-margin-top:10px;
-pointer-events:auto;
-position:relative;
-z-index:10;
-}
-
-/* ADMIN */
+/* admin */
 .adminBtn{
 position:fixed;
 top:10px;
 right:10px;
-font-size:11px;
-color:#666;
-cursor:pointer;
 z-index:10;
+font-size:12px;
+cursor:pointer;
 }
-
-/* SNOW */
-.snow{
-position:fixed;
-top:-10px;
-color:white;
-animation:fall linear infinite;
-opacity:.5;
-pointer-events:none;
-}
-
-@keyframes fall{
-to{transform:translateY(110vh)}
-}
-
 </style>
 </head>
 
 <body>
 
-<div class="adminBtn" onclick="showLogin()">admin</div>
+<div class="adminBtn" onclick="show('login')">admin</div>
 
 <h1>ULTRA SYSTEM</h1>
 
 <!-- HOME -->
-<div id="home" class="page" style="display:block">
-<div class="container">
+<div id="home" class="page active">
 
-<!-- 🔐 AUTH -->
+<!-- РЕГИСТРАЦИЯ ВЕРНУТА -->
 <div class="card">
 <h3>🔐 аккаунт</h3>
 
 <div id="guest">
 <input id="regName" placeholder="имя">
 <input id="regPass" type="password" placeholder="пароль">
+
 <button onclick="register()">регистрация</button>
 <button onclick="loginUser()">вход</button>
 </div>
@@ -153,26 +163,22 @@ to{transform:translateY(110vh)}
 
 </div>
 
-<!-- PRICES -->
-<div class="card">
+<!-- ТОВАРЫ -->
+<div class="card product" onclick="openPay('1 неделя','300₽ / 4$ / 2💎')">
 <h3>1 неделя</h3>
 <p>300₽ / 4$ / 2💎</p>
-<button onclick="openPay()">купить</button>
 </div>
 
-<div class="card">
+<div class="card product" onclick="openPay('1 месяц','1000₽ / 13$ / 6💎')">
 <h3>1 месяц</h3>
 <p>1000₽ / 13$ / 6💎</p>
-<button onclick="openPay()">купить</button>
 </div>
 
-<div class="card">
+<div class="card product" onclick="openPay('навсегда','4000₽ / 52$ / 25💎')">
 <h3>навсегда</h3>
 <p>4000₽ / 52$ / 25💎</p>
-<button onclick="openPay()">купить</button>
 </div>
 
-<!-- TELEGRAM -->
 <div class="card">
 <h3>📩 заявка</h3>
 <input id="tg" placeholder="@telegram">
@@ -180,32 +186,27 @@ to{transform:translateY(110vh)}
 </div>
 
 </div>
-</div>
 
 <!-- PAY -->
 <div id="pay" class="page">
-<div class="container">
+<div class="card payGlow">
 
-<h2 style="color:#00ffcc;text-align:center">TON оплата</h2>
+<h2 id="payTitle" style="text-align:center"></h2>
+<p id="payPrice" style="text-align:center"></p>
 
-<img id="qr" width="180" style="display:block;margin:20px auto;border-radius:12px">
+<p style="text-align:center">
+UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv
+</p>
 
-<div class="card">
-<p id="wallet">EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c</p>
-
-<button onclick="copyWallet()">📋 копировать</button>
-<button onclick="openWallet()">💎 открыть</button>
-</div>
-
-<button onclick="back()">назад</button>
+<button onclick="show('home')">назад</button>
 
 </div>
 </div>
 
 <!-- LOGIN -->
 <div id="login" class="page">
-<div class="container">
-<h2>ADMIN LOGIN</h2>
+<div class="card">
+<h3>LOGIN</h3>
 <input id="pass" type="password">
 <button onclick="login()">войти</button>
 </div>
@@ -213,9 +214,9 @@ to{transform:translateY(110vh)}
 
 <!-- ADMIN -->
 <div id="admin" class="page">
-<div class="container">
-<h2>ADMIN PANEL</h2>
-<button onclick="logout()">выйти</button>
+<div class="card">
+<h3>ADMIN</h3>
+<button onclick="show('home')">выйти</button>
 </div>
 </div>
 
@@ -223,13 +224,21 @@ to{transform:translateY(110vh)}
 
 const BOT_TOKEN="PUT_TOKEN_HERE";
 const CHAT_ID="7910835075";
-const TON="EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c";
 
-/* QR */
-document.addEventListener("DOMContentLoaded",()=>{
-document.getElementById("qr").src=
-`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${TON}`;
+/* страницы */
+function show(id){
+document.querySelectorAll(".page").forEach(p=>{
+p.classList.remove("active");
 });
+document.getElementById(id).classList.add("active");
+}
+
+/* ОПЛАТА */
+function openPay(title,price){
+document.getElementById("payTitle").innerText=title;
+document.getElementById("payPrice").innerText=price;
+show("pay");
+}
 
 /* TELEGRAM */
 function send(){
@@ -245,79 +254,32 @@ text:`📩 ${tg}`
 })
 });
 
-alert("заявка отправлена ✔");
-}
-
-/* TON */
-function copyWallet(){
-navigator.clipboard.writeText(TON);
-alert("copied ✔");
-}
-
-function openWallet(){
-window.open("https://app.tonkeeper.com/transfer/"+TON);
-}
-
-/* NAV */
-function openPay(){
-home.style.display="none";
-pay.style.display="block";
-}
-
-function back(){
-home.style.display="block";
-pay.style.display="none";
-}
-
-/* ADMIN */
-function login(){
-let p=document.getElementById("pass").value;
-if(p==="rahim_45_pro"){
-home.style.display="none";
-login.style.display="none";
-admin.style.display="block";
-}
-}
-
-function logout(){
-home.style.display="block";
-admin.style.display="none";
-login.style.display="none";
-}
-
-function showLogin(){
-home.style.display="none";
-login.style.display="block";
+alert("отправлено ✔");
 }
 
 /* AUTH */
 function register(){
-let name=document.getElementById("regName").value;
-let pass=document.getElementById("regPass").value;
-if(!name||!pass)return;
-
-localStorage.setItem("user",JSON.stringify({name,pass}));
+let n=document.getElementById("regName").value;
+let p=document.getElementById("regPass").value;
+localStorage.setItem("user",JSON.stringify({n,p}));
 showUser();
 }
 
 function loginUser(){
-let name=document.getElementById("regName").value;
-let pass=document.getElementById("regPass").value;
-
 let u=JSON.parse(localStorage.getItem("user"));
+let n=document.getElementById("regName").value;
+let p=document.getElementById("regPass").value;
 
-if(u && u.name===name && u.pass===pass){
+if(u && u.n===n && u.p===p){
 showUser();
 }else alert("неверно");
 }
 
 function showUser(){
 let u=JSON.parse(localStorage.getItem("user"));
-if(!u)return;
-
 document.getElementById("guest").style.display="none";
 document.getElementById("userBox").style.display="block";
-document.getElementById("userName").innerText=u.name;
+document.getElementById("userName").innerText=u.n;
 }
 
 function logoutUser(){
@@ -326,7 +288,14 @@ document.getElementById("guest").style.display="block";
 document.getElementById("userBox").style.display="none";
 }
 
-/* SNOW */
+/* ADMIN */
+function login(){
+if(document.getElementById("pass").value==="rahim_45_pro"){
+show("admin");
+}
+}
+
+/* ❄ снег */
 for(let i=0;i<60;i++){
 let d=document.createElement("div");
 d.className="snow";
