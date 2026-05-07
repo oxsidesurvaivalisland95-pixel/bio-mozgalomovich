@@ -17,7 +17,6 @@ color:white;
 overflow-x:hidden;
 }
 
-/* CYBER BACKGROUND */
 body{
 background: radial-gradient(circle at top,#0b1220,#05070d 60%,#000);
 }
@@ -39,7 +38,7 @@ pointer-events:none;
 mix-blend-mode:overlay;
 }
 
-/* LEAF PARTICLES */
+/* PARTICLES */
 .leaf{
 position:fixed;
 top:-20px;
@@ -56,7 +55,7 @@ animation:fall linear infinite;
 100%{transform:translateY(110vh);}
 }
 
-/* ANIMATIONS */
+/* ANIMATION */
 @keyframes glow {
 0%{text-shadow:0 0 5px #00ffe5;}
 50%{text-shadow:0 0 25px #ff00ff;}
@@ -110,12 +109,6 @@ border-radius:15px;
 border:1px solid rgba(0,255,255,.3);
 animation:float 4s infinite;
 box-shadow:0 0 20px rgba(0,255,255,.1);
-transition:.2s;
-}
-
-.card:hover{
-transform:scale(1.02);
-box-shadow:0 0 35px rgba(255,0,255,.25);
 }
 
 /* BUTTON */
@@ -129,7 +122,6 @@ background:linear-gradient(90deg,#00ffcc,#5f9cff,#ff00ff);
 color:white;
 font-weight:bold;
 cursor:pointer;
-box-shadow:0 0 15px rgba(0,255,255,.2);
 }
 
 /* INPUT */
@@ -147,6 +139,22 @@ color:white;
 .price{
 color:#00ffe5;
 font-weight:bold;
+}
+
+/* HISTORY FIX */
+#history .card{
+border-left:3px solid #00ffe5;
+padding-left:18px;
+}
+
+/* FOOTER */
+.bottomText{
+position:fixed;
+bottom:5px;
+width:100%;
+text-align:center;
+font-size:12px;
+color:#00ffe5;
 }
 
 /* TOAST */
@@ -167,29 +175,6 @@ animation:pop .25s ease;
 @keyframes pop{
 from{opacity:0;transform:translateX(-50%) scale(.8);}
 to{opacity:1;transform:translateX(-50%) scale(1);}
-}
-
-/* HISTORY STYLE */
-#history .card{
-border-left:3px solid #00ffe5;
-padding-left:18px;
-}
-
-#history .card::before{
-content:"⟡";
-position:absolute;
-margin-left:-15px;
-color:#ff00ff;
-text-shadow:0 0 10px #ff00ff;
-}
-
-.bottomText{
-position:fixed;
-bottom:5px;
-width:100%;
-text-align:center;
-font-size:12px;
-color:#00ffe5;
 }
 
 </style>
@@ -232,14 +217,6 @@ color:#00ffe5;
 <button onclick="tg('навсегда')">в тг</button>
 </div>
 
-<div class="card">
-<h3>LOGIN</h3>
-<input id="login" placeholder="логин">
-<input id="pass" type="password" placeholder="пароль">
-<button onclick="register()">регистрация</button>
-<button onclick="login()">вход</button>
-</div>
-
 </div>
 
 <!-- CART -->
@@ -260,13 +237,10 @@ color:#00ffe5;
 
 </div>
 
-<div class="bottomText">
-FULLTER — cyber secure system
-</div>
+<div class="bottomText">CYBER SYSTEM ACTIVE</div>
 
 <script>
 
-/* DATA */
 let user = localStorage.getItem("user") || "guest";
 let cart = JSON.parse(localStorage.getItem("cart_"+user) || "[]");
 let history = JSON.parse(localStorage.getItem("history_"+user) || "[]");
@@ -289,33 +263,29 @@ document.body.appendChild(d);
 setTimeout(()=>d.remove(),1200);
 }
 
-/* AUTH */
-function register(){
-user=document.getElementById("login").value;
-localStorage.setItem("user",user);
-cart=[];history=[];
-save();
-toast("registered");
-}
-
-function login(){
-user=document.getElementById("login").value;
-cart=JSON.parse(localStorage.getItem("cart_"+user)||"[]");
-history=JSON.parse(localStorage.getItem("history_"+user)||"[]");
-toast("logged in");
-}
-
-/* SAVE */
-function save(){
-localStorage.setItem("cart_"+user,JSON.stringify(cart));
-localStorage.setItem("history_"+user,JSON.stringify(history));
-}
-
 /* ADD */
 function add(i){
 cart.push(i);
-save();
-toast("added to cart");
+localStorage.setItem("cart_"+user,JSON.stringify(cart));
+toast("added");
+}
+
+/* ORDER */
+function order(i){
+orders.push({id:Date.now(),item:cart[i],status:"ожидает"});
+history.push(cart[i]);
+
+localStorage.setItem("history_"+user,JSON.stringify(history));
+toast("order created");
+}
+
+/* ADMIN */
+function adminLogin(){
+if(adminPass.value==="rahim_45_pro"){
+admin=true;
+toast("admin access granted");
+render();
+}
 }
 
 /* TG */
@@ -324,33 +294,10 @@ window.open("https://t.me/mozgalomovich?text="+encodeURIComponent(i));
 toast("sent");
 }
 
-/* ORDER */
-function order(i){
-orders.push({id:Date.now(),item:cart[i],status:"не оплачено"});
-history.push(cart[i]);
-save();
-toast("order created");
-}
-
-/* ADMIN */
-function adminLogin(){
-if(adminPass.value==="rahim_45_pro"){
-admin=true;
-render();
-toast("admin access granted");
-}
-}
-
-function paid(id){
-orders.forEach(o=>{
-if(o.id===id)o.status="оплачено";
-});
-render();
-}
-
 /* RENDER */
 function render(){
 
+/* CART */
 if(document.getElementById("cart").classList.contains("active")){
 let c=document.getElementById("cart");
 c.innerHTML="";
@@ -363,10 +310,19 @@ ${i}
 });
 }
 
+/* HISTORY FIXED */
 if(document.getElementById("history").classList.contains("active")){
 let h=document.getElementById("history");
 h.innerHTML="";
-history.slice().reverse().forEach(i=>{
+
+let data = JSON.parse(localStorage.getItem("history_"+user) || "[]");
+
+if(data.length===0){
+h.innerHTML=`<div class="card">история пуста</div>`;
+return;
+}
+
+data.slice().reverse().forEach(i=>{
 h.innerHTML+=`
 <div class="card">
 <div style="color:#00ffe5">transaction</div>
@@ -375,22 +331,23 @@ ${i}
 });
 }
 
+/* ADMIN */
 if(admin){
 let a=document.getElementById("adminPanel");
 a.innerHTML="";
 orders.forEach(o=>{
 a.innerHTML+=`
 <div class="card">
-${o.item}<br>${o.status}
-<button onclick="paid(${o.id})">оплачено</button>
+${o.item}<br>
+${o.status}
 </div>`;
 });
 }
 
 }
 
-/* LEAVES */
-for(let i=0;i<25;i++){
+/* PARTICLES */
+for(let i=0;i<20;i++){
 let d=document.createElement("div");
 d.className="leaf";
 d.style.left=Math.random()*100+"vw";
