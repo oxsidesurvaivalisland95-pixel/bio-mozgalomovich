@@ -14,14 +14,13 @@ font-family:Arial;
 color:white;
 min-height:100vh;
 overflow-x:hidden;
-
 background:
 radial-gradient(circle at top left,#00ffe515,transparent 30%),
 radial-gradient(circle at bottom right,#ff00ff12,transparent 30%),
 linear-gradient(180deg,#05070d,#060912,#0a1020);
 }
 
-/* scanlines */
+/* scan */
 body::before{
 content:"";
 position:fixed;
@@ -84,7 +83,7 @@ max-width:420px;
 border-radius:15px;
 }
 
-/* toast */
+/* TOAST */
 .toast{
 position:fixed;
 top:50%;
@@ -95,6 +94,7 @@ border:1px solid #00ffe5;
 padding:15px;
 border-radius:10px;
 animation:toast 1s forwards;
+z-index:999;
 }
 
 @keyframes toast{
@@ -121,6 +121,26 @@ to{
 transform:translateY(110vh);
 opacity:0;
 }
+}
+
+/* animations */
+.pop{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:#000;
+border:1px solid #00ffe5;
+padding:12px;
+border-radius:10px;
+animation:pop 1s forwards;
+z-index:9999;
+}
+
+@keyframes pop{
+0%{opacity:0;transform:translate(-50%,-50%) scale(0.5);}
+20%{opacity:1;}
+100%{opacity:0;transform:translate(-50%,-60%) scale(1);}
 }
 
 </style>
@@ -177,7 +197,10 @@ opacity:0;
 <div class="card">
 <h3>TON WALLET</h3>
 <p id="walletText">UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv</p>
+
 <button onclick="copyWallet()">Скопировать</button>
+<button onclick="openTonkeeper()">Открыть Tonkeeper</button>
+
 </div>
 </div>
 
@@ -223,13 +246,22 @@ document.body.appendChild(d);
 setTimeout(()=>d.remove(),1000);
 }
 
-/* auth */
+/* pop animation */
+function pop(t){
+let p=document.createElement("div");
+p.className="pop";
+p.innerText=t;
+document.body.appendChild(p);
+setTimeout(()=>p.remove(),1000);
+}
+
+/* auth FIXED */
 function register(){
 let l=document.getElementById("login").value;
 let p=document.getElementById("pass").value;
 users[l]=p;
 localStorage.setItem("users",JSON.stringify(users));
-toast("ok");
+pop("ЗАРЕГИСТРИРОВАНО");
 }
 
 function login(){
@@ -238,7 +270,7 @@ let p=document.getElementById("pass").value;
 if(users[l]===p){
 current=l;
 localStorage.setItem("current",l);
-toast("вход");
+pop("ВХОД УСПЕШЕН");
 render();
 }
 }
@@ -246,51 +278,47 @@ render();
 /* add */
 function add(item){
 if(!current) return toast("войдите");
-
-let cart=getCart();
-cart.push({user:current,item});
-saveCart(cart);
-
-toast("добавлено");
+let c=getCart();
+c.push({user:current,item});
+saveCart(c);
+pop("ДОБАВЛЕНО");
 render();
 }
 
 /* code */
-function code(){
+function genCode(){
 return "CYB-"+Math.random().toString(36).substr(2,6).toUpperCase();
 }
 
 /* buy */
 function buy(i){
-
-let cart=getCart();
-let orders=getOrders();
-
-let c=code();
+let c=getCart();
+let o=getOrders();
+let code=genCode();
 
 toast("ОЖИДАЙТЕ ОПЛАТЫ");
 
 let wallet="UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv";
 
 setTimeout(()=>{
-window.open(`ton://transfer/${wallet}?text=ORDER_${c}`,"_blank");
+window.open(`ton://transfer/${wallet}?text=ORDER_${code}`,"_blank");
 },800);
 
-orders.push({...cart[i],status:"ожидание",code:c});
+o.push({...c[i],status:"ожидание",code});
 
-cart.splice(i,1);
+c.splice(i,1);
 
-saveCart(cart);
-saveOrders(orders);
+saveCart(c);
+saveOrders(o);
 
 render();
 }
 
 /* delete */
 function del(i){
-let cart=getCart();
-cart.splice(i,1);
-saveCart(cart);
+let c=getCart();
+c.splice(i,1);
+saveCart(c);
 render();
 }
 
@@ -317,65 +345,15 @@ saveOrders(o);
 render();
 }
 
-/* render */
-function render(){
-
-/* cart */
-let c=document.getElementById("cart");
-let cart=getCart();
-c.innerHTML="";
-cart.forEach((e,i)=>{
-c.innerHTML+=`
-<div class="card">
-${e.item}
-<button onclick="buy(${i})">Купить</button>
-<button onclick="del(${i})">Удалить</button>
-</div>`;
-});
-
-/* history */
-let h=document.getElementById("history");
-let orders=getOrders();
-h.innerHTML="";
-orders.forEach(o=>{
-h.innerHTML+=`
-<div class="card">
-${o.item} - ${o.status}<br>
-<b>${o.code}</b>
-</div>`;
-});
-
-/* admin */
-if(isAdmin){
-let a=document.getElementById("adminPanel");
-a.innerHTML="";
-
-let all=[];
-
-for(let k in localStorage){
-if(k.startsWith("orders_")){
-all=all.concat(JSON.parse(localStorage.getItem(k)));
-}
+/* open telegram */
+function openTonkeeper(){
+window.open("ton://transfer/UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv","_blank");
 }
 
-all.forEach((o,i)=>{
-a.innerHTML+=`
-<div class="card">
-${o.user}<br>
-${o.item}<br>
-${o.status}<br>
-<b>${o.code}</b><br><br>
-<button onclick="approve(${i})">ОПЛАЧЕНО</button>
-<button onclick="reject(${i})">ОТКЛОНИТЬ</button>
-</div>`;
-});
-}
-}
-
-/* wallet */
+/* copy */
 function copyWallet(){
 navigator.clipboard.writeText(document.getElementById("walletText").innerText);
-toast("скопировано");
+pop("СКОПИРОВАНО");
 }
 
 /* cyber rain */
@@ -388,6 +366,50 @@ r.style.animationDuration=(3+Math.random()*5)+"s";
 document.body.appendChild(r);
 setTimeout(()=>r.remove(),8000);
 },120);
+
+/* render */
+function render(){
+
+let c=document.getElementById("cart");
+let cart=getCart();
+c.innerHTML="";
+cart.forEach((e,i)=>{
+c.innerHTML+=`
+<div class="card">
+${e.item}
+<button onclick="buy(${i})">Купить</button>
+<button onclick="del(${i})">Удалить</button>
+</div>`;
+});
+
+let h=document.getElementById("history");
+let orders=getOrders();
+h.innerHTML="";
+
+orders.forEach(o=>{
+h.innerHTML+=`
+<div class="card">
+${o.item} - ${o.status}<br>
+<b>${o.code}</b>
+</div>`;
+});
+
+if(isAdmin){
+let a=document.getElementById("adminPanel");
+a.innerHTML="";
+orders.forEach((o,i)=>{
+a.innerHTML+=`
+<div class="card">
+${o.user}<br>
+${o.item}<br>
+${o.status}<br>
+<b>${o.code}</b><br><br>
+<button onclick="approve(${i})">ОПЛАЧЕНО</button>
+<button onclick="reject(${i})">ОТКЛОНИТЬ</button>
+</div>`;
+});
+}
+}
 
 render();
 
