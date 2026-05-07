@@ -1,403 +1,237 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CYBER MARKET</title>
+<script>
 
-<style>
+let user = localStorage.getItem("user") || null;
+let cart = [];
+let orders = JSON.parse(localStorage.getItem("orders") || "[]");
+let admin = false;
 
-/* BASE */
-html,body{
-margin:0;
-padding:0;
-background:#05070d;
-font-family:Arial;
-color:white;
-overflow-x:hidden;
+/* =========================
+   LOAD USER SAFE
+========================= */
+function load(){
+
+if(!user){
+cart = [];
+return;
 }
 
-body{
-background: radial-gradient(circle at top,#0b1220,#05070d 60%,#000);
+cart = JSON.parse(localStorage.getItem("cart_"+user) || "[]");
 }
 
-/* SCANLINES */
-body::after{
-content:"";
-position:fixed;
-inset:0;
-background: repeating-linear-gradient(
-to bottom,
-rgba(255,255,255,0.03),
-rgba(255,255,255,0.03) 1px,
-transparent 1px,
-transparent 3px
-);
-opacity:.3;
-pointer-events:none;
-mix-blend-mode:overlay;
+/* =========================
+   SET USER
+========================= */
+function setUser(name){
+user = name;
+localStorage.setItem("user", user);
+load();
+render();
 }
 
-/* TOP BAR */
-.topBar{
-text-align:center;
-color:#00ffe5;
-font-weight:bold;
-padding:10px;
-letter-spacing:1px;
-text-shadow:0 0 10px #00ffe5;
+/* =========================
+   REGISTER
+========================= */
+function register(){
+
+let name = document.getElementById("login").value.trim();
+let pass = document.getElementById("pass").value;
+
+if(!name){
+alert("введи логин");
+return;
 }
 
-/* TITLE */
-.title{
-text-align:center;
-font-size:40px;
-margin:20px;
-color:#00ffe5;
-text-shadow:0 0 10px #00ffe5,0 0 25px #ff00ff;
-animation:glow 2.5s infinite, floatTitle 3s ease-in-out infinite;
+if(!localStorage.getItem("acc_"+name)){
+localStorage.setItem("acc_"+name, JSON.stringify({pass:pass || ""}));
+localStorage.setItem("cart_"+name,"[]");
+localStorage.setItem("history_"+name,"[]");
 }
 
-@keyframes glow{
-0%{text-shadow:0 0 5px #00ffe5;}
-50%{text-shadow:0 0 25px #ff00ff;}
-100%{text-shadow:0 0 5px #00ffe5;}
+setUser(name);
 }
 
-@keyframes floatTitle{
-0%{transform:translateY(0px);}
-50%{transform:translateY(-5px);}
-100%{transform:translateY(0px);}
+/* =========================
+   LOGIN
+========================= */
+function login(){
+
+let name = document.getElementById("login").value.trim();
+let pass = document.getElementById("pass").value;
+
+let accRaw = localStorage.getItem("acc_"+name);
+
+if(!accRaw){
+alert("аккаунт не найден");
+return;
 }
 
-/* NAV */
-.nav{
-position:fixed;
-top:10px;
-right:10px;
-display:flex;
-gap:5px;
-z-index:10;
+let acc = JSON.parse(accRaw || "{}");
+
+if(acc.pass !== pass){
+alert("неверный пароль");
+return;
 }
 
-/* PAGE */
-.page{display:none;padding:70px 15px;}
-.page.active{display:block}
-
-/* CARD */
-.card{
-background:#101826;
-padding:15px;
-margin:10px auto;
-max-width:420px;
-border-radius:15px;
-border:1px solid #00ffe5;
-box-shadow:0 0 15px rgba(0,255,255,0.15);
-animation:float 4s ease-in-out infinite, fadeIn .3s ease;
-transition:.25s;
+setUser(name);
 }
 
-.card:hover{
-transform:scale(1.03);
-box-shadow:0 0 30px rgba(255,0,255,0.25);
+/* =========================
+   ADD CART
+========================= */
+function add(item){
+
+if(!user){
+alert("сначала войди");
+return;
 }
 
-@keyframes float{
-0%{transform:translateY(0px);}
-50%{transform:translateY(-6px);}
-100%{transform:translateY(0px);}
+cart.push(item);
+localStorage.setItem("cart_"+user, JSON.stringify(cart));
+render();
 }
 
-@keyframes fadeIn{
-from{opacity:0;transform:scale(.95);}
-to{opacity:1;transform:scale(1);}
+/* =========================
+   REMOVE CART ITEM
+========================= */
+function removeItem(i){
+cart.splice(i,1);
+localStorage.setItem("cart_"+user, JSON.stringify(cart));
+render();
 }
 
-/* BUTTON */
-button{
-width:100%;
-padding:10px;
-margin-top:8px;
-border:none;
-border-radius:10px;
-background:linear-gradient(90deg,#00ffcc,#5f9cff,#ff00ff);
-color:white;
-font-weight:bold;
-cursor:pointer;
-transition:.2s;
+/* =========================
+   ORDER CREATE
+========================= */
+function order(i){
+
+let item = cart[i];
+
+let order = {
+id: Date.now(),
+user: user,
+item: item,
+status: "ожидает"
+};
+
+orders.push(order);
+localStorage.setItem("orders", JSON.stringify(orders));
+
+/* history per user */
+let h = JSON.parse(localStorage.getItem("history_"+user) || "[]");
+h.push(item);
+localStorage.setItem("history_"+user, JSON.stringify(h));
+
+/* optional telegram notify (simple) */
+fetch("https://api.telegram.org/botYOUR_BOT_TOKEN/sendMessage", {
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body: JSON.stringify({
+chat_id:"YOUR_CHAT_ID",
+text:`🛒 Новый заказ\nUser: ${user}\nItem: ${item}`
+})
+}).catch(()=>{});
+
+render();
 }
 
-button:hover{
-filter:brightness(1.2);
-transform:scale(1.03);
-box-shadow:0 0 20px rgba(0,255,255,.4);
+/* =========================
+   ADMIN LOGIN
+========================= */
+function adminLogin(){
+
+let pass = document.getElementById("adminPass").value;
+
+if(pass === "rahim_45_pro"){
+admin = true;
+alert("admin OK");
+render();
+}else{
+alert("wrong password");
+}
 }
 
-/* INPUT */
-input{
-width:100%;
-padding:10px;
-margin-top:8px;
-border-radius:10px;
-border:none;
-background:#0d1018;
-color:white;
+/* =========================
+   CHANGE STATUS
+========================= */
+function setStatus(id,status){
+
+orders = orders.map(o=>{
+if(o.id === id){
+o.status = status;
+}
+return o;
+});
+
+localStorage.setItem("orders", JSON.stringify(orders));
+render();
+}
+
+/* =========================
+   RENDER
+========================= */
+function render(){
+
+/* CART */
+if(document.getElementById("cart").classList.contains("active")){
+let c = document.getElementById("cart");
+c.innerHTML = "";
+
+if(!cart.length){
+c.innerHTML = `<div class="card">корзина пуста</div>`;
+return;
+}
+
+cart.forEach((i,idx)=>{
+c.innerHTML += `
+<div class="card">
+${i}
+<button onclick="order(${idx})">заказать</button>
+<button onclick="removeItem(${idx})">удалить</button>
+</div>`;
+});
 }
 
 /* HISTORY */
-#history .card{
-border-left:3px solid #00ffe5;
-padding-left:15px;
-}
-
-/* COPY */
-.copyToast{
-position:fixed;
-left:50%;
-top:50%;
-transform:translate(-50%,-50%);
-background:#0d1018;
-border:1px solid #00ffe5;
-color:#00ffe5;
-padding:12px 18px;
-border-radius:12px;
-z-index:9999;
-animation:pop .25s ease;
-}
-
-@keyframes pop{
-from{opacity:0;transform:translate(-50%,-50%) scale(.8);}
-to{opacity:1;transform:translate(-50%,-50%) scale(1);}
-}
-
-/* SOCIAL */
-.socials a{
-color:#00ffe5;
-text-decoration:none;
-margin:0 10px;
-font-weight:bold;
-}
-
-.socials a:hover{
-text-shadow:0 0 10px #00ffe5;
-}
-
-/* BOTTOM */
-.bottomBar{
-position:fixed;
-bottom:0;
-width:100%;
-text-align:center;
-font-size:12px;
-padding:6px;
-color:#00ffe5;
-background:rgba(0,0,0,0.4);
-backdrop-filter:blur(6px);
-}
-
-/* PARTICLES */
-.leaf{
-position:fixed;
-top:-20px;
-width:6px;
-height:6px;
-background:#00ffe5;
-border-radius:50%;
-opacity:.6;
-animation:fall linear infinite;
-}
-
-@keyframes fall{
-0%{transform:translateY(-10vh);}
-100%{transform:translateY(110vh);}
-}
-
-</style>
-</head>
-
-<body>
-
-<div class="topBar">@mozgalomovich</div>
-
-<div class="title">CYBER MARKET</div>
-
-<div class="nav">
-<button onclick="show('home')">🏠</button>
-<button onclick="show('cart')">🛒</button>
-<button onclick="show('history')">📜</button>
-<button onclick="show('admin')">⚙️</button>
-</div>
-
-<!-- HOME -->
-<div id="home" class="page active">
-
-<div class="card">
-<h3>1 НЕДЕЛЯ</h3>
-<div>300₽ / 4$ / 2 TON</div>
-<button onclick="add('1 неделя')">добавить</button>
-</div>
-
-<div class="card">
-<h3>1 МЕСЯЦ</h3>
-<div>1000₽ / 13$ / 6 TON</div>
-<button onclick="add('1 месяц')">добавить</button>
-</div>
-
-<div class="card">
-<h3>НАВСЕГДА</h3>
-<div>4000₽ / 52$ / 25 TON</div>
-<button onclick="add('навсегда')">добавить</button>
-</div>
-
-<!-- ACCOUNT -->
-<div class="card">
-<h3>АККАУНТ</h3>
-<input id="login" placeholder="логин">
-<input id="pass" placeholder="пароль">
-<button onclick="register()">регистрация</button>
-<button onclick="login()">вход</button>
-</div>
-
-<!-- TON -->
-<div class="card">
-<h3>TON WALLET</h3>
-<div style="font-size:12px;word-break:break-all;opacity:.7">
-UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv
-</div>
-<button onclick="copyWallet()">📋 скопировано</button>
-<button onclick="window.open('ton://transfer/UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv')">
-💰 Tonkeeper
-</button>
-</div>
-
-<!-- SOCIALS -->
-<div class="card socials">
-<h3>СОЦСЕТИ</h3>
-<a href="https://t.me/bio_mozgalom" target="_blank">Telegram</a>
-<a href="https://www.tiktok.com/@mozgalomovich?_r=1&_t=ZS-96A3aJHUonR" target="_blank">TikTok</a>
-</div>
-
-</div>
-
-<!-- CART -->
-<div id="cart" class="page"></div>
-
-<!-- HISTORY -->
-<div id="history" class="page"></div>
-
-<!-- ADMIN -->
-<div id="admin" class="page">
-<div class="card">
-<input id="adminPass" placeholder="admin">
-<button onclick="adminLogin()">вход</button>
-</div>
-<div id="adminPanel"></div>
-</div>
-
-<div class="bottomBar">CYBER MARKET • MOZGALOM SYSTEM</div>
-
-<script>
-
-let user = localStorage.getItem("user") || "guest";
-let cart = [];
-let history = [];
-let orders = [];
-let admin = false;
-
-function load(){
-cart = JSON.parse(localStorage.getItem("cart_"+user) || "[]");
-history = JSON.parse(localStorage.getItem("history_"+user) || "[]");
-}
-load();
-
-function show(id){
-document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-document.getElementById(id).classList.add("active");
-render();
-}
-
-function register(){
-user=document.getElementById("login").value;
-localStorage.setItem("user",user);
-localStorage.setItem("cart_"+user,"[]");
-localStorage.setItem("history_"+user,"[]");
-load();
-}
-
-function login(){
-user=document.getElementById("login").value;
-load();
-}
-
-function add(i){
-cart.push(i);
-localStorage.setItem("cart_"+user,JSON.stringify(cart));
-}
-
-function order(i){
-orders.push({id:Date.now(),item:cart[i],status:"ожидает"});
-let h = JSON.parse(localStorage.getItem("history_"+user) || "[]");
-h.push(cart[i]);
-localStorage.setItem("history_"+user,JSON.stringify(h));
-history=h;
-}
-
-function adminLogin(){
-if(adminPass.value==="rahim_45_pro"){
-admin=true;
-render();
-}
-}
-
-function copyWallet(){
-navigator.clipboard.writeText("UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv");
-let d=document.createElement("div");
-d.className="copyToast";
-d.innerText="скопировано";
-document.body.appendChild(d);
-setTimeout(()=>d.remove(),1200);
-}
-
-function render(){
-
-if(document.getElementById("cart").classList.contains("active")){
-let c=document.getElementById("cart");
-c.innerHTML="";
-cart.forEach((i,idx)=>{
-c.innerHTML+=`<div class="card">${i}<button onclick="order(${idx})">заказать</button></div>`;
-});
-}
-
 if(document.getElementById("history").classList.contains("active")){
-let h=document.getElementById("history");
-h.innerHTML="";
-let data=JSON.parse(localStorage.getItem("history_"+user)||"[]");
-if(!data.length){h.innerHTML=`<div class="card">история пуста</div>`;return;}
+let h = document.getElementById("history");
+h.innerHTML = "";
+
+let data = JSON.parse(localStorage.getItem("history_"+user) || "[]");
+
+if(!data.length){
+h.innerHTML = `<div class="card">история пуста</div>`;
+return;
+}
+
 data.slice().reverse().forEach(i=>{
-h.innerHTML+=`<div class="card">transaction<br>${i}</div>`;
+h.innerHTML += `
+<div class="card">
+transaction<br>${i}
+</div>`;
 });
 }
 
+/* ADMIN */
 if(admin){
-let a=document.getElementById("adminPanel");
-a.innerHTML="";
-orders.forEach(o=>{
-a.innerHTML+=`<div class="card">${o.item}<br>${o.status}</div>`;
+let a = document.getElementById("adminPanel");
+a.innerHTML = "";
+
+orders.slice().reverse().forEach(o=>{
+a.innerHTML += `
+<div class="card">
+USER: ${o.user}<br>
+ITEM: ${o.item}<br>
+STATUS: ${o.status}
+<button onclick="setStatus(${o.id},'оплачено')">оплачено</button>
+<button onclick="setStatus(${o.id},'отменено')">отменить</button>
+</div>`;
 });
 }
 
 }
 
-/* particles */
-for(let i=0;i<25;i++){
-let d=document.createElement("div");
-d.className="leaf";
-d.style.left=Math.random()*100+"vw";
-d.style.animationDuration=(3+Math.random()*6)+"s";
-document.body.appendChild(d);
-}
+/* INIT */
+load();
+render();
 
 </script>
-
-</body>
-</html>
