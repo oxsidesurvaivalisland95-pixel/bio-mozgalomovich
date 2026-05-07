@@ -33,26 +33,19 @@ rgba(255,255,255,0.03) 1px,
 transparent 1px,
 transparent 3px
 );
-opacity:.25;
+opacity:.3;
 pointer-events:none;
 mix-blend-mode:overlay;
 }
 
-/* PARTICLES */
-.leaf{
-position:fixed;
-top:-20px;
-width:6px;
-height:6px;
-background:#00ffe5;
-border-radius:50%;
-opacity:.6;
-animation:fall linear infinite;
-}
-
-@keyframes fall{
-0%{transform:translateY(-10vh);}
-100%{transform:translateY(110vh);}
+/* TOP BAR */
+.topBar{
+text-align:center;
+color:#00ffe5;
+font-weight:bold;
+padding:10px;
+letter-spacing:1px;
+text-shadow:0 0 10px #00ffe5;
 }
 
 /* TITLE */
@@ -62,13 +55,19 @@ font-size:40px;
 margin:20px;
 color:#00ffe5;
 text-shadow:0 0 10px #00ffe5,0 0 25px #ff00ff;
-animation:glow 2.5s infinite;
+animation:glow 2.5s infinite, floatTitle 3s ease-in-out infinite;
 }
 
 @keyframes glow{
 0%{text-shadow:0 0 5px #00ffe5;}
 50%{text-shadow:0 0 25px #ff00ff;}
 100%{text-shadow:0 0 5px #00ffe5;}
+}
+
+@keyframes floatTitle{
+0%{transform:translateY(0px);}
+50%{transform:translateY(-5px);}
+100%{transform:translateY(0px);}
 }
 
 /* NAV */
@@ -94,12 +93,24 @@ max-width:420px;
 border-radius:15px;
 border:1px solid #00ffe5;
 box-shadow:0 0 15px rgba(0,255,255,0.15);
+animation:float 4s ease-in-out infinite, fadeIn .3s ease;
 transition:.25s;
 }
 
 .card:hover{
 transform:scale(1.03);
 box-shadow:0 0 30px rgba(255,0,255,0.25);
+}
+
+@keyframes float{
+0%{transform:translateY(0px);}
+50%{transform:translateY(-6px);}
+100%{transform:translateY(0px);}
+}
+
+@keyframes fadeIn{
+from{opacity:0;transform:scale(.95);}
+to{opacity:1;transform:scale(1);}
 }
 
 /* BUTTON */
@@ -113,6 +124,13 @@ background:linear-gradient(90deg,#00ffcc,#5f9cff,#ff00ff);
 color:white;
 font-weight:bold;
 cursor:pointer;
+transition:.2s;
+}
+
+button:hover{
+filter:brightness(1.2);
+transform:scale(1.03);
+box-shadow:0 0 20px rgba(0,255,255,.4);
 }
 
 /* INPUT */
@@ -132,7 +150,7 @@ border-left:3px solid #00ffe5;
 padding-left:15px;
 }
 
-/* COPY TOAST */
+/* COPY */
 .copyToast{
 position:fixed;
 left:50%;
@@ -143,8 +161,7 @@ border:1px solid #00ffe5;
 color:#00ffe5;
 padding:12px 18px;
 border-radius:12px;
-font-weight:bold;
-z-index:99999;
+z-index:9999;
 animation:pop .25s ease;
 }
 
@@ -153,10 +170,54 @@ from{opacity:0;transform:translate(-50%,-50%) scale(.8);}
 to{opacity:1;transform:translate(-50%,-50%) scale(1);}
 }
 
+/* SOCIAL */
+.socials a{
+color:#00ffe5;
+text-decoration:none;
+margin:0 10px;
+font-weight:bold;
+}
+
+.socials a:hover{
+text-shadow:0 0 10px #00ffe5;
+}
+
+/* BOTTOM */
+.bottomBar{
+position:fixed;
+bottom:0;
+width:100%;
+text-align:center;
+font-size:12px;
+padding:6px;
+color:#00ffe5;
+background:rgba(0,0,0,0.4);
+backdrop-filter:blur(6px);
+}
+
+/* PARTICLES */
+.leaf{
+position:fixed;
+top:-20px;
+width:6px;
+height:6px;
+background:#00ffe5;
+border-radius:50%;
+opacity:.6;
+animation:fall linear infinite;
+}
+
+@keyframes fall{
+0%{transform:translateY(-10vh);}
+100%{transform:translateY(110vh);}
+}
+
 </style>
 </head>
 
 <body>
+
+<div class="topBar">@mozgalomovich</div>
 
 <div class="title">CYBER MARKET</div>
 
@@ -197,19 +258,23 @@ to{opacity:1;transform:translate(-50%,-50%) scale(1);}
 <button onclick="login()">вход</button>
 </div>
 
-<!-- TON WALLET -->
+<!-- TON -->
 <div class="card">
 <h3>TON WALLET</h3>
-
-<div style="font-size:12px;opacity:.7;word-break:break-all">
+<div style="font-size:12px;word-break:break-all;opacity:.7">
 UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv
 </div>
-
-<button onclick="copyWallet()">📋 скопировать</button>
-
+<button onclick="copyWallet()">📋 скопировано</button>
 <button onclick="window.open('ton://transfer/UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv')">
-💰 открыть в Tonkeeper
+💰 Tonkeeper
 </button>
+</div>
+
+<!-- SOCIALS -->
+<div class="card socials">
+<h3>СОЦСЕТИ</h3>
+<a href="https://t.me/bio_mozgalom" target="_blank">Telegram</a>
+<a href="https://www.tiktok.com/@mozgalomovich?_r=1&_t=ZS-96A3aJHUonR" target="_blank">TikTok</a>
 </div>
 
 </div>
@@ -229,6 +294,8 @@ UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv
 <div id="adminPanel"></div>
 </div>
 
+<div class="bottomBar">CYBER MARKET • MOZGALOM SYSTEM</div>
+
 <script>
 
 let user = localStorage.getItem("user") || "guest";
@@ -237,21 +304,18 @@ let history = [];
 let orders = [];
 let admin = false;
 
-/* LOAD */
 function load(){
 cart = JSON.parse(localStorage.getItem("cart_"+user) || "[]");
 history = JSON.parse(localStorage.getItem("history_"+user) || "[]");
 }
 load();
 
-/* NAV */
 function show(id){
 document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
 document.getElementById(id).classList.add("active");
 render();
 }
 
-/* REGISTER */
 function register(){
 user=document.getElementById("login").value;
 localStorage.setItem("user",user);
@@ -260,30 +324,24 @@ localStorage.setItem("history_"+user,"[]");
 load();
 }
 
-/* LOGIN */
 function login(){
 user=document.getElementById("login").value;
 load();
 }
 
-/* ADD */
 function add(i){
 cart.push(i);
 localStorage.setItem("cart_"+user,JSON.stringify(cart));
 }
 
-/* ORDER */
 function order(i){
 orders.push({id:Date.now(),item:cart[i],status:"ожидает"});
-
 let h = JSON.parse(localStorage.getItem("history_"+user) || "[]");
 h.push(cart[i]);
-
 localStorage.setItem("history_"+user,JSON.stringify(h));
-history = h;
+history=h;
 }
 
-/* ADMIN */
 function adminLogin(){
 if(adminPass.value==="rahim_45_pro"){
 admin=true;
@@ -291,69 +349,46 @@ render();
 }
 }
 
-/* COPY WALLET */
 function copyWallet(){
 navigator.clipboard.writeText("UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv");
-
 let d=document.createElement("div");
 d.className="copyToast";
 d.innerText="скопировано";
 document.body.appendChild(d);
-
 setTimeout(()=>d.remove(),1200);
 }
 
-/* RENDER */
 function render(){
 
-/* CART */
 if(document.getElementById("cart").classList.contains("active")){
 let c=document.getElementById("cart");
 c.innerHTML="";
 cart.forEach((i,idx)=>{
-c.innerHTML+=`
-<div class="card">
-${i}
-<button onclick="order(${idx})">заказать</button>
-</div>`;
+c.innerHTML+=`<div class="card">${i}<button onclick="order(${idx})">заказать</button></div>`;
 });
 }
 
-/* HISTORY */
 if(document.getElementById("history").classList.contains("active")){
 let h=document.getElementById("history");
 h.innerHTML="";
-
-let data = JSON.parse(localStorage.getItem("history_"+user) || "[]");
-
-if(data.length===0){
-h.innerHTML=`<div class="card">история пуста</div>`;
-return;
-}
-
+let data=JSON.parse(localStorage.getItem("history_"+user)||"[]");
+if(!data.length){h.innerHTML=`<div class="card">история пуста</div>`;return;}
 data.slice().reverse().forEach(i=>{
-h.innerHTML+=`
-<div class="card">
-transaction<br>${i}
-</div>`;
+h.innerHTML+=`<div class="card">transaction<br>${i}</div>`;
 });
 }
 
-/* ADMIN */
 if(admin){
 let a=document.getElementById("adminPanel");
 a.innerHTML="";
 orders.forEach(o=>{
-a.innerHTML+=`
-<div class="card">
-${o.item}<br>${o.status}
-</div>`;
+a.innerHTML+=`<div class="card">${o.item}<br>${o.status}</div>`;
 });
 }
 
 }
 
-/* PARTICLES */
+/* particles */
 for(let i=0;i<25;i++){
 let d=document.createElement("div");
 d.className="leaf";
