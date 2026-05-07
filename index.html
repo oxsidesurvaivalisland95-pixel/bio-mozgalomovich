@@ -3,111 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ULTRA SYSTEM</title>
+<title>FULLTER MARKETPLACE</title>
 
 <style>
+
 html,body{
 margin:0;
 padding:0;
-width:100%;
-height:100%;
-background:#050508;
+background:#05070d;
 font-family:Arial;
 color:white;
 overflow-x:hidden;
+min-height:100%;
+-webkit-appearance:none !important;
+appearance:none !important;
 }
 
-*{box-sizing:border-box}
+*{
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
+outline:none !important;
+}
 
 body::before{
 content:"";
 position:fixed;
 inset:0;
 background:
-radial-gradient(circle at 15% 20%, rgba(0,255,200,0.18), transparent 40%),
-radial-gradient(circle at 80% 80%, rgba(95,156,255,0.16), transparent 45%),
-radial-gradient(circle at 50% 50%, rgba(255,0,255,0.10), transparent 60%);
+radial-gradient(circle at top left, rgba(0,255,200,.15), transparent 40%),
+radial-gradient(circle at bottom right, rgba(255,0,255,.15), transparent 40%),
+radial-gradient(circle at center, rgba(95,156,255,.12), transparent 50%);
 pointer-events:none;
 z-index:0;
 }
 
-#snowCanvas{
+#snow{
 position:fixed;
 inset:0;
-width:100%;
-height:100%;
 pointer-events:none;
 z-index:1;
 }
 
-.page{
-display:none;
-padding:20px;
-position:relative;
-z-index:2;
-}
-.page.active{display:block}
-
-.card{
-background:rgba(10,10,18,0.85);
-backdrop-filter:blur(12px);
-max-width:340px;
-margin:15px auto;
-padding:20px;
-border-radius:14px;
-border:1px solid rgba(0,255,200,0.25);
-box-shadow:0 0 20px rgba(0,255,200,0.15);
-transition:0.3s ease;
-}
-
-.card.product:hover{
-transform:translateY(-8px) scale(1.04);
-border:1px solid rgba(0,255,200,0.9);
-box-shadow:0 0 25px rgba(0,255,200,0.5);
-}
-
-input{
-width:90%;
-padding:10px;
-border-radius:10px;
-border:none;
-margin-top:10px;
-background:#0a0a12;
-color:white;
-}
-
-button{
-width:100%;
-padding:12px;
-margin-top:10px;
-border:none;
-border-radius:10px;
-background:linear-gradient(90deg,#00ffcc,#5f9cff,#ff00ff);
-cursor:pointer;
-font-weight:bold;
-}
-
-button:hover{
-transform:scale(1.03);
-box-shadow:0 0 25px #00ffcc;
-}
-
-h1{
-text-align:center;
-font-size:42px;
-background:linear-gradient(90deg,#00ffcc,#5f9cff,#ff00ff);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-}
-
 .topUser{
 position:fixed;
-top:8px;
+top:10px;
 left:50%;
 transform:translateX(-50%);
+z-index:50;
 color:#00ffe5;
-text-shadow:0 0 10px #00ffe5;
-z-index:10;
+font-weight:bold;
+text-shadow:0 0 12px #00ffe5;
 }
 
 .bottomText{
@@ -116,44 +61,164 @@ bottom:8px;
 left:50%;
 transform:translateX(-50%);
 font-size:12px;
-color:#00ffe5;
-opacity:0.8;
-z-index:10;
 text-align:center;
+color:#00ffe5;
+opacity:.9;
+z-index:50;
 }
 
-.adminBtn{
-position:fixed;
-top:10px;
-right:10px;
-z-index:10;
+.page{
+display:none;
+padding:80px 20px 80px;
+position:relative;
+z-index:2;
+}
+
+.page.active{
+display:block;
+}
+
+.title{
+font-size:42px;
+text-align:center;
+margin-bottom:20px;
+background:linear-gradient(90deg,#00ffcc,#5f9cff,#ff00ff);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+font-weight:bold;
+text-shadow:0 0 20px rgba(0,255,200,.4);
+}
+
+.card{
+background:rgba(10,12,20,.88);
+backdrop-filter:blur(12px);
+border:1px solid rgba(0,255,200,.25);
+border-radius:18px;
+padding:20px;
+margin:15px auto;
+max-width:360px;
+box-shadow:0 0 25px rgba(0,255,200,.12);
+transition:.25s;
+overflow:hidden;
+}
+
+.product:hover{
+transform:translateY(-6px) scale(1.03);
+box-shadow:0 0 30px rgba(0,255,200,.35);
+border-color:#00ffe5;
+}
+
+input{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:none;
+border-radius:12px;
+background:#0d1018 !important;
+color:white !important;
+outline:none !important;
+-webkit-appearance:none !important;
+appearance:none !important;
+}
+
+input:focus{
+outline:none !important;
+box-shadow:none !important;
+border:none !important;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus{
+-webkit-text-fill-color:white !important;
+transition:background-color 999999s ease-in-out 0s;
+box-shadow:0 0 0px 1000px #0d1018 inset !important;
+}
+
+button{
+width:100%;
+padding:13px;
+margin-top:10px;
+border:none;
+border-radius:12px;
 cursor:pointer;
+font-weight:bold;
+color:white;
+background:linear-gradient(90deg,#00ffcc,#5f9cff,#ff00ff);
+transition:.25s;
+-webkit-appearance:none !important;
+appearance:none !important;
+}
+
+button:hover{
+transform:scale(1.03);
+box-shadow:0 0 25px #00ffe5;
 }
 
 .copyBtn{
-background:#111;
-border:1px solid #00ffcc;
+background:#10151f;
+border:1px solid #00ffe5;
+}
+
+.adminOpen{
+position:fixed;
+top:10px;
+right:10px;
+z-index:100;
+padding:8px 14px;
+border-radius:10px;
+background:#10151f;
+border:1px solid #00ffe5;
+cursor:pointer;
 }
 
 .toast{
 position:fixed;
-bottom:40px;
+bottom:60px;
 left:50%;
 transform:translateX(-50%);
 background:#000;
-padding:10px 20px;
-border-radius:10px;
+padding:12px 18px;
+border-radius:12px;
 opacity:0;
-transition:0.3s;
-z-index:999;
+transition:.3s;
+z-index:9999;
+border:1px solid #00ffe5;
 }
-.toast.show{opacity:1}
+
+.toast.show{
+opacity:1;
+}
+
+.wallet{
+word-break:break-all;
+cursor:pointer;
+padding:10px;
+border-radius:10px;
+background:#0d1018;
+margin-top:10px;
+}
+
+.status{
+margin-top:10px;
+color:#00ffe5;
+font-weight:bold;
+}
+
+.orderCard{
+margin-top:15px;
+padding:15px;
+border-radius:12px;
+background:#0d1018;
+border:1px solid rgba(0,255,200,.2);
+}
+
 </style>
 </head>
 
 <body>
 
-<canvas id="snowCanvas"></canvas>
+<canvas id="snow"></canvas>
 
 <div class="topUser">@mozgalomovich</div>
 
@@ -161,32 +226,42 @@ z-index:999;
 мы являемся командой fullter, и гарантируем безопасность перевода и получение товара
 </div>
 
-<h1>ULTRA SYSTEM</h1>
+<div class="adminOpen" onclick="showPage('adminPage')">
+admin
+</div>
 
 <div id="toast" class="toast"></div>
 
-<div class="adminBtn" onclick="show('admin')">admin</div>
-
 <!-- HOME -->
-<div id="home" class="page active">
+
+<div id="homePage" class="page active">
+
+<div class="title">FULLTER MARKETPLACE</div>
 
 <div class="card">
-<h3>🔐 регистрация</h3>
-<input id="regName" placeholder="имя">
+
+<h3>🔐 регистрация / вход</h3>
+
+<input id="regLogin" placeholder="логин">
 <input id="regPass" type="password" placeholder="пароль">
-<button onclick="register()">регистрация</button>
+
+<button onclick="registerUser()">регистрация</button>
 <button onclick="loginUser()">вход</button>
 
-<div id="userBox" style="display:none">
-<p>👤 <span id="userName"></span></p>
-<button onclick="logoutUser()">выйти</button>
+<div id="profileBox" style="display:none;margin-top:10px;">
+👤 <span id="profileName"></span>
 </div>
+
 </div>
 
 <div class="card">
+
 <h3>📩 заявка</h3>
-<input id="tg" placeholder="@telegram">
-<button onclick="send()">отправить</button>
+
+<input id="tgInput" placeholder="@telegram">
+
+<button onclick="sendRequest()">отправить</button>
+
 </div>
 
 <div class="card product" onclick="openPay('1 неделя','300₽ / 4$ / 2 TON')">
@@ -207,44 +282,87 @@ z-index:999;
 </div>
 
 <!-- PAY -->
-<div id="pay" class="page">
+
+<div id="payPage" class="page">
+
+<div class="title">ОПЛАТА</div>
+
 <div class="card">
 
-<h2 id="payTitle"></h2>
+<h3 id="payName"></h3>
 <p id="payPrice"></p>
 
-<p onclick="copyWallet()" style="text-align:center;cursor:pointer">
+<div class="wallet" onclick="copyWallet()">
 UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv
-</p>
+</div>
 
 <button onclick="openWallet()">открыть кошелёк</button>
-<button class="copyBtn" onclick="copyWallet()">копировать</button>
 
-<p id="statusText">статус: нет заказа</p>
+<button class="copyBtn" onclick="copyWallet()">
+копировать
+</button>
 
-<button onclick="markPaid()">я оплатил</button>
-<button onclick="show('home')">назад</button>
+<p>
+надо написать нашему менеджеру @mozgalomovich и скинуть ему чек оплаты
+</p>
+
+<div id="payStatus" class="status">
+статус: нет заказа
+</div>
+
+<button onclick="createOrder()">
+я оплатил
+</button>
+
+<button onclick="showPage('homePage')">
+назад
+</button>
 
 </div>
+
 </div>
 
 <!-- ADMIN -->
-<div id="admin" class="page">
 
-<div id="adminLogin" class="card">
-<h3>🔐 ADMIN LOGIN</h3>
-<input id="adminPass" type="password" placeholder="пароль">
-<button onclick="adminLogin()">войти</button>
+<div id="adminPage" class="page">
+
+<div class="title">ADMIN PANEL</div>
+
+<div id="adminLoginBox" class="card">
+
+<h3>🔐 вход в админ панель</h3>
+
+<input id="adminPassword" type="password" placeholder="пароль">
+
+<button onclick="adminLogin()">
+войти
+</button>
+
+<button onclick="showPage('homePage')">
+назад
+</button>
+
 </div>
 
-<div id="adminPanel" class="card" style="display:none">
+<div id="adminPanel" style="display:none;">
 
-<h3>📦 АДМИН ПАНЕЛЬ</h3>
+<div class="card">
 
-<button onclick="loadOrders()">обновить</button>
-<button onclick="goHome()">на главную</button>
+<h3>📦 управление заказами</h3>
 
-<div id="ordersList"></div>
+<p id="adminWelcome"></p>
+
+<button onclick="refreshOrders()">
+обновить заказы
+</button>
+
+<button onclick="showPage('homePage')">
+на главную
+</button>
+
+<div id="ordersContainer"></div>
+
+</div>
 
 </div>
 
@@ -254,157 +372,306 @@ UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv
 
 const WALLET="UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv";
 
-let orders = JSON.parse(localStorage.getItem("orders")||"[]");
-let currentOrder=null;
+let currentProduct=null;
 
-/* NAV */
-function show(id){
-document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+function showPage(id){
+
+document.querySelectorAll(".page").forEach(p=>{
+p.classList.remove("active");
+});
+
 document.getElementById(id).classList.add("active");
-if(id==="admin") loadOrders();
+
 }
 
-/* PAY */
-function openPay(t,p){
-payTitle.innerText=t;
-payPrice.innerText=p;
-currentOrder={t,p};
-show('pay');
+function toast(text){
+
+const t=document.getElementById("toast");
+
+t.innerText=text;
+
+t.classList.add("show");
+
+setTimeout(()=>{
+t.classList.remove("show");
+},1600);
+
 }
 
-/* WALLET */
-function openWallet(){
-window.open("https://app.tonkeeper.com/transfer/"+WALLET);
-}
+function registerUser(){
 
-function copyWallet(){
-navigator.clipboard.writeText(WALLET);
-toast("скопировано");
-}
+const login=document.getElementById("regLogin").value;
+const pass=document.getElementById("regPass").value;
 
-/* ORDER FIX */
-function markPaid(){
-
-if(!currentOrder){
-toast("нет заказа");
+if(!login || !pass){
+toast("заполни поля");
 return;
 }
 
-let o={
-id:Date.now(),
-product:currentOrder.t,
-price:currentOrder.p,
-status:"ожидание проверки"
-};
+localStorage.setItem("userData",JSON.stringify({
+login,
+pass
+}));
 
-orders.push(o);
-localStorage.setItem("orders",JSON.stringify(orders));
+toast("регистрация успешна");
 
-statusText.innerText="статус: ожидание проверки";
-toast("отправлено");
-}
-
-/* ADMIN LOGIN */
-function adminLogin(){
-if(adminPass.value==="rahim_45_pro"){
-adminLogin.style.display="none";
-adminPanel.style.display="block";
-toast("вход выполнен");
-loadOrders();
-}else toast("неверный пароль");
-}
-
-/* LOAD ORDERS */
-function loadOrders(){
-
-ordersList.innerHTML="";
-orders=JSON.parse(localStorage.getItem("orders")||"[]");
-
-orders.forEach(o=>{
-let d=document.createElement("div");
-d.className="card";
-
-d.innerHTML=`
-<b>#${o.id}</b><br>
-${o.product}<br>
-${o.status}<br><br>
-
-<button onclick="setStatus(${o.id},'оплачено')">✔ оплачено</button>
-<button onclick="setStatus(${o.id},'не оплачено')">❌ не оплачено</button>
-`;
-
-ordersList.appendChild(d);
-});
-}
-
-function setStatus(id,status){
-orders=orders.map(o=>{
-if(o.id===id)o.status=status;
-return o;
-});
-localStorage.setItem("orders",JSON.stringify(orders));
-loadOrders();
-}
-
-/* BACK */
-function goHome(){
-show('home');
-}
-
-/* AUTH */
-function register(){
-localStorage.setItem("user",JSON.stringify({n:regName.value,p:regPass.value}));
 }
 
 function loginUser(){
-let u=JSON.parse(localStorage.getItem("user"));
-if(u&&u.n===regName.value&&u.p===regPass.value){
-userBox.style.display="block";
-userName.innerText=u.n;
-}
+
+const login=document.getElementById("regLogin").value;
+const pass=document.getElementById("regPass").value;
+
+const data=JSON.parse(localStorage.getItem("userData"));
+
+if(!data){
+toast("аккаунта нет");
+return;
 }
 
-function logoutUser(){
-userBox.style.display="none";
+if(login===data.login && pass===data.pass){
+
+document.getElementById("profileBox").style.display="block";
+document.getElementById("profileName").innerText=data.login;
+
+toast("вход выполнен");
+
+}else{
+
+toast("неверный логин");
+
 }
 
-/* TOAST */
-function toast(t){
-let x=document.getElementById("toast");
-x.innerText=t;
-x.classList.add("show");
-setTimeout(()=>x.classList.remove("show"),1500);
 }
 
-/* SNOW */
-const c=document.getElementById("snowCanvas");
-const x=c.getContext("2d");
+function sendRequest(){
+
+const tg=document.getElementById("tgInput").value;
+
+if(!tg){
+toast("введи telegram");
+return;
+}
+
+toast("отправлено");
+
+}
+
+function openPay(name,price){
+
+currentProduct={
+name,
+price
+};
+
+document.getElementById("payName").innerText=name;
+document.getElementById("payPrice").innerText=price;
+
+showPage("payPage");
+
+}
+
+function copyWallet(){
+
+navigator.clipboard.writeText(WALLET);
+
+toast("скопировано");
+
+}
+
+function openWallet(){
+
+window.open("https://app.tonkeeper.com/transfer/"+WALLET);
+
+}
+
+function createOrder(){
+
+if(!currentProduct){
+toast("ошибка");
+return;
+}
+
+let orders=JSON.parse(localStorage.getItem("orders") || "[]");
+
+orders.push({
+id:Date.now(),
+product:currentProduct.name,
+price:currentProduct.price,
+status:"не оплачено"
+});
+
+localStorage.setItem("orders",JSON.stringify(orders));
+
+document.getElementById("payStatus").innerText=
+"статус: ожидание проверки";
+
+toast("заказ создан");
+
+}
+
+function adminLogin(){
+
+const pass=document.getElementById("adminPassword").value;
+
+if(pass==="rahim_45_pro"){
+
+document.getElementById("adminLoginBox").style.display="none";
+
+document.getElementById("adminPanel").style.display="block";
+
+document.getElementById("adminWelcome").innerText=
+"✅ добро пожаловать в админ панель";
+
+refreshOrders();
+
+toast("админ вход");
+
+}else{
+
+toast("неверный пароль");
+
+}
+
+}
+
+function refreshOrders(){
+
+const container=document.getElementById("ordersContainer");
+
+container.innerHTML="";
+
+let orders=JSON.parse(localStorage.getItem("orders") || "[]");
+
+if(orders.length===0){
+
+container.innerHTML="<p>заказов пока нет</p>";
+
+return;
+
+}
+
+orders.forEach(order=>{
+
+let div=document.createElement("div");
+
+div.className="orderCard";
+
+div.innerHTML=`
+<b>#${order.id}</b><br><br>
+
+📦 ${order.product}<br>
+💰 ${order.price}<br>
+📌 ${order.status}<br><br>
+
+<button onclick="changeStatus(${order.id},'оплачено')">
+✔ оплачено
+</button>
+
+<button onclick="changeStatus(${order.id},'не оплачено')">
+❌ не оплачено
+</button>
+
+<button onclick="deleteOrder(${order.id})">
+🗑 удалить
+</button>
+`;
+
+container.appendChild(div);
+
+});
+
+}
+
+function changeStatus(id,status){
+
+let orders=JSON.parse(localStorage.getItem("orders") || "[]");
+
+orders=orders.map(o=>{
+
+if(o.id===id){
+o.status=status;
+}
+
+return o;
+
+});
+
+localStorage.setItem("orders",JSON.stringify(orders));
+
+refreshOrders();
+
+toast("статус изменён");
+
+}
+
+function deleteOrder(id){
+
+let orders=JSON.parse(localStorage.getItem("orders") || "[]");
+
+orders=orders.filter(o=>o.id!==id);
+
+localStorage.setItem("orders",JSON.stringify(orders));
+
+refreshOrders();
+
+toast("заказ удалён");
+
+}
+
+const canvas=document.getElementById("snow");
+const ctx=canvas.getContext("2d");
 
 function resize(){
-c.width=innerWidth;
-c.height=innerHeight;
+
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
 }
+
 resize();
+
 window.addEventListener("resize",resize);
 
-let s=[];
-for(let i=0;i<80;i++){
-s.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*2});
+let snowflakes=[];
+
+for(let i=0;i<120;i++){
+
+snowflakes.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+r:Math.random()*2.5+1,
+s:Math.random()*1.5+0.5
+});
+
 }
 
-function draw(){
-x.clearRect(0,0,c.width,c.height);
-x.fillStyle="white";
-for(let i of s){
-x.beginPath();
-x.arc(i.x,i.y,i.r,0,Math.PI*2);
-x.fill();
-i.y+=1;
-if(i.y>c.height)i.y=0;
+function animateSnow(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+ctx.fillStyle="white";
+
+snowflakes.forEach(f=>{
+
+ctx.beginPath();
+ctx.arc(f.x,f.y,f.r,0,Math.PI*2);
+ctx.fill();
+
+f.y+=f.s;
+
+if(f.y>canvas.height){
+f.y=0;
+f.x=Math.random()*canvas.width;
 }
-requestAnimationFrame(draw);
+
+});
+
+requestAnimationFrame(animateSnow);
+
 }
-draw();
+
+animateSnow();
 
 </script>
 
