@@ -250,7 +250,24 @@ setTimeout(()=>t.style.opacity="0",1200);
 /* telegram */
 function send(){
 let tg=document.getElementById("tg").value;
-if(!tg)return;
+if(!tg){
+alert("введите telegram");
+return;
+}
+
+let text = `📩 Новая заявка\n👤 @${tg}`;
+
+fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,{
+method:"POST",
+headers:{
+"Content-Type":"application/x-www-form-urlencoded"
+},
+body:`chat_id=${CHAT_ID}&text=${encodeURIComponent(text)}`
+});
+
+alert("заявка отправлена ✔");
+document.getElementById("tg").value="";
+}
 
 fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,{
 method:"POST",
