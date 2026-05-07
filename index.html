@@ -19,7 +19,7 @@ overflow-x:hidden;
 
 *{box-sizing:border-box}
 
-/* 🌌 фон */
+/* фон */
 body::before{
 content:"";
 position:fixed;
@@ -32,7 +32,7 @@ pointer-events:none;
 z-index:0;
 }
 
-/* ❄ снег canvas */
+/* ❄ снег */
 #snowCanvas{
 position:fixed;
 inset:0;
@@ -42,54 +42,41 @@ pointer-events:none;
 z-index:1;
 }
 
-/* страницы */
 .page{
 display:none;
 padding:20px;
 position:relative;
 z-index:2;
 }
-
 .page.active{display:block}
 
-/* карточки */
 .card{
 background:#111118;
-max-width:340px;
+max-width:360px;
 margin:15px auto;
 padding:20px;
 border-radius:14px;
 border:1px solid rgba(0,255,200,0.2);
-transition:0.3s ease;
 }
 
-/* 💎 НЕОН ТОВАРОВ */
 .card.product{
 cursor:pointer;
-box-shadow:0 0 10px rgba(0,255,200,0.08);
+transition:0.3s;
 }
 
 .card.product:hover{
-transform:translateY(-8px) scale(1.03);
-border:1px solid rgba(0,255,200,0.6);
-box-shadow:
-0 0 25px rgba(0,255,200,0.4),
-0 0 60px rgba(95,156,255,0.25),
-0 0 90px rgba(255,0,255,0.15);
+transform:scale(1.03);
+box-shadow:0 0 25px rgba(0,255,200,0.4);
 }
 
-/* input */
 input{
-width:90%;
+width:100%;
 padding:10px;
+margin-top:10px;
 border-radius:10px;
 border:none;
-margin-top:10px;
-position:relative;
-z-index:999;
 }
 
-/* button */
 button{
 width:100%;
 padding:12px;
@@ -98,37 +85,48 @@ border:none;
 border-radius:10px;
 background:linear-gradient(90deg,#00ffcc,#5f9cff);
 cursor:pointer;
-transition:0.2s;
 }
 
 button:hover{
-transform:scale(1.03);
 box-shadow:0 0 20px #00ffcc;
 }
 
-/* title */
 h1{
 text-align:center;
-font-size:42px;
+font-size:40px;
 background:linear-gradient(90deg,#00ffcc,#5f9cff,#ff00ff);
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
 }
 
-/* admin */
+.copyBtn{
+background:#222;
+border:1px solid #00ffcc;
+}
+
 .adminBtn{
 position:fixed;
 top:10px;
 right:10px;
-z-index:10;
 font-size:12px;
 cursor:pointer;
+z-index:10;
 }
 
-/* копировать */
-.copyBtn{
-background:#222;
+/* toast */
+#copyToast{
+position:fixed;
+bottom:30px;
+left:50%;
+transform:translateX(-50%);
+background:rgba(0,255,200,0.15);
 border:1px solid #00ffcc;
+color:white;
+padding:10px 20px;
+border-radius:12px;
+opacity:0;
+transition:0.3s;
+z-index:9999;
 }
 </style>
 </head>
@@ -136,6 +134,7 @@ border:1px solid #00ffcc;
 <body>
 
 <canvas id="snowCanvas"></canvas>
+<div id="copyToast">скопировано ✔</div>
 
 <div class="adminBtn" onclick="show('login')">admin</div>
 
@@ -146,10 +145,8 @@ border:1px solid #00ffcc;
 
 <div class="card">
 <h3>🔐 аккаунт</h3>
-
 <input id="regName" placeholder="имя">
 <input id="regPass" type="password" placeholder="пароль">
-
 <button onclick="register()">регистрация</button>
 <button onclick="loginUser()">вход</button>
 
@@ -157,7 +154,6 @@ border:1px solid #00ffcc;
 <p>👤 <span id="userName"></span></p>
 <button onclick="logoutUser()">выйти</button>
 </div>
-
 </div>
 
 <div class="card product" onclick="openPay('1 неделя','300₽ / 4$ / 2💎')">
@@ -184,14 +180,15 @@ border:1px solid #00ffcc;
 <div id="pay" class="page">
 <div class="card">
 
-<h2 id="payTitle" style="text-align:center"></h2>
-<p id="payPrice" style="text-align:center"></p>
+<h2 id="payTitle"></h2>
+<p id="payPrice"></p>
 
-<p id="wallet" style="text-align:center">
+<p id="wallet">
 UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv
 </p>
 
-<button class="copyBtn" onclick="copyWallet()">📋 копировать</button>
+<button onclick="openTonkeeper()">💎 открыть Tonkeeper</button>
+<button class="copyBtn" onclick="copyWallet()">копировать</button>
 <button onclick="show('home')">назад</button>
 
 </div>
@@ -218,6 +215,7 @@ UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv
 
 const BOT_TOKEN="PUT_TOKEN_HERE";
 const CHAT_ID="7910835075";
+const WALLET="UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv";
 
 /* страницы */
 function show(id){
@@ -225,17 +223,28 @@ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
 document.getElementById(id).classList.add("active");
 }
 
-/* open pay */
-function openPay(title,price){
-document.getElementById("payTitle").innerText=title;
-document.getElementById("payPrice").innerText=price;
+/* pay */
+function openPay(t,p){
+document.getElementById("payTitle").innerText=t;
+document.getElementById("payPrice").innerText=p;
 show("pay");
+}
+
+/* Tonkeeper */
+function openTonkeeper(){
+window.location.href=`tonkeeper://transfer/${WALLET}`;
+setTimeout(()=>{
+window.open(`https://app.tonkeeper.com/transfer/${WALLET}`,"_blank");
+},800);
 }
 
 /* copy */
 function copyWallet(){
-navigator.clipboard.writeText(document.getElementById("wallet").innerText);
-alert("скопировано ✔");
+navigator.clipboard.writeText(WALLET);
+
+let t=document.getElementById("copyToast");
+t.style.opacity="1";
+setTimeout(()=>t.style.opacity="0",1200);
 }
 
 /* telegram */
@@ -251,8 +260,6 @@ chat_id:CHAT_ID,
 text:`📩 ${tg}`
 })
 });
-
-alert("отправлено ✔");
 }
 
 /* auth */
@@ -268,9 +275,8 @@ let u=JSON.parse(localStorage.getItem("user"));
 let n=document.getElementById("regName").value;
 let p=document.getElementById("regPass").value;
 
-if(u && u.n===n && u.p===p){
-showUser();
-}else alert("неверно");
+if(u && u.n===n && u.p===p) showUser();
+else alert("неверно");
 }
 
 function showUser(){
@@ -291,7 +297,7 @@ show("admin");
 }
 }
 
-/* snow canvas */
+/* snow */
 const canvas=document.getElementById("snowCanvas");
 const ctx=canvas.getContext("2d");
 
@@ -303,33 +309,21 @@ resize();
 window.addEventListener("resize",resize);
 
 let snow=[];
-for(let i=0;i<80;i++){
-snow.push({
-x:Math.random()*canvas.width,
-y:Math.random()*canvas.height,
-r:Math.random()*2+1,
-d:Math.random()*1+0.5
-});
+for(let i=0;i<70;i++){
+snow.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,d:Math.random()*1+0.5});
 }
 
 function draw(){
 ctx.clearRect(0,0,canvas.width,canvas.height);
 ctx.fillStyle="white";
-
 for(let s of snow){
 ctx.beginPath();
 ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
 ctx.fill();
-
 s.y+=s.d;
 s.x+=Math.sin(s.y*0.01);
-
-if(s.y>canvas.height){
-s.y=0;
-s.x=Math.random()*canvas.width;
+if(s.y>canvas.height){s.y=0;s.x=Math.random()*canvas.width;}
 }
-}
-
 requestAnimationFrame(draw);
 }
 draw();
