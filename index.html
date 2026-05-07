@@ -11,27 +11,26 @@ margin:0;
 padding:0;
 width:100%;
 height:100%;
-background:#02020a;
+background:#050508;
 font-family:Arial;
 color:white;
 overflow-x:hidden;
 }
 
-/* 🌌 КИБЕРПАНК ФОН */
+*{box-sizing:border-box}
+
 body::before{
 content:"";
 position:fixed;
 inset:0;
 background:
-radial-gradient(circle at 20% 20%, rgba(0,255,255,0.18), transparent 40%),
-radial-gradient(circle at 80% 30%, rgba(255,0,255,0.15), transparent 45%),
-radial-gradient(circle at 50% 80%, rgba(0,140,255,0.12), transparent 50%),
-linear-gradient(180deg, #02020a, #050510);
+radial-gradient(circle at 15% 20%, rgba(0,255,200,0.18), transparent 40%),
+radial-gradient(circle at 80% 80%, rgba(95,156,255,0.16), transparent 45%),
+radial-gradient(circle at 50% 50%, rgba(255,0,255,0.10), transparent 60%);
 pointer-events:none;
 z-index:0;
 }
 
-/* ❄ снег (без багов) */
 #snowCanvas{
 position:fixed;
 inset:0;
@@ -39,10 +38,8 @@ width:100%;
 height:100%;
 pointer-events:none;
 z-index:1;
-filter:blur(0.2px);
 }
 
-/* страницы */
 .page{
 display:none;
 padding:20px;
@@ -51,32 +48,24 @@ z-index:2;
 }
 .page.active{display:block}
 
-/* 💎 КИБЕРПАНК КАРТОЧКИ */
 .card{
-background:rgba(10,10,20,0.85);
-backdrop-filter:blur(10px);
+background:rgba(10,10,18,0.85);
+backdrop-filter:blur(12px);
 max-width:340px;
 margin:15px auto;
 padding:20px;
-border-radius:16px;
-border:1px solid rgba(0,255,255,0.25);
-box-shadow:
-0 0 15px rgba(0,255,255,0.1),
-0 0 40px rgba(255,0,255,0.08);
-transition:0.25s;
+border-radius:14px;
+border:1px solid rgba(0,255,200,0.25);
+box-shadow:0 0 20px rgba(0,255,200,0.15);
+transition:0.3s ease;
 }
 
-/* NEON HOVER */
 .card.product:hover{
 transform:translateY(-8px) scale(1.04);
-border:1px solid rgba(0,255,255,0.7);
-box-shadow:
-0 0 25px rgba(0,255,255,0.5),
-0 0 60px rgba(255,0,255,0.3),
-0 0 90px rgba(0,140,255,0.2);
+border:1px solid rgba(0,255,200,0.9);
+box-shadow:0 0 25px rgba(0,255,200,0.5);
 }
 
-/* INPUT */
 input{
 width:90%;
 padding:10px;
@@ -85,85 +74,80 @@ border:none;
 margin-top:10px;
 background:#0a0a12;
 color:white;
-outline:none;
-box-shadow:0 0 10px rgba(0,255,255,0.1);
 }
 
-/* BUTTON */
 button{
 width:100%;
 padding:12px;
 margin-top:10px;
 border:none;
 border-radius:10px;
+background:linear-gradient(90deg,#00ffcc,#5f9cff,#ff00ff);
 cursor:pointer;
-background:linear-gradient(90deg,#00ffe5,#ff00ff,#008cff);
-color:white;
 font-weight:bold;
-transition:0.2s;
-box-shadow:0 0 15px rgba(0,255,255,0.2);
 }
 
 button:hover{
 transform:scale(1.03);
-box-shadow:0 0 25px rgba(0,255,255,0.6);
+box-shadow:0 0 25px #00ffcc;
 }
 
-/* TITLE */
 h1{
 text-align:center;
 font-size:42px;
-background:linear-gradient(90deg,#00ffe5,#ff00ff,#008cff);
+background:linear-gradient(90deg,#00ffcc,#5f9cff,#ff00ff);
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
-filter:drop-shadow(0 0 10px rgba(0,255,255,0.3));
 }
 
-/* PRICE */
-.price{
-text-align:center;
-opacity:0.85;
-}
-
-/* CLICK ANIMATION */
-.card:active,
-button:active{
-transform:scale(0.97);
-opacity:0.85;
-}
-
-/* 🔥 TOAST */
-.toast{
+.topUser{
 position:fixed;
+top:8px;
 left:50%;
-bottom:40px;
 transform:translateX(-50%);
-background:rgba(0,0,0,0.8);
-padding:12px 18px;
-border-radius:12px;
-opacity:0;
-transition:0.4s;
-z-index:999;
-border:1px solid rgba(0,255,255,0.4);
-pointer-events:none;
+color:#00ffe5;
+text-shadow:0 0 10px #00ffe5;
+z-index:10;
 }
 
-.toast.show{
-opacity:1;
-transform:translateX(-50%) translateY(-10px);
+.bottomText{
+position:fixed;
+bottom:8px;
+left:50%;
+transform:translateX(-50%);
+font-size:12px;
+color:#00ffe5;
+opacity:0.8;
+z-index:10;
+text-align:center;
 }
 
-/* admin glow */
 .adminBtn{
 position:fixed;
 top:10px;
 right:10px;
 z-index:10;
 cursor:pointer;
-font-size:12px;
-color:#00ffe5;
-text-shadow:0 0 10px #00ffe5;
 }
+
+.copyBtn{
+background:#111;
+border:1px solid #00ffcc;
+}
+
+.toast{
+position:fixed;
+bottom:40px;
+left:50%;
+transform:translateX(-50%);
+background:#000;
+padding:10px 20px;
+border-radius:10px;
+opacity:0;
+transition:0.3s;
+z-index:999;
+}
+.toast.show{opacity:1}
 </style>
 </head>
 
@@ -171,25 +155,29 @@ text-shadow:0 0 10px #00ffe5;
 
 <canvas id="snowCanvas"></canvas>
 
+<div class="topUser">@mozgalomovich</div>
+
+<div class="bottomText">
+мы являемся командой fullter, и гарантируем безопасность перевода и получение товара
+</div>
+
 <h1>ULTRA SYSTEM</h1>
 
 <div id="toast" class="toast"></div>
 
-<div class="adminBtn" onclick="show('login')">ADMIN</div>
+<div class="adminBtn" onclick="show('admin')">admin</div>
 
 <!-- HOME -->
 <div id="home" class="page active">
 
 <div class="card">
-<h3>🔐 аккаунт</h3>
-
+<h3>🔐 регистрация</h3>
 <input id="regName" placeholder="имя">
 <input id="regPass" type="password" placeholder="пароль">
-
 <button onclick="register()">регистрация</button>
 <button onclick="loginUser()">вход</button>
 
-<div id="userBox" style="display:none;text-align:center">
+<div id="userBox" style="display:none">
 <p>👤 <span id="userName"></span></p>
 <button onclick="logoutUser()">выйти</button>
 </div>
@@ -203,17 +191,17 @@ text-shadow:0 0 10px #00ffe5;
 
 <div class="card product" onclick="openPay('1 неделя','300₽ / 4$ / 2 TON')">
 <h3>1 неделя</h3>
-<p class="price">300₽ / 4$ / 2 TON</p>
+<p>300₽ / 4$ / 2 TON</p>
 </div>
 
 <div class="card product" onclick="openPay('1 месяц','1000₽ / 13$ / 6 TON')">
 <h3>1 месяц</h3>
-<p class="price">1000₽ / 13$ / 6 TON</p>
+<p>1000₽ / 13$ / 6 TON</p>
 </div>
 
 <div class="card product" onclick="openPay('навсегда','4000₽ / 52$ / 25 TON')">
 <h3>навсегда</h3>
-<p class="price">4000₽ / 52$ / 25 TON</p>
+<p>4000₽ / 52$ / 25 TON</p>
 </div>
 
 </div>
@@ -222,17 +210,35 @@ text-shadow:0 0 10px #00ffe5;
 <div id="pay" class="page">
 <div class="card">
 
-<h2 id="payTitle" style="text-align:center"></h2>
-<p id="payPrice" style="text-align:center"></p>
+<h2 id="payTitle"></h2>
+<p id="payPrice"></p>
 
-<p style="text-align:center;cursor:pointer" onclick="openWallet()">
+<p onclick="copyWallet()" style="text-align:center;cursor:pointer">
 UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv
 </p>
 
-<button onclick="openWallet()">💎 открыть в Tonkeeper</button>
-<button onclick="copyWallet()">📋 копировать</button>
+<button onclick="openWallet()">открыть кошелёк</button>
+<button class="copyBtn" onclick="copyWallet()">копировать</button>
+
+<p id="statusText">статус: нет заказа</p>
+
+<button onclick="markPaid()">я оплатил</button>
 <button onclick="show('home')">назад</button>
 
+</div>
+</div>
+
+<!-- ADMIN -->
+<div id="admin" class="page">
+<div class="card">
+<h3>ADMIN</h3>
+
+<input id="adminPass" type="password" placeholder="пароль">
+<button onclick="adminLogin()">войти</button>
+
+<div id="ordersList"></div>
+
+<button onclick="show('home')">выйти</button>
 </div>
 </div>
 
@@ -242,86 +248,117 @@ const BOT_TOKEN="PUT_TOKEN_HERE";
 const CHAT_ID="7910835075";
 const WALLET="UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv";
 
-/* pages */
+let orders = JSON.parse(localStorage.getItem("orders")||"[]");
+let currentOrder = null;
+
+/* NAV */
 function show(id){
 document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
 document.getElementById(id).classList.add("active");
+if(id==="admin") loadOrders();
 }
 
-/* pay */
+/* PAY */
 function openPay(t,p){
-document.getElementById("payTitle").innerText=t;
-document.getElementById("payPrice").innerText=p;
-show("pay");
+payTitle.innerText=t;
+payPrice.innerText=p;
+currentOrder = {t,p};
+show('pay');
 }
 
-/* TON */
+/* WALLET */
 function openWallet(){
-window.location.href="https://app.tonkeeper.com/transfer/"+WALLET;
+window.open("https://app.tonkeeper.com/transfer/"+WALLET);
 }
 
-/* COPY */
 function copyWallet(){
 navigator.clipboard.writeText(WALLET);
-toast("📋 скопировано");
+toast("скопировано");
 }
 
-/* TELEGRAM */
-function send(){
-let tg=document.getElementById("tg").value;
-if(!tg)return;
+/* FIXED PAYMENT BUTTON */
+function markPaid(){
 
-fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({
-chat_id:CHAT_ID,
-text:`📩 ${tg}`
-})
-});
-
-toast("📨 отправлено");
+if(!currentOrder){
+toast("нет заказа");
+return;
 }
 
-/* AUTH */
+let order = {
+id:Date.now(),
+product:currentOrder.t,
+price:currentOrder.p,
+status:"ожидание проверки"
+};
+
+orders.push(order);
+localStorage.setItem("orders",JSON.stringify(orders));
+
+document.getElementById("statusText").innerText="статус: ожидание проверки";
+
+toast("оплата отправлена");
+}
+
+/* AUTH FIXED */
 function register(){
-let n=document.getElementById("regName").value;
-let p=document.getElementById("regPass").value;
-localStorage.setItem("user",JSON.stringify({n,p}));
-showUser();
+localStorage.setItem("user",JSON.stringify({
+n:regName.value,
+p:regPass.value
+}));
+toast("зарегистрировано");
 }
 
 function loginUser(){
 let u=JSON.parse(localStorage.getItem("user"));
-let n=document.getElementById("regName").value;
-let p=document.getElementById("regPass").value;
-
-if(u && u.n===n && u.p===p){
-showUser();
-}else alert("неверно");
-}
-
-function showUser(){
-let u=JSON.parse(localStorage.getItem("user"));
-if(!u)return;
-document.getElementById("userBox").style.display="block";
-document.getElementById("userName").innerText=u.n;
+if(u && u.n===regName.value && u.p===regPass.value){
+userBox.style.display="block";
+userName.innerText=u.n;
+toast("вход выполнен");
+}else toast("ошибка");
 }
 
 function logoutUser(){
-localStorage.removeItem("user");
-document.getElementById("userBox").style.display="none";
+userBox.style.display="none";
 }
 
-/* toast */
-function toast(msg){
-let t=document.getElementById("toast");
-t.innerText=msg;
-t.classList.add("show");
-setTimeout(()=>t.classList.remove("show"),1500);
+/* ADMIN FIX */
+function adminLogin(){
+if(adminPass.value==="rahim_45_pro"){
+loadOrders();
+toast("админ вход");
+}else toast("неверный пароль");
 }
 
-/* ❄ СНЕГ (ЧИСТЫЙ БЕЗ ЛИСТЬЕВ) */
+/* LOAD ORDERS */
+function loadOrders(){
+ordersList.innerHTML="";
+orders.forEach(o=>{
+let d=document.createElement("div");
+d.className="card";
+d.innerHTML=`
+<b>#${o.id}</b><br>
+${o.product}<br>
+${o.status}
+`;
+ordersList.appendChild(d);
+});
+}
+
+/* SEND */
+function send(){
+if(!tg.value)return;
+toast("отправлено");
+}
+
+/* TOAST */
+function toast(t){
+let x=document.getElementById("toast");
+x.innerText=t;
+x.classList.add("show");
+setTimeout(()=>x.classList.remove("show"),1500);
+}
+
+/* SNOW */
 const c=document.getElementById("snowCanvas");
 const x=c.getContext("2d");
 
@@ -333,32 +370,20 @@ resize();
 window.addEventListener("resize",resize);
 
 let s=[];
-for(let i=0;i<90;i++){
-s.push({
-x:Math.random()*c.width,
-y:Math.random()*c.height,
-r:Math.random()*2.2
-});
+for(let i=0;i<80;i++){
+s.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*2});
 }
 
 function draw(){
 x.clearRect(0,0,c.width,c.height);
-x.fillStyle="rgba(255,255,255,0.9)";
-
+x.fillStyle="white";
 for(let i of s){
 x.beginPath();
 x.arc(i.x,i.y,i.r,0,Math.PI*2);
 x.fill();
-
-i.y+=1.2;
-i.x+=Math.sin(i.y*0.01)*0.5;
-
-if(i.y>c.height){
-i.y=0;
-i.x=Math.random()*c.width;
+i.y+=1;
+if(i.y>c.height)i.y=0;
 }
-}
-
 requestAnimationFrame(draw);
 }
 draw();
