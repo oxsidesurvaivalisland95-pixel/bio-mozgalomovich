@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -83,28 +84,28 @@ max-width:420px;
 border-radius:15px;
 }
 
-/* TOAST */
-.toast{
+/* POP */
+.pop{
 position:fixed;
 top:50%;
 left:50%;
 transform:translate(-50%,-50%);
-background:#111;
+background:#000;
 border:1px solid #00ffe5;
-padding:15px;
+padding:12px;
 border-radius:10px;
-animation:toast 1s forwards;
-z-index:999;
+animation:pop 1s forwards;
+z-index:9999;
+white-space:pre;
 }
 
-@keyframes toast{
+@keyframes pop{
 0%{opacity:0;}
 20%{opacity:1;}
-80%{opacity:1;}
 100%{opacity:0;}
 }
 
-/* cyber rain */
+/* CYBER RAIN */
 .rain{
 position:fixed;
 top:-50px;
@@ -121,26 +122,6 @@ to{
 transform:translateY(110vh);
 opacity:0;
 }
-}
-
-/* animations */
-.pop{
-position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-background:#000;
-border:1px solid #00ffe5;
-padding:12px;
-border-radius:10px;
-animation:pop 1s forwards;
-z-index:9999;
-}
-
-@keyframes pop{
-0%{opacity:0;transform:translate(-50%,-50%) scale(0.5);}
-20%{opacity:1;}
-100%{opacity:0;transform:translate(-50%,-60%) scale(1);}
 }
 
 </style>
@@ -163,21 +144,24 @@ z-index:9999;
 
 <div class="card">
 <h3>1 неделя</h3>
-<button onclick="add('1 неделя')">Добавить</button>
+<p>300₽ / 4$ / 2💎</p>
+<button onclick="add('1 неделя',2)">Добавить</button>
 </div>
 
 <div class="card">
 <h3>1 месяц</h3>
-<button onclick="add('1 месяц')">Добавить</button>
+<p>1000₽ / 13$ / 6💎</p>
+<button onclick="add('1 месяц',6)">Добавить</button>
 </div>
 
 <div class="card">
 <h3>Навсегда</h3>
-<button onclick="add('Навсегда')">Добавить</button>
+<p>4000₽ / 52$ / 25💎</p>
+<button onclick="add('Навсегда',25)">Добавить</button>
 </div>
 
 <div class="card">
-<h3>Аккаунт</h3>
+<h3>АККАУНТ</h3>
 <input id="login">
 <input id="pass" type="password">
 <button onclick="register()">Регистрация</button>
@@ -194,14 +178,32 @@ z-index:9999;
 
 <!-- WALLET -->
 <div id="wallet" class="page">
+
 <div class="card">
 <h3>TON WALLET</h3>
-<p id="walletText">UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv</p>
 
+<p id="walletText">
+UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv
+</p>
+
+<button onclick="openWallet()">Открыть Tonkeeper</button>
 <button onclick="copyWallet()">Скопировать</button>
-<button onclick="openTonkeeper()">Открыть Tonkeeper</button>
 
 </div>
+
+<div class="card">
+<h3>СВЯЗЬ</h3>
+
+<a href="https://t.me/YOUR_USERNAME" target="_blank">
+<button>Telegram</button>
+</a>
+
+<a href="https://tiktok.com/@YOUR_TIKTOK" target="_blank">
+<button>TikTok</button>
+</a>
+
+</div>
+
 </div>
 
 <!-- ADMIN -->
@@ -216,147 +218,196 @@ z-index:9999;
 
 <script>
 
-let users = JSON.parse(localStorage.getItem("users")||"{}");
+/* DB */
+let DB = JSON.parse(localStorage.getItem("DB")||"{}");
+if(!DB.users) DB.users={};
+if(!DB.orders) DB.orders={};
+
 let current = localStorage.getItem("current") || null;
-let isAdmin = false;
+let isAdmin=false;
 
-/* storage per user */
-function cartKey(){return "cart_"+current;}
-function orderKey(){return "orders_"+current;}
-
-function getCart(){return JSON.parse(localStorage.getItem(cartKey())||"[]");}
-function getOrders(){return JSON.parse(localStorage.getItem(orderKey())||"[]");}
-
-function saveCart(d){localStorage.setItem(cartKey(),JSON.stringify(d));}
-function saveOrders(d){localStorage.setItem(orderKey(),JSON.stringify(d));}
-
-/* nav */
-function show(id){
-document.querySelectorAll(".page").forEach(e=>e.classList.remove("active"));
-document.getElementById(id).classList.add("active");
-render();
+function saveDB(){
+localStorage.setItem("DB",JSON.stringify(DB));
 }
 
-/* toast */
-function toast(t){
-let d=document.createElement("div");
-d.className="toast";
-d.innerText=t;
-document.body.appendChild(d);
-setTimeout(()=>d.remove(),1000);
-}
-
-/* pop animation */
-function pop(t){
-let p=document.createElement("div");
-p.className="pop";
-p.innerText=t;
-document.body.appendChild(p);
-setTimeout(()=>p.remove(),1000);
-}
-
-/* auth FIXED */
+/* AUTH */
 function register(){
 let l=document.getElementById("login").value;
 let p=document.getElementById("pass").value;
-users[l]=p;
-localStorage.setItem("users",JSON.stringify(users));
-pop("ЗАРЕГИСТРИРОВАНО");
+
+if(DB.users[l]){
+pop("USER EXISTS");
+return;
+}
+
+DB.users[l]=p;
+saveDB();
+pop("REGISTER OK");
 }
 
 function login(){
 let l=document.getElementById("login").value;
 let p=document.getElementById("pass").value;
-if(users[l]===p){
+
+if(!DB.users[l]){
+pop("NO USER");
+return;
+}
+
+if(DB.users[l]!==p){
+pop("WRONG PASSWORD");
+return;
+}
+
 current=l;
 localStorage.setItem("current",l);
-pop("ВХОД УСПЕШЕН");
+
+pop("LOGIN OK");
 render();
 }
-}
 
-/* add */
-function add(item){
-if(!current) return toast("войдите");
+/* CART */
+function cartKey(){return "cart_"+current;}
+function getCart(){return JSON.parse(localStorage.getItem(cartKey())||"[]");}
+function saveCart(c){localStorage.setItem(cartKey(),JSON.stringify(c));}
+
+function add(item,price){
+if(!current){pop("LOGIN FIRST");return;}
+
 let c=getCart();
-c.push({user:current,item});
+c.push({item,price});
 saveCart(c);
-pop("ДОБАВЛЕНО");
+
+pop("ADDED");
 render();
 }
 
-/* code */
-function genCode(){
-return "CYB-"+Math.random().toString(36).substr(2,6).toUpperCase();
-}
-
-/* buy */
+/* BUY */
 function buy(i){
-let c=getCart();
-let o=getOrders();
-let code=genCode();
 
-toast("ОЖИДАЙТЕ ОПЛАТЫ");
+let c=getCart();
+
+let code =
+"CYB-" +
+Date.now().toString(36).toUpperCase() +
+"-" +
+Math.random().toString(36).substr(2,5).toUpperCase();
+
+if(!DB.orders[current]) DB.orders[current]=[];
+
+DB.orders[current].push({
+item:c[i].item,
+price:c[i].price,
+code:code,
+status:"ожидание оплаты"
+});
+
+saveDB();
 
 let wallet="UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv";
 
-setTimeout(()=>{
-window.open(`ton://transfer/${wallet}?text=ORDER_${code}`,"_blank");
-},800);
-
-o.push({...c[i],status:"ожидание",code});
+window.open(
+`ton://transfer/${wallet}?amount=${c[i].price}&text=ORDER_${code}`,
+"_blank"
+);
 
 c.splice(i,1);
-
 saveCart(c);
-saveOrders(o);
+
+pop("ОЖИДАНИЕ ОПЛАТЫ\n"+code+"\nНАПИШИ МЕНЕДЖЕРУ");
 
 render();
 }
 
-/* delete */
-function del(i){
-let c=getCart();
-c.splice(i,1);
-saveCart(c);
-render();
-}
-
-/* admin */
-function adminLogin(){
-if(document.getElementById("adminPass").value==="rahim_45_pro"){
-isAdmin=true;
-toast("admin");
-render();
-}
-}
-
-function approve(i){
-let o=getOrders();
-o[i].status="оплачено";
-saveOrders(o);
-render();
-}
-
-function reject(i){
-let o=getOrders();
-o[i].status="отклонено";
-saveOrders(o);
-render();
-}
-
-/* open telegram */
-function openTonkeeper(){
+/* WALLET */
+function openWallet(){
 window.open("ton://transfer/UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv","_blank");
 }
 
-/* copy */
 function copyWallet(){
-navigator.clipboard.writeText(document.getElementById("walletText").innerText);
-pop("СКОПИРОВАНО");
+navigator.clipboard.writeText(
+document.getElementById("walletText").innerText
+);
+pop("COPIED");
 }
 
-/* cyber rain */
+/* ADMIN */
+function adminLogin(){
+if(document.getElementById("adminPass").value==="rahim_45_pro"){
+isAdmin=true;
+render();
+}
+}
+
+/* NAV */
+function show(id){
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+render();
+}
+
+/* POP */
+function pop(t){
+let d=document.createElement("div");
+d.className="pop";
+d.innerText=t;
+document.body.appendChild(d);
+setTimeout(()=>d.remove(),1200);
+}
+
+/* RENDER */
+function render(){
+
+let c=document.getElementById("cart");
+if(c){
+let cart=getCart();
+c.innerHTML="";
+cart.forEach((e,i)=>{
+c.innerHTML+=`
+<div class="card">
+${e.item}<br>
+💎 ${e.price}<br>
+<button onclick="buy(${i})">Оплатить</button>
+</div>`;
+});
+}
+
+let h=document.getElementById("history");
+if(h){
+h.innerHTML="";
+if(DB.orders[current]){
+DB.orders[current].forEach(o=>{
+h.innerHTML+=`
+<div class="card">
+${o.item}<br>
+${o.status}<br>
+<b>${o.code}</b>
+</div>`;
+});
+}
+}
+
+if(isAdmin){
+let a=document.getElementById("adminPanel");
+a.innerHTML="";
+
+for(let u in DB.orders){
+DB.orders[u].forEach(o=>{
+a.innerHTML+=`
+<div class="card">
+${u}<br>
+${o.item}<br>
+${o.status}<br>
+${o.code}
+</div>`;
+});
+}
+}
+}
+
+render();
+
+/* CYBER RAIN */
 setInterval(()=>{
 let r=document.createElement("div");
 r.className="rain";
@@ -366,52 +417,6 @@ r.style.animationDuration=(3+Math.random()*5)+"s";
 document.body.appendChild(r);
 setTimeout(()=>r.remove(),8000);
 },120);
-
-/* render */
-function render(){
-
-let c=document.getElementById("cart");
-let cart=getCart();
-c.innerHTML="";
-cart.forEach((e,i)=>{
-c.innerHTML+=`
-<div class="card">
-${e.item}
-<button onclick="buy(${i})">Купить</button>
-<button onclick="del(${i})">Удалить</button>
-</div>`;
-});
-
-let h=document.getElementById("history");
-let orders=getOrders();
-h.innerHTML="";
-
-orders.forEach(o=>{
-h.innerHTML+=`
-<div class="card">
-${o.item} - ${o.status}<br>
-<b>${o.code}</b>
-</div>`;
-});
-
-if(isAdmin){
-let a=document.getElementById("adminPanel");
-a.innerHTML="";
-orders.forEach((o,i)=>{
-a.innerHTML+=`
-<div class="card">
-${o.user}<br>
-${o.item}<br>
-${o.status}<br>
-<b>${o.code}</b><br><br>
-<button onclick="approve(${i})">ОПЛАЧЕНО</button>
-<button onclick="reject(${i})">ОТКЛОНИТЬ</button>
-</div>`;
-});
-}
-}
-
-render();
 
 </script>
 
