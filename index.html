@@ -1,127 +1,90 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CYBER MARKET X</title>
+<title>CYBER MARKET FULL WORKING</title>
 
 <style>
 
-*{margin:0;padding:0;box-sizing:border-box;}
-
 body{
+margin:0;
 font-family:Arial;
+background:#05070d;
 color:white;
-min-height:100vh;
 overflow-x:hidden;
-background:
-radial-gradient(circle at top left,#00ffe515,transparent 30%),
-radial-gradient(circle at bottom right,#ff00ff12,transparent 30%),
-linear-gradient(180deg,#05070d,#060912,#0a1020);
-}
-
-/* scan */
-body::before{
-content:"";
-position:fixed;
-inset:0;
-pointer-events:none;
-background:repeating-linear-gradient(
-to bottom,
-rgba(255,255,255,0.02),
-rgba(255,255,255,0.02) 1px,
-transparent 3px,
-transparent 6px
-);
-animation:scan 6s linear infinite;
-}
-
-@keyframes scan{
-0%{transform:translateY(0);}
-100%{transform:translateY(10px);}
 }
 
 .header{
 text-align:center;
-padding:20px;
-font-size:40px;
-font-weight:bold;
+padding:18px;
+font-size:30px;
 color:#00ffe5;
-text-shadow:0 0 20px #00ffe5,0 0 40px #ff00ff;
+text-shadow:0 0 15px #00ffe5;
 }
 
 .nav{
 display:flex;
+flex-wrap:wrap;
 justify-content:center;
-gap:10px;
+gap:8px;
 padding:10px;
-background:rgba(0,0,0,0.4);
-backdrop-filter:blur(10px);
+background:#0a0f1a;
 }
 
 button{
-padding:10px;
+background:#00ffe5;
 border:none;
-border-radius:10px;
+padding:10px;
+border-radius:6px;
 cursor:pointer;
-color:white;
-background:linear-gradient(90deg,#00ffe5,#ff00ff);
-transition:.2s;
 }
 
-button:hover{transform:scale(1.05);}
-
-.page{display:none;padding:20px;}
+.page{display:none;padding:15px;}
 .page.active{display:block;}
 
 .card{
-background:rgba(20,25,40,0.85);
+background:#111a2a;
 border:1px solid #00ffe5;
 padding:15px;
 margin:10px auto;
+border-radius:10px;
 max-width:420px;
-border-radius:15px;
 }
 
-/* POP */
+input{
+padding:10px;
+margin:5px;
+width:90%;
+}
+
 .pop{
 position:fixed;
 top:50%;
 left:50%;
 transform:translate(-50%,-50%);
-background:#000;
+background:black;
 border:1px solid #00ffe5;
-padding:12px;
-border-radius:10px;
-animation:pop 1s forwards;
+padding:10px;
+animation:fade 1s forwards;
 z-index:9999;
-white-space:pre;
 }
 
-@keyframes pop{
-0%{opacity:0;}
-20%{opacity:1;}
+@keyframes fade{
+0%{opacity:1;}
 100%{opacity:0;}
 }
 
-/* CYBER RAIN */
 .rain{
 position:fixed;
 top:-50px;
 color:#00ffe5;
-font-size:14px;
-opacity:0.8;
-animation:fall linear forwards;
 pointer-events:none;
-text-shadow:0 0 10px #00ffe5;
+animation:fall linear forwards;
 }
 
 @keyframes fall{
-to{
-transform:translateY(110vh);
-opacity:0;
-}
+to{transform:translateY(110vh);opacity:0;}
 }
 
 </style>
@@ -129,43 +92,48 @@ opacity:0;
 
 <body>
 
-<div class="header">CYBER MARKET</div>
+<div class="header">CYBER MARKET LIVE</div>
 
 <div class="nav">
-<button onclick="show('home')">HOME</button>
+<button onclick="show('auth')">AUTH</button>
+<button onclick="show('shop')">SHOP</button>
 <button onclick="show('cart')">CART</button>
 <button onclick="show('history')">HISTORY</button>
 <button onclick="show('wallet')">WALLET</button>
 <button onclick="show('admin')">ADMIN</button>
+<button onclick="show('live')">LIVE</button>
 </div>
 
-<!-- HOME -->
-<div id="home" class="page active">
+<!-- AUTH -->
+<div id="auth" class="page active">
+<div class="card">
+<h3>LOGIN / REGISTER</h3>
+<input id="email" placeholder="email">
+<input id="pass" type="password" placeholder="password">
+<button onclick="register()">register</button>
+<button onclick="login()">login</button>
+</div>
+</div>
+
+<!-- SHOP -->
+<div id="shop" class="page">
 
 <div class="card">
 <h3>1 неделя</h3>
-<p>300₽ / 4$ / 2💎</p>
-<button onclick="add('1 неделя',2)">Добавить</button>
+<p>300₽</p>
+<button onclick="add('1 неделя',2)">buy</button>
 </div>
 
 <div class="card">
 <h3>1 месяц</h3>
-<p>1000₽ / 13$ / 6💎</p>
-<button onclick="add('1 месяц',6)">Добавить</button>
+<p>1000₽</p>
+<button onclick="add('1 месяц',6)">buy</button>
 </div>
 
 <div class="card">
-<h3>Навсегда</h3>
-<p>4000₽ / 52$ / 25💎</p>
-<button onclick="add('Навсегда',25)">Добавить</button>
-</div>
-
-<div class="card">
-<h3>АККАУНТ</h3>
-<input id="login">
-<input id="pass" type="password">
-<button onclick="register()">Регистрация</button>
-<button onclick="login()">Вход</button>
+<h3>навсегда</h3>
+<p>4000₽</p>
+<button onclick="add('навсегда',25)">buy</button>
 </div>
 
 </div>
@@ -181,233 +149,162 @@ opacity:0;
 
 <div class="card">
 <h3>TON WALLET</h3>
-
-<p id="walletText">
-UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv
-</p>
-
-<button onclick="openWallet()">Открыть Tonkeeper</button>
-<button onclick="copyWallet()">Скопировать</button>
-
-</div>
-
-<div class="card">
-<h3>СВЯЗЬ</h3>
-
-<a href="https://t.me/YOUR_USERNAME" target="_blank">
-<button>Telegram</button>
-</a>
-
-<a href="https://tiktok.com/@YOUR_TIKTOK" target="_blank">
-<button>TikTok</button>
-</a>
-
+<p id="walletText">UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv</p>
+<button onclick="openWallet()">Tonkeeper</button>
+<button onclick="copyWallet()">Copy</button>
 </div>
 
 </div>
 
 <!-- ADMIN -->
 <div id="admin" class="page">
+
 <div class="card">
 <h3>ADMIN</h3>
-<input id="adminPass">
-<button onclick="adminLogin()">Войти</button>
+<input id="adminPass" placeholder="password">
+<button onclick="adminLogin()">enter</button>
 </div>
-<div id="adminPanel"></div>
+
+<div class="card">
+<h3>LIVE ORDERS</h3>
+<div id="live"></div>
 </div>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
 <script>
 
-/* DB */
-let DB = JSON.parse(localStorage.getItem("DB")||"{}");
-if(!DB.users) DB.users={};
-if(!DB.orders) DB.orders={};
+let auth,db,user,ready=false;
 
-let current = localStorage.getItem("current") || null;
-let isAdmin=false;
-
-function saveDB(){
-localStorage.setItem("DB",JSON.stringify(DB));
-}
-
-/* AUTH */
-function register(){
-let l=document.getElementById("login").value;
-let p=document.getElementById("pass").value;
-
-if(DB.users[l]){
-pop("USER EXISTS");
-return;
-}
-
-DB.users[l]=p;
-saveDB();
-pop("REGISTER OK");
-}
-
-function login(){
-let l=document.getElementById("login").value;
-let p=document.getElementById("pass").value;
-
-if(!DB.users[l]){
-pop("NO USER");
-return;
-}
-
-if(DB.users[l]!==p){
-pop("WRONG PASSWORD");
-return;
-}
-
-current=l;
-localStorage.setItem("current",l);
-
-pop("LOGIN OK");
-render();
-}
-
-/* CART */
-function cartKey(){return "cart_"+current;}
-function getCart(){return JSON.parse(localStorage.getItem(cartKey())||"[]");}
-function saveCart(c){localStorage.setItem(cartKey(),JSON.stringify(c));}
-
-function add(item,price){
-if(!current){pop("LOGIN FIRST");return;}
-
-let c=getCart();
-c.push({item,price});
-saveCart(c);
-
-pop("ADDED");
-render();
-}
-
-/* BUY */
-function buy(i){
-
-let c=getCart();
-
-let code =
-"CYB-" +
-Date.now().toString(36).toUpperCase() +
-"-" +
-Math.random().toString(36).substr(2,5).toUpperCase();
-
-if(!DB.orders[current]) DB.orders[current]=[];
-
-DB.orders[current].push({
-item:c[i].item,
-price:c[i].price,
-code:code,
-status:"ожидание оплаты"
-});
-
-saveDB();
-
-let wallet="UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv";
-
-window.open(
-`ton://transfer/${wallet}?amount=${c[i].price}&text=ORDER_${code}`,
-"_blank"
-);
-
-c.splice(i,1);
-saveCart(c);
-
-pop("ОЖИДАНИЕ ОПЛАТЫ\n"+code+"\nНАПИШИ МЕНЕДЖЕРУ");
-
-render();
-}
-
-/* WALLET */
-function openWallet(){
-window.open("ton://transfer/UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv","_blank");
-}
-
-function copyWallet(){
-navigator.clipboard.writeText(
-document.getElementById("walletText").innerText
-);
-pop("COPIED");
-}
-
-/* ADMIN */
-function adminLogin(){
-if(document.getElementById("adminPass").value==="rahim_45_pro"){
-isAdmin=true;
-render();
-}
-}
-
-/* NAV */
 function show(id){
-document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-document.getElementById(id).classList.add("active");
-render();
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+document.getElementById(id).classList.add('active');
 }
 
-/* POP */
 function pop(t){
 let d=document.createElement("div");
 d.className="pop";
 d.innerText=t;
 document.body.appendChild(d);
-setTimeout(()=>d.remove(),1200);
+setTimeout(()=>d.remove(),1000);
 }
 
-/* RENDER */
-function render(){
+/* FIREBASE INIT */
+function init(){
 
-let c=document.getElementById("cart");
-if(c){
-let cart=getCart();
-c.innerHTML="";
-cart.forEach((e,i)=>{
-c.innerHTML+=`
-<div class="card">
-${e.item}<br>
-💎 ${e.price}<br>
-<button onclick="buy(${i})">Оплатить</button>
-</div>`;
+try{
+
+firebase.initializeApp({
+apiKey:"YOUR",
+authDomain:"YOUR",
+projectId:"YOUR",
+appId:"YOUR"
 });
+
+auth=firebase.auth();
+db=firebase.firestore();
+
+ready=true;
+
+auth.onAuthStateChanged(u=>{
+if(u){
+user=u;
+show("shop");
+listen();
+}
+});
+
+}catch(e){
+console.log("firebase error",e);
 }
 
-let h=document.getElementById("history");
-if(h){
-h.innerHTML="";
-if(DB.orders[current]){
-DB.orders[current].forEach(o=>{
-h.innerHTML+=`
+}
+
+/* REGISTER */
+function register(){
+auth.createUserWithEmailAndPassword(email.value,pass.value)
+.then(u=>{
+user=u.user;
+show("shop");
+})
+.catch(e=>pop(e.message));
+}
+
+/* LOGIN */
+function login(){
+auth.signInWithEmailAndPassword(email.value,pass.value)
+.then(u=>{
+user=u.user;
+show("shop");
+listen();
+})
+.catch(e=>pop(e.message));
+}
+
+/* ADD */
+function add(item,price){
+if(!user)return pop("login first");
+
+db.collection("orders").add({
+item,
+price,
+uid:user.uid,
+time:Date.now(),
+code:"CYB-"+Math.random().toString(36).substr(2,6)
+});
+
+pop("added");
+}
+
+/* LIVE */
+function listen(){
+
+db.collection("orders")
+.orderBy("time","desc")
+.onSnapshot(snap=>{
+
+let l=document.getElementById("live");
+if(!l)return;
+
+l.innerHTML="";
+
+snap.forEach(d=>{
+let o=d.data();
+l.innerHTML+=`
 <div class="card">
 ${o.item}<br>
-${o.status}<br>
-<b>${o.code}</b>
-</div>`;
-});
-}
-}
-
-if(isAdmin){
-let a=document.getElementById("adminPanel");
-a.innerHTML="";
-
-for(let u in DB.orders){
-DB.orders[u].forEach(o=>{
-a.innerHTML+=`
-<div class="card">
-${u}<br>
-${o.item}<br>
-${o.status}<br>
+${o.uid}<br>
 ${o.code}
 </div>`;
 });
+
+});
+
 }
+
+/* WALLET */
+function openWallet(){
+window.open("ton://transfer/UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv");
+}
+
+function copyWallet(){
+navigator.clipboard.writeText(walletText.innerText);
+pop("copied");
+}
+
+/* ADMIN */
+function adminLogin(){
+if(adminPass.value==="rahim_45_pro"){
+listen();
+pop("admin ok");
 }
 }
 
-render();
-
-/* CYBER RAIN */
+/* RAIN */
 setInterval(()=>{
 let r=document.createElement("div");
 r.className="rain";
@@ -417,6 +314,9 @@ r.style.animationDuration=(3+Math.random()*5)+"s";
 document.body.appendChild(r);
 setTimeout(()=>r.remove(),8000);
 },120);
+
+/* START */
+window.onload=init;
 
 </script>
 
