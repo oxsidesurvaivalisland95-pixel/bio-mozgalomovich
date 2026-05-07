@@ -11,65 +11,71 @@ html,body{
 margin:0;
 padding:0;
 background:#05070d;
-font-family:Arial;
+font-family:Arial,sans-serif;
 color:white;
 overflow-x:hidden;
 min-height:100%;
--webkit-appearance:none !important;
-appearance:none !important;
-}
-
-*{
-box-sizing:border-box;
 -webkit-tap-highlight-color:transparent;
-outline:none !important;
 }
 
+/* CYBER BG */
 body::before{
 content:"";
 position:fixed;
 inset:0;
 background:
-radial-gradient(circle at top left, rgba(0,255,200,.15), transparent 40%),
-radial-gradient(circle at bottom right, rgba(255,0,255,.15), transparent 40%),
-radial-gradient(circle at center, rgba(95,156,255,.12), transparent 50%);
+radial-gradient(circle at 20% 20%, rgba(0,255,200,.15), transparent 40%),
+radial-gradient(circle at 80% 80%, rgba(255,0,255,.15), transparent 40%),
+radial-gradient(circle at 50% 50%, rgba(95,156,255,.12), transparent 50%);
 pointer-events:none;
 z-index:0;
 }
 
-#snow{
-position:fixed;
-inset:0;
-pointer-events:none;
-z-index:1;
-}
-
+/* USER */
 .topUser{
 position:fixed;
 top:10px;
 left:50%;
 transform:translateX(-50%);
-z-index:50;
-color:#00ffe5;
+font-size:15px;
 font-weight:bold;
-text-shadow:0 0 12px #00ffe5;
+color:#00ffe5;
+z-index:100;
+text-shadow:0 0 10px #00ffe5;
 }
 
+/* FOOTER */
 .bottomText{
 position:fixed;
 bottom:8px;
 left:50%;
 transform:translateX(-50%);
 font-size:12px;
-text-align:center;
 color:#00ffe5;
-opacity:.9;
-z-index:50;
+opacity:.85;
+text-align:center;
+z-index:100;
 }
 
+/* NAV */
+.nav{
+position:fixed;
+top:10px;
+right:10px;
+display:flex;
+gap:8px;
+z-index:100;
+}
+
+.nav button{
+width:auto;
+padding:10px 14px;
+}
+
+/* PAGE */
 .page{
 display:none;
-padding:80px 20px 80px;
+padding:80px 20px;
 position:relative;
 z-index:2;
 }
@@ -78,66 +84,39 @@ z-index:2;
 display:block;
 }
 
+/* TITLE */
 .title{
-font-size:42px;
 text-align:center;
-margin-bottom:20px;
+font-size:42px;
+font-weight:bold;
+margin-bottom:25px;
 background:linear-gradient(90deg,#00ffcc,#5f9cff,#ff00ff);
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
-font-weight:bold;
-text-shadow:0 0 20px rgba(0,255,200,.4);
 }
 
+/* CARD */
 .card{
-background:rgba(10,12,20,.88);
-backdrop-filter:blur(12px);
+background:rgba(10,12,20,.92);
 border:1px solid rgba(0,255,200,.25);
 border-radius:18px;
-padding:20px;
+padding:18px;
 margin:15px auto;
-max-width:360px;
-box-shadow:0 0 25px rgba(0,255,200,.12);
+max-width:390px;
+backdrop-filter:blur(10px);
+box-shadow:0 0 25px rgba(0,255,200,.08);
 transition:.25s;
-overflow:hidden;
 }
 
-.product:hover{
-transform:translateY(-6px) scale(1.03);
-box-shadow:0 0 30px rgba(0,255,200,.35);
-border-color:#00ffe5;
+.card:hover{
+transform:translateY(-3px);
+box-shadow:0 0 30px rgba(255,0,255,.18);
 }
 
-input{
-width:100%;
-padding:12px;
-margin-top:10px;
-border:none;
-border-radius:12px;
-background:#0d1018 !important;
-color:white !important;
-outline:none !important;
--webkit-appearance:none !important;
-appearance:none !important;
-}
-
-input:focus{
-outline:none !important;
-box-shadow:none !important;
-border:none !important;
-}
-
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus{
--webkit-text-fill-color:white !important;
-transition:background-color 999999s ease-in-out 0s;
-box-shadow:0 0 0px 1000px #0d1018 inset !important;
-}
-
+/* BUTTON */
 button{
 width:100%;
-padding:13px;
+padding:12px;
 margin-top:10px;
 border:none;
 border-radius:12px;
@@ -145,72 +124,113 @@ cursor:pointer;
 font-weight:bold;
 color:white;
 background:linear-gradient(90deg,#00ffcc,#5f9cff,#ff00ff);
-transition:.25s;
--webkit-appearance:none !important;
-appearance:none !important;
+transition:.2s;
 }
 
 button:hover{
-transform:scale(1.03);
-box-shadow:0 0 25px #00ffe5;
+transform:scale(1.02);
+filter:brightness(1.1);
 }
 
-.copyBtn{
-background:#10151f;
-border:1px solid #00ffe5;
-}
-
-.adminOpen{
-position:fixed;
-top:10px;
-right:10px;
-z-index:100;
-padding:8px 14px;
-border-radius:10px;
-background:#10151f;
-border:1px solid #00ffe5;
-cursor:pointer;
-}
-
-.toast{
-position:fixed;
-bottom:60px;
-left:50%;
-transform:translateX(-50%);
-background:#000;
-padding:12px 18px;
-border-radius:12px;
-opacity:0;
-transition:.3s;
-z-index:9999;
-border:1px solid #00ffe5;
-}
-
-.toast.show{
-opacity:1;
-}
-
-.wallet{
-word-break:break-all;
-cursor:pointer;
-padding:10px;
-border-radius:10px;
-background:#0d1018;
+/* INPUT */
+input{
+width:100%;
+padding:12px;
 margin-top:10px;
+border:none;
+border-radius:12px;
+background:#0d1018;
+color:white;
+font-size:15px;
 }
 
-.status{
+/* PRICE */
+.price{
+font-size:22px;
+font-weight:bold;
 margin-top:10px;
 color:#00ffe5;
+text-shadow:0 0 10px #00ffe5;
+}
+
+/* QR */
+.qr{
+width:220px;
+height:220px;
+background:white;
+margin:15px auto;
+border-radius:18px;
+display:flex;
+align-items:center;
+justify-content:center;
+color:black;
 font-weight:bold;
 }
 
-.orderCard{
-margin-top:15px;
-padding:15px;
+/* STATUS */
+.status{
+padding:10px;
 border-radius:12px;
-background:#0d1018;
+margin-top:10px;
+font-size:14px;
+background:#101826;
 border:1px solid rgba(0,255,200,.2);
+}
+
+/* TOAST */
+.toast{
+position:fixed;
+left:50%;
+bottom:70px;
+transform:translateX(-50%);
+background:#0d1018;
+padding:12px 18px;
+border-radius:12px;
+border:1px solid #00ffe5;
+color:#00ffe5;
+z-index:9999;
+animation:fade .3s;
+}
+
+@keyframes fade{
+from{
+opacity:0;
+transform:translateX(-50%) translateY(20px);
+}
+to{
+opacity:1;
+transform:translateX(-50%) translateY(0);
+}
+}
+
+/* ADMIN */
+.orderCard{
+padding:12px;
+border-radius:14px;
+background:#101826;
+margin-top:10px;
+border:1px solid rgba(0,255,200,.15);
+}
+
+.adminLocked{
+text-align:center;
+opacity:.8;
+}
+
+/* STATS */
+.stats{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-top:15px;
+}
+
+.statBox{
+background:#101826;
+padding:12px;
+border-radius:14px;
+text-align:center;
+border:1px solid rgba(255,255,255,.08);
 }
 
 </style>
@@ -218,150 +238,173 @@ border:1px solid rgba(0,255,200,.2);
 
 <body>
 
-<canvas id="snow"></canvas>
-
 <div class="topUser">@mozgalomovich</div>
 
 <div class="bottomText">
 мы являемся командой fullter, и гарантируем безопасность перевода и получение товара
 </div>
 
-<div class="adminOpen" onclick="showPage('adminPage')">
-admin
+<div class="nav">
+<button onclick="showPage('home')">🏠</button>
+<button onclick="showPage('cart')">🛒</button>
+<button onclick="showPage('wallet')">💳</button>
+<button onclick="showPage('history')">📜</button>
+<button onclick="showPage('admin')">⚙️</button>
 </div>
-
-<div id="toast" class="toast"></div>
 
 <!-- HOME -->
+<div id="home" class="page active">
 
-<div id="homePage" class="page active">
-
-<div class="title">FULLTER MARKETPLACE</div>
-
-<div class="card">
-
-<h3>🔐 регистрация / вход</h3>
-
-<input id="regLogin" placeholder="логин">
-<input id="regPass" type="password" placeholder="пароль">
-
-<button onclick="registerUser()">регистрация</button>
-<button onclick="loginUser()">вход</button>
-
-<div id="profileBox" style="display:none;margin-top:10px;">
-👤 <span id="profileName"></span>
-</div>
-
-</div>
+<div class="title">FULLTER MARKET</div>
 
 <div class="card">
+<h2>1 НЕДЕЛЯ</h2>
+<p>доступ на 7 дней</p>
 
-<h3>📩 заявка</h3>
-
-<input id="tgInput" placeholder="@telegram">
-
-<button onclick="sendRequest()">отправить</button>
-
+<div class="price">
+300₽ / 4$ / 2 TON
 </div>
 
-<div class="card product" onclick="openPay('1 неделя','300₽ / 4$ / 2 TON')">
-<h3>1 неделя</h3>
-<p>300₽ / 4$ / 2 TON</p>
-</div>
-
-<div class="card product" onclick="openPay('1 месяц','1000₽ / 13$ / 6 TON')">
-<h3>1 месяц</h3>
-<p>1000₽ / 13$ / 6 TON</p>
-</div>
-
-<div class="card product" onclick="openPay('навсегда','4000₽ / 52$ / 25 TON')">
-<h3>навсегда</h3>
-<p>4000₽ / 52$ / 25 TON</p>
-</div>
-
-</div>
-
-<!-- PAY -->
-
-<div id="payPage" class="page">
-
-<div class="title">ОПЛАТА</div>
-
-<div class="card">
-
-<h3 id="payName"></h3>
-<p id="payPrice"></p>
-
-<div class="wallet" onclick="copyWallet()">
-UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv
-</div>
-
-<button onclick="openWallet()">открыть кошелёк</button>
-
-<button class="copyBtn" onclick="copyWallet()">
-копировать
+<button onclick="addCart('1 неделя')">
+добавить
 </button>
 
-<p>
-надо написать нашему менеджеру @mozgalomovich и скинуть ему чек оплаты
-</p>
+<button onclick="sendTG('1 неделя')">
+отправить в тг
+</button>
 
-<div id="payStatus" class="status">
-статус: нет заказа
 </div>
 
-<button onclick="createOrder()">
+<div class="card">
+<h2>1 МЕСЯЦ</h2>
+<p>полный доступ на месяц</p>
+
+<div class="price">
+1000₽ / 13$ / 6 TON
+</div>
+
+<button onclick="addCart('1 месяц')">
+добавить
+</button>
+
+<button onclick="sendTG('1 месяц')">
+отправить в тг
+</button>
+
+</div>
+
+<div class="card">
+<h2>НАВСЕГДА</h2>
+<p>пожизненный доступ</p>
+
+<div class="price">
+4000₽ / 52$ / 25 TON
+</div>
+
+<button onclick="addCart('навсегда')">
+добавить
+</button>
+
+<button onclick="sendTG('навсегда')">
+отправить в тг
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>REGISTRATION</h2>
+
+<input id="loginInput" placeholder="логин">
+
+<input id="passInput" type="password" placeholder="пароль">
+
+<button onclick="registerUser()">
+регистрация
+</button>
+
+<button onclick="loginUser()">
+логин
+</button>
+
+</div>
+
+</div>
+
+<!-- CART -->
+<div id="cart" class="page">
+
+<div class="title">КОРЗИНА</div>
+
+<div id="cartItems"></div>
+
+</div>
+
+<!-- HISTORY -->
+<div id="history" class="page">
+
+<div class="title">ИСТОРИЯ</div>
+
+<div id="historyItems"></div>
+
+</div>
+
+<!-- WALLET -->
+<div id="wallet" class="page">
+
+<div class="title">TON PAYMENT</div>
+
+<div class="card">
+
+<div class="qr">
+QR TON
+</div>
+
+<div class="status">
+TON кошелёк:
+<br><br>
+UQBWALLETTONFULLTER123
+</div>
+
+<button onclick="copyWallet()">
+скопировать
+</button>
+
+<button onclick="openWallet()">
+открыть кошелёк
+</button>
+
+<button onclick="notify('отправлено')">
 я оплатил
 </button>
 
-<button onclick="showPage('homePage')">
-назад
-</button>
+<div class="status">
+надо написать нашему менеджеру @mozgalomovich и скинуть ему чек оплаты
+</div>
 
 </div>
 
 </div>
 
 <!-- ADMIN -->
-
-<div id="adminPage" class="page">
+<div id="admin" class="page">
 
 <div class="title">ADMIN PANEL</div>
 
-<div id="adminLoginBox" class="card">
+<div class="card">
 
-<h3>🔐 вход в админ панель</h3>
+<input id="adminPass" type="password" placeholder="пароль">
 
-<input id="adminPassword" type="password" placeholder="пароль">
-
-<button onclick="adminLogin()">
+<button onclick="loginAdmin()">
 войти
-</button>
-
-<button onclick="showPage('homePage')">
-назад
 </button>
 
 </div>
 
-<div id="adminPanel" style="display:none;">
+<div id="adminPanel">
 
-<div class="card">
-
-<h3>📦 управление заказами</h3>
-
-<p id="adminWelcome"></p>
-
-<button onclick="refreshOrders()">
-обновить заказы
-</button>
-
-<button onclick="showPage('homePage')">
-на главную
-</button>
-
-<div id="ordersContainer"></div>
-
+<div class="card adminLocked">
+войдите в админ панель
 </div>
 
 </div>
@@ -370,10 +413,10 @@ UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv
 
 <script>
 
-const WALLET="UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv";
+/* ACCOUNT */
+let currentUser = localStorage.getItem("currentUser") || "guest";
 
-let currentProduct=null;
-
+/* NAV */
 function showPage(id){
 
 document.querySelectorAll(".page").forEach(p=>{
@@ -382,173 +425,287 @@ p.classList.remove("active");
 
 document.getElementById(id).classList.add("active");
 
+if(id==="cart"){
+renderCart();
 }
 
-function toast(text){
-
-const t=document.getElementById("toast");
-
-t.innerText=text;
-
-t.classList.add("show");
-
-setTimeout(()=>{
-t.classList.remove("show");
-},1600);
+if(id==="history"){
+renderHistory();
+}
 
 }
 
+/* REGISTER */
 function registerUser(){
 
-const login=document.getElementById("regLogin").value;
-const pass=document.getElementById("regPass").value;
+let login=document.getElementById("loginInput").value;
 
-if(!login || !pass){
-toast("заполни поля");
+if(!login){
+notify("введите логин");
 return;
 }
 
-localStorage.setItem("userData",JSON.stringify({
-login,
-pass
-}));
+localStorage.setItem("currentUser",login);
 
-toast("регистрация успешна");
+currentUser=login;
+
+notify("регистрация успешна");
 
 }
 
+/* LOGIN */
 function loginUser(){
 
-const login=document.getElementById("regLogin").value;
-const pass=document.getElementById("regPass").value;
+let login=document.getElementById("loginInput").value;
 
-const data=JSON.parse(localStorage.getItem("userData"));
-
-if(!data){
-toast("аккаунта нет");
+if(!login){
+notify("введите логин");
 return;
 }
 
-if(login===data.login && pass===data.pass){
+localStorage.setItem("currentUser",login);
 
-document.getElementById("profileBox").style.display="block";
-document.getElementById("profileName").innerText=data.login;
+currentUser=login;
 
-toast("вход выполнен");
-
-}else{
-
-toast("неверный логин");
+notify("вход выполнен");
 
 }
 
+/* STORAGE */
+function getCart(){
+
+return JSON.parse(
+localStorage.getItem("cart_"+currentUser) || "[]"
+);
+
 }
 
-function sendRequest(){
+function saveCart(cart){
 
-const tg=document.getElementById("tgInput").value;
+localStorage.setItem(
+"cart_"+currentUser,
+JSON.stringify(cart)
+);
 
-if(!tg){
-toast("введи telegram");
+}
+
+function getHistory(){
+
+return JSON.parse(
+localStorage.getItem("history_"+currentUser) || "[]"
+);
+
+}
+
+function saveHistory(history){
+
+localStorage.setItem(
+"history_"+currentUser,
+JSON.stringify(history)
+);
+
+}
+
+/* CART */
+let cart=getCart();
+
+function addCart(item){
+
+cart=getCart();
+
+cart.push(item);
+
+saveCart(cart);
+
+notify("добавлено");
+
+renderCart();
+
+}
+
+function renderCart(){
+
+cart=getCart();
+
+let box=document.getElementById("cartItems");
+
+box.innerHTML="";
+
+if(cart.length===0){
+
+box.innerHTML=`
+<div class="card">
+корзина пустая
+</div>
+`;
+
 return;
 }
 
-toast("отправлено");
+cart.forEach((item,index)=>{
+
+let div=document.createElement("div");
+
+div.className="card";
+
+div.innerHTML=`
+<h3>${item}</h3>
+
+<button onclick="sendOrder('${item}')">
+оформить заказ
+</button>
+
+<button onclick="removeCart(${index})">
+удалить
+</button>
+`;
+
+box.appendChild(div);
+
+});
 
 }
 
-function openPay(name,price){
+function removeCart(index){
 
-currentProduct={
-name,
-price
-};
+cart=getCart();
 
-document.getElementById("payName").innerText=name;
-document.getElementById("payPrice").innerText=price;
+cart.splice(index,1);
 
-showPage("payPage");
+saveCart(cart);
 
-}
+renderCart();
 
-function copyWallet(){
-
-navigator.clipboard.writeText(WALLET);
-
-toast("скопировано");
+notify("удалено");
 
 }
 
-function openWallet(){
+/* HISTORY */
+function renderHistory(){
 
-window.open("https://app.tonkeeper.com/transfer/"+WALLET);
+let history=getHistory();
 
-}
+let box=document.getElementById("historyItems");
 
-function createOrder(){
+box.innerHTML="";
 
-if(!currentProduct){
-toast("ошибка");
+if(history.length===0){
+
+box.innerHTML=`
+<div class="card">
+история пуста
+</div>
+`;
+
 return;
 }
 
-let orders=JSON.parse(localStorage.getItem("orders") || "[]");
+history.forEach(item=>{
+
+let div=document.createElement("div");
+
+div.className="card";
+
+div.innerHTML=`
+<h3>${item.product}</h3>
+
+<div class="status">
+${item.date}
+</div>
+`;
+
+box.appendChild(div);
+
+});
+
+}
+
+/* ORDERS */
+let orders=[];
+
+function sendOrder(item){
 
 orders.push({
 id:Date.now(),
-product:currentProduct.name,
-price:currentProduct.price,
+product:item,
 status:"не оплачено"
 });
 
-localStorage.setItem("orders",JSON.stringify(orders));
+let history=getHistory();
 
-document.getElementById("payStatus").innerText=
-"статус: ожидание проверки";
+history.push({
+product:item,
+date:new Date().toLocaleString()
+});
 
-toast("заказ создан");
+saveHistory(history);
+
+notify("заказ отправлен");
+
+renderOrders();
 
 }
 
-function adminLogin(){
+/* ADMIN */
+let adminLogged=false;
 
-const pass=document.getElementById("adminPassword").value;
+function loginAdmin(){
+
+let pass=document.getElementById("adminPass").value;
 
 if(pass==="rahim_45_pro"){
 
-document.getElementById("adminLoginBox").style.display="none";
+adminLogged=true;
 
-document.getElementById("adminPanel").style.display="block";
+notify("добро пожаловать в админ панель");
 
-document.getElementById("adminWelcome").innerText=
-"✅ добро пожаловать в админ панель";
-
-refreshOrders();
-
-toast("админ вход");
+renderOrders();
 
 }else{
 
-toast("неверный пароль");
+notify("неверный пароль");
 
 }
 
 }
 
-function refreshOrders(){
+function renderOrders(){
 
-const container=document.getElementById("ordersContainer");
+if(!adminLogged){
+return;
+}
 
-container.innerHTML="";
+let panel=document.getElementById("adminPanel");
 
-let orders=JSON.parse(localStorage.getItem("orders") || "[]");
+panel.innerHTML="";
+
+let paid=orders.filter(o=>o.status==="оплачено").length;
+
+panel.innerHTML+=`
+<div class="stats">
+
+<div class="statBox">
+<h3>${orders.length}</h3>
+заказов
+</div>
+
+<div class="statBox">
+<h3>${paid}</h3>
+оплачено
+</div>
+
+</div>
+`;
 
 if(orders.length===0){
 
-container.innerHTML="<p>заказов пока нет</p>";
+panel.innerHTML+=`
+<div class="card">
+нет заказов
+</div>
+`;
 
 return;
-
 }
 
 orders.forEach(order=>{
@@ -558,120 +715,101 @@ let div=document.createElement("div");
 div.className="orderCard";
 
 div.innerHTML=`
-<b>#${order.id}</b><br><br>
+<b>${order.product}</b>
+<br><br>
 
-📦 ${order.product}<br>
-💰 ${order.price}<br>
-📌 ${order.status}<br><br>
+статус:
+${order.status}
 
-<button onclick="changeStatus(${order.id},'оплачено')">
+<button onclick="setPaid(${order.id})">
 ✔ оплачено
 </button>
 
-<button onclick="changeStatus(${order.id},'не оплачено')">
+<button onclick="setUnpaid(${order.id})">
 ❌ не оплачено
-</button>
-
-<button onclick="deleteOrder(${order.id})">
-🗑 удалить
 </button>
 `;
 
-container.appendChild(div);
+panel.appendChild(div);
 
 });
 
 }
 
-function changeStatus(id,status){
+function setPaid(id){
 
-let orders=JSON.parse(localStorage.getItem("orders") || "[]");
-
-orders=orders.map(o=>{
-
+orders.forEach(o=>{
 if(o.id===id){
-o.status=status;
+o.status="оплачено";
 }
-
-return o;
-
 });
 
-localStorage.setItem("orders",JSON.stringify(orders));
+renderOrders();
 
-refreshOrders();
-
-toast("статус изменён");
+notify("обновлено");
 
 }
 
-function deleteOrder(id){
+function setUnpaid(id){
 
-let orders=JSON.parse(localStorage.getItem("orders") || "[]");
-
-orders=orders.filter(o=>o.id!==id);
-
-localStorage.setItem("orders",JSON.stringify(orders));
-
-refreshOrders();
-
-toast("заказ удалён");
-
+orders.forEach(o=>{
+if(o.id===id){
+o.status="не оплачено";
 }
-
-const canvas=document.getElementById("snow");
-const ctx=canvas.getContext("2d");
-
-function resize(){
-
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
-
-}
-
-resize();
-
-window.addEventListener("resize",resize);
-
-let snowflakes=[];
-
-for(let i=0;i<120;i++){
-
-snowflakes.push({
-x:Math.random()*canvas.width,
-y:Math.random()*canvas.height,
-r:Math.random()*2.5+1,
-s:Math.random()*1.5+0.5
 });
 
-}
+renderOrders();
 
-function animateSnow(){
-
-ctx.clearRect(0,0,canvas.width,canvas.height);
-
-ctx.fillStyle="white";
-
-snowflakes.forEach(f=>{
-
-ctx.beginPath();
-ctx.arc(f.x,f.y,f.r,0,Math.PI*2);
-ctx.fill();
-
-f.y+=f.s;
-
-if(f.y>canvas.height){
-f.y=0;
-f.x=Math.random()*canvas.width;
-}
-
-});
-
-requestAnimationFrame(animateSnow);
+notify("обновлено");
 
 }
 
-animateSnow();
+/* TG SEND */
+function sendTG(item){
+
+window.open(
+'https://t.me/mozgalomovich?text=' +
+encodeURIComponent(
+'здравствуйте, хочу заказать: ' + item
+),
+'_blank'
+);
+
+notify('отправлено');
+
+}
+
+/* WALLET */
+function copyWallet(){
+
+navigator.clipboard.writeText("UQBWALLETTONFULLTER123");
+
+notify("скопировано");
+
+}
+
+function openWallet(){
+
+window.open("https://ton.org/","_blank");
+
+}
+
+/* TOAST */
+function notify(text){
+
+let div=document.createElement("div");
+
+div.className="toast";
+
+div.innerText=text;
+
+document.body.appendChild(div);
+
+setTimeout(()=>{
+div.remove();
+},1600);
+
+}
 
 </script>
 
