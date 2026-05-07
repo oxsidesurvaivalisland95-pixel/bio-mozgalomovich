@@ -1,9 +1,3 @@
-function show(id){
-document.querySelectorAll(".page").forEach(p=>{
-p.classList.remove("active");
-});
-document.getElementById(id).classList.add("active");
-}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -17,28 +11,27 @@ margin:0;
 padding:0;
 width:100%;
 height:100%;
-background:#050508;
+background:#02020a;
 font-family:Arial;
 color:white;
 overflow-x:hidden;
 }
 
-*{box-sizing:border-box}
-
-/* фон */
+/* 🌌 КИБЕРПАНК ФОН */
 body::before{
 content:"";
 position:fixed;
 inset:0;
 background:
-radial-gradient(circle at 15% 20%, rgba(0,255,200,0.12), transparent 40%),
-radial-gradient(circle at 80% 80%, rgba(95,156,255,0.12), transparent 45%),
-radial-gradient(circle at 50% 50%, rgba(255,0,255,0.06), transparent 60%);
+radial-gradient(circle at 20% 20%, rgba(0,255,255,0.18), transparent 40%),
+radial-gradient(circle at 80% 30%, rgba(255,0,255,0.15), transparent 45%),
+radial-gradient(circle at 50% 80%, rgba(0,140,255,0.12), transparent 50%),
+linear-gradient(180deg, #02020a, #050510);
 pointer-events:none;
 z-index:0;
 }
 
-/* ❄ снег */
+/* ❄ снег (без багов) */
 #snowCanvas{
 position:fixed;
 inset:0;
@@ -46,8 +39,10 @@ width:100%;
 height:100%;
 pointer-events:none;
 z-index:1;
+filter:blur(0.2px);
 }
 
+/* страницы */
 .page{
 display:none;
 padding:20px;
@@ -56,83 +51,118 @@ z-index:2;
 }
 .page.active{display:block}
 
+/* 💎 КИБЕРПАНК КАРТОЧКИ */
 .card{
-background:#111118;
-max-width:360px;
+background:rgba(10,10,20,0.85);
+backdrop-filter:blur(10px);
+max-width:340px;
 margin:15px auto;
 padding:20px;
-border-radius:14px;
-border:1px solid rgba(0,255,200,0.2);
+border-radius:16px;
+border:1px solid rgba(0,255,255,0.25);
+box-shadow:
+0 0 15px rgba(0,255,255,0.1),
+0 0 40px rgba(255,0,255,0.08);
+transition:0.25s;
 }
 
-.card.product{
-cursor:pointer;
-transition:0.3s;
-}
-
+/* NEON HOVER */
 .card.product:hover{
-transform:scale(1.03);
-box-shadow:0 0 25px rgba(0,255,200,0.4);
+transform:translateY(-8px) scale(1.04);
+border:1px solid rgba(0,255,255,0.7);
+box-shadow:
+0 0 25px rgba(0,255,255,0.5),
+0 0 60px rgba(255,0,255,0.3),
+0 0 90px rgba(0,140,255,0.2);
 }
 
+/* INPUT */
 input{
-width:100%;
+width:90%;
 padding:10px;
-margin-top:10px;
 border-radius:10px;
 border:none;
+margin-top:10px;
+background:#0a0a12;
+color:white;
+outline:none;
+box-shadow:0 0 10px rgba(0,255,255,0.1);
 }
 
+/* BUTTON */
 button{
 width:100%;
 padding:12px;
 margin-top:10px;
 border:none;
 border-radius:10px;
-background:linear-gradient(90deg,#00ffcc,#5f9cff);
 cursor:pointer;
+background:linear-gradient(90deg,#00ffe5,#ff00ff,#008cff);
+color:white;
+font-weight:bold;
+transition:0.2s;
+box-shadow:0 0 15px rgba(0,255,255,0.2);
 }
 
 button:hover{
-box-shadow:0 0 20px #00ffcc;
+transform:scale(1.03);
+box-shadow:0 0 25px rgba(0,255,255,0.6);
 }
 
+/* TITLE */
 h1{
 text-align:center;
-font-size:40px;
-background:linear-gradient(90deg,#00ffcc,#5f9cff,#ff00ff);
+font-size:42px;
+background:linear-gradient(90deg,#00ffe5,#ff00ff,#008cff);
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
+filter:drop-shadow(0 0 10px rgba(0,255,255,0.3));
 }
 
-.copyBtn{
-background:#222;
-border:1px solid #00ffcc;
+/* PRICE */
+.price{
+text-align:center;
+opacity:0.85;
 }
 
+/* CLICK ANIMATION */
+.card:active,
+button:active{
+transform:scale(0.97);
+opacity:0.85;
+}
+
+/* 🔥 TOAST */
+.toast{
+position:fixed;
+left:50%;
+bottom:40px;
+transform:translateX(-50%);
+background:rgba(0,0,0,0.8);
+padding:12px 18px;
+border-radius:12px;
+opacity:0;
+transition:0.4s;
+z-index:999;
+border:1px solid rgba(0,255,255,0.4);
+pointer-events:none;
+}
+
+.toast.show{
+opacity:1;
+transform:translateX(-50%) translateY(-10px);
+}
+
+/* admin glow */
 .adminBtn{
 position:fixed;
 top:10px;
 right:10px;
-font-size:12px;
-cursor:pointer;
 z-index:10;
-}
-
-/* toast */
-#copyToast{
-position:fixed;
-bottom:30px;
-left:50%;
-transform:translateX(-50%);
-background:rgba(0,255,200,0.15);
-border:1px solid #00ffcc;
-color:white;
-padding:10px 20px;
-border-radius:12px;
-opacity:0;
-transition:0.3s;
-z-index:9999;
+cursor:pointer;
+font-size:12px;
+color:#00ffe5;
+text-shadow:0 0 10px #00ffe5;
 }
 </style>
 </head>
@@ -140,38 +170,29 @@ z-index:9999;
 <body>
 
 <canvas id="snowCanvas"></canvas>
-<div id="copyToast">скопировано ✔</div>
-
-<div class="adminBtn" onclick="show('login')">admin</div>
 
 <h1>ULTRA SYSTEM</h1>
+
+<div id="toast" class="toast"></div>
+
+<div class="adminBtn" onclick="show('login')">ADMIN</div>
 
 <!-- HOME -->
 <div id="home" class="page active">
 
 <div class="card">
 <h3>🔐 аккаунт</h3>
+
 <input id="regName" placeholder="имя">
 <input id="regPass" type="password" placeholder="пароль">
+
 <button onclick="register()">регистрация</button>
 <button onclick="loginUser()">вход</button>
 
-<div id="userBox" style="display:none">
+<div id="userBox" style="display:none;text-align:center">
 <p>👤 <span id="userName"></span></p>
 <button onclick="logoutUser()">выйти</button>
 </div>
-</div>
-
-<div class="card product" onclick="openPay('1 неделя','300₽ / 4$ / 2💎')">
-<h3>1 неделя</h3><p>300₽ / 4$ / 2💎</p>
-</div>
-
-<div class="card product" onclick="openPay('1 месяц','1000₽ / 13$ / 6💎')">
-<h3>1 месяц</h3><p>1000₽ / 13$ / 6💎</p>
-</div>
-
-<div class="card product" onclick="openPay('навсегда','4000₽ / 52$ / 25💎')">
-<h3>навсегда</h3><p>4000₽ / 52$ / 25💎</p>
 </div>
 
 <div class="card">
@@ -180,40 +201,38 @@ z-index:9999;
 <button onclick="send()">отправить</button>
 </div>
 
+<div class="card product" onclick="openPay('1 неделя','300₽ / 4$ / 2 TON')">
+<h3>1 неделя</h3>
+<p class="price">300₽ / 4$ / 2 TON</p>
+</div>
+
+<div class="card product" onclick="openPay('1 месяц','1000₽ / 13$ / 6 TON')">
+<h3>1 месяц</h3>
+<p class="price">1000₽ / 13$ / 6 TON</p>
+</div>
+
+<div class="card product" onclick="openPay('навсегда','4000₽ / 52$ / 25 TON')">
+<h3>навсегда</h3>
+<p class="price">4000₽ / 52$ / 25 TON</p>
+</div>
+
 </div>
 
 <!-- PAY -->
 <div id="pay" class="page">
 <div class="card">
 
-<h2 id="payTitle"></h2>
-<p id="payPrice"></p>
+<h2 id="payTitle" style="text-align:center"></h2>
+<p id="payPrice" style="text-align:center"></p>
 
-<p id="wallet">
+<p style="text-align:center;cursor:pointer" onclick="openWallet()">
 UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv
 </p>
 
-<button onclick="openTonkeeper()">💎 открыть Tonkeeper</button>
-<button class="copyBtn" onclick="copyWallet()">копировать</button>
+<button onclick="openWallet()">💎 открыть в Tonkeeper</button>
+<button onclick="copyWallet()">📋 копировать</button>
 <button onclick="show('home')">назад</button>
 
-</div>
-</div>
-
-<!-- LOGIN -->
-<div id="login" class="page">
-<div class="card">
-<h3>LOGIN</h3>
-<input id="pass" type="password">
-<button onclick="login()">войти</button>
-</div>
-</div>
-
-<!-- ADMIN -->
-<div id="admin" class="page">
-<div class="card">
-<h3>ADMIN</h3>
-<button onclick="show('home')">выйти</button>
 </div>
 </div>
 
@@ -223,7 +242,7 @@ const BOT_TOKEN="PUT_TOKEN_HERE";
 const CHAT_ID="7910835075";
 const WALLET="UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv";
 
-/* страницы */
+/* pages */
 function show(id){
 document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
 document.getElementById(id).classList.add("active");
@@ -236,41 +255,21 @@ document.getElementById("payPrice").innerText=p;
 show("pay");
 }
 
-/* Tonkeeper */
-function openTonkeeper(){
-window.location.href=`tonkeeper://transfer/${WALLET}`;
-setTimeout(()=>{
-window.open(`https://app.tonkeeper.com/transfer/${WALLET}`,"_blank");
-},800);
+/* TON */
+function openWallet(){
+window.location.href="https://app.tonkeeper.com/transfer/"+WALLET;
 }
 
-/* copy */
+/* COPY */
 function copyWallet(){
 navigator.clipboard.writeText(WALLET);
-
-let t=document.getElementById("copyToast");
-t.style.opacity="1";
-setTimeout(()=>t.style.opacity="0",1200);
+toast("📋 скопировано");
 }
 
-/* telegram */
+/* TELEGRAM */
 function send(){
-alert("кнопка работает");
-}  
-
-let text = `📩 Новая заявка\n👤 @${tg}`;
-
-fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,{
-method:"POST",
-headers:{
-"Content-Type":"application/x-www-form-urlencoded"
-},
-body:`chat_id=${CHAT_ID}&text=${encodeURIComponent(text)}`
-});
-
-alert("заявка отправлена ✔");
-document.getElementById("tg").value="";
-}
+let tg=document.getElementById("tg").value;
+if(!tg)return;
 
 fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,{
 method:"POST",
@@ -280,9 +279,11 @@ chat_id:CHAT_ID,
 text:`📩 ${tg}`
 })
 });
+
+toast("📨 отправлено");
 }
 
-/* auth */
+/* AUTH */
 function register(){
 let n=document.getElementById("regName").value;
 let p=document.getElementById("regPass").value;
@@ -295,12 +296,14 @@ let u=JSON.parse(localStorage.getItem("user"));
 let n=document.getElementById("regName").value;
 let p=document.getElementById("regPass").value;
 
-if(u && u.n===n && u.p===p) showUser();
-else alert("неверно");
+if(u && u.n===n && u.p===p){
+showUser();
+}else alert("неверно");
 }
 
 function showUser(){
 let u=JSON.parse(localStorage.getItem("user"));
+if(!u)return;
 document.getElementById("userBox").style.display="block";
 document.getElementById("userName").innerText=u.n;
 }
@@ -310,40 +313,52 @@ localStorage.removeItem("user");
 document.getElementById("userBox").style.display="none";
 }
 
-/* admin */
-function login(){
-if(document.getElementById("pass").value==="rahim_45_pro"){
-show("admin");
-}
+/* toast */
+function toast(msg){
+let t=document.getElementById("toast");
+t.innerText=msg;
+t.classList.add("show");
+setTimeout(()=>t.classList.remove("show"),1500);
 }
 
-/* snow */
-const canvas=document.getElementById("snowCanvas");
-const ctx=canvas.getContext("2d");
+/* ❄ СНЕГ (ЧИСТЫЙ БЕЗ ЛИСТЬЕВ) */
+const c=document.getElementById("snowCanvas");
+const x=c.getContext("2d");
 
 function resize(){
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
+c.width=innerWidth;
+c.height=innerHeight;
 }
 resize();
 window.addEventListener("resize",resize);
 
-let snow=[];
-for(let i=0;i<70;i++){
-snow.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,d:Math.random()*1+0.5});
+let s=[];
+for(let i=0;i<90;i++){
+s.push({
+x:Math.random()*c.width,
+y:Math.random()*c.height,
+r:Math.random()*2.2
+});
 }
 
 function draw(){
-ctx.clearRect(0,0,canvas.width,canvas.height);
-ctx.fillStyle="white";
-for(let s of snow){
-ctx.beginPath();
-ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-ctx.fill();
-s.y+=s.d;
-s.x+=Math.sin(s.y*0.01);
-if(s.y>canvas.height){s.y=0;s.x=Math.random()*canvas.width;}
+x.clearRect(0,0,c.width,c.height);
+x.fillStyle="rgba(255,255,255,0.9)";
+
+for(let i of s){
+x.beginPath();
+x.arc(i.x,i.y,i.r,0,Math.PI*2);
+x.fill();
+
+i.y+=1.2;
+i.x+=Math.sin(i.y*0.01)*0.5;
+
+if(i.y>c.height){
+i.y=0;
+i.x=Math.random()*c.width;
 }
+}
+
 requestAnimationFrame(draw);
 }
 draw();
