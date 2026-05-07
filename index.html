@@ -6,6 +6,8 @@
 <title>CYBER MARKET</title>
 
 <style>
+
+/* BASE */
 html,body{
 margin:0;
 padding:0;
@@ -19,6 +21,7 @@ body{
 background: radial-gradient(circle at top,#0b1220,#05070d 60%,#000);
 }
 
+/* SCANLINES */
 body::after{
 content:"";
 position:fixed;
@@ -32,27 +35,57 @@ transparent 3px
 );
 opacity:.25;
 pointer-events:none;
+mix-blend-mode:overlay;
 }
 
+/* PARTICLES */
+.leaf{
+position:fixed;
+top:-20px;
+width:6px;
+height:6px;
+background:#00ffe5;
+border-radius:50%;
+opacity:.6;
+animation:fall linear infinite;
+}
+
+@keyframes fall{
+0%{transform:translateY(-10vh);}
+100%{transform:translateY(110vh);}
+}
+
+/* TITLE */
 .title{
 text-align:center;
 font-size:40px;
 margin:20px;
 color:#00ffe5;
-text-shadow:0 0 15px #00ffe5;
+text-shadow:0 0 10px #00ffe5,0 0 25px #ff00ff;
+animation:glow 2.5s infinite;
 }
 
+@keyframes glow{
+0%{text-shadow:0 0 5px #00ffe5;}
+50%{text-shadow:0 0 25px #ff00ff;}
+100%{text-shadow:0 0 5px #00ffe5;}
+}
+
+/* NAV */
 .nav{
 position:fixed;
 top:10px;
 right:10px;
 display:flex;
 gap:5px;
+z-index:10;
 }
 
+/* PAGE */
 .page{display:none;padding:70px 15px;}
 .page.active{display:block}
 
+/* CARD */
 .card{
 background:#101826;
 padding:15px;
@@ -60,8 +93,16 @@ margin:10px auto;
 max-width:420px;
 border-radius:15px;
 border:1px solid #00ffe5;
+box-shadow:0 0 15px rgba(0,255,255,0.15);
+transition:.25s;
 }
 
+.card:hover{
+transform:scale(1.03);
+box-shadow:0 0 30px rgba(255,0,255,0.25);
+}
+
+/* BUTTON */
 button{
 width:100%;
 padding:10px;
@@ -74,6 +115,7 @@ font-weight:bold;
 cursor:pointer;
 }
 
+/* INPUT */
 input{
 width:100%;
 padding:10px;
@@ -84,9 +126,31 @@ background:#0d1018;
 color:white;
 }
 
+/* HISTORY */
 #history .card{
 border-left:3px solid #00ffe5;
 padding-left:15px;
+}
+
+/* COPY TOAST */
+.copyToast{
+position:fixed;
+left:50%;
+top:50%;
+transform:translate(-50%,-50%);
+background:#0d1018;
+border:1px solid #00ffe5;
+color:#00ffe5;
+padding:12px 18px;
+border-radius:12px;
+font-weight:bold;
+z-index:99999;
+animation:pop .25s ease;
+}
+
+@keyframes pop{
+from{opacity:0;transform:translate(-50%,-50%) scale(.8);}
+to{opacity:1;transform:translate(-50%,-50%) scale(1);}
 }
 
 </style>
@@ -106,7 +170,6 @@ padding-left:15px;
 <!-- HOME -->
 <div id="home" class="page active">
 
-<!-- 🔥 ТАРИФЫ ВЕРНУТЫ -->
 <div class="card">
 <h3>1 НЕДЕЛЯ</h3>
 <div>300₽ / 4$ / 2 TON</div>
@@ -125,13 +188,28 @@ padding-left:15px;
 <button onclick="add('навсегда')">добавить</button>
 </div>
 
-<!-- LOGIN -->
+<!-- ACCOUNT -->
 <div class="card">
 <h3>АККАУНТ</h3>
 <input id="login" placeholder="логин">
 <input id="pass" placeholder="пароль">
 <button onclick="register()">регистрация</button>
 <button onclick="login()">вход</button>
+</div>
+
+<!-- TON WALLET -->
+<div class="card">
+<h3>TON WALLET</h3>
+
+<div style="font-size:12px;opacity:.7;word-break:break-all">
+UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv
+</div>
+
+<button onclick="copyWallet()">📋 скопировать</button>
+
+<button onclick="window.open('ton://transfer/UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv')">
+💰 открыть в Tonkeeper
+</button>
 </div>
 
 </div>
@@ -194,7 +272,7 @@ cart.push(i);
 localStorage.setItem("cart_"+user,JSON.stringify(cart));
 }
 
-/* ORDER + HISTORY FIXED */
+/* ORDER */
 function order(i){
 orders.push({id:Date.now(),item:cart[i],status:"ожидает"});
 
@@ -213,6 +291,18 @@ render();
 }
 }
 
+/* COPY WALLET */
+function copyWallet(){
+navigator.clipboard.writeText("UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv");
+
+let d=document.createElement("div");
+d.className="copyToast";
+d.innerText="скопировано";
+document.body.appendChild(d);
+
+setTimeout(()=>d.remove(),1200);
+}
+
 /* RENDER */
 function render(){
 
@@ -229,7 +319,7 @@ ${i}
 });
 }
 
-/* HISTORY FIXED */
+/* HISTORY */
 if(document.getElementById("history").classList.contains("active")){
 let h=document.getElementById("history");
 h.innerHTML="";
@@ -261,6 +351,15 @@ ${o.item}<br>${o.status}
 });
 }
 
+}
+
+/* PARTICLES */
+for(let i=0;i<25;i++){
+let d=document.createElement("div");
+d.className="leaf";
+d.style.left=Math.random()*100+"vw";
+d.style.animationDuration=(3+Math.random()*6)+"s";
+document.body.appendChild(d);
 }
 
 </script>
