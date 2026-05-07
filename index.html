@@ -230,26 +230,32 @@ UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv
 
 <!-- ADMIN -->
 <div id="admin" class="page">
-<div class="card">
-<h3>ADMIN</h3>
 
+<div id="adminLogin" class="card">
+<h3>🔐 ADMIN LOGIN</h3>
 <input id="adminPass" type="password" placeholder="пароль">
 <button onclick="adminLogin()">войти</button>
+</div>
+
+<div id="adminPanel" class="card" style="display:none">
+
+<h3>📦 АДМИН ПАНЕЛЬ</h3>
+
+<button onclick="loadOrders()">обновить</button>
+<button onclick="goHome()">на главную</button>
 
 <div id="ordersList"></div>
 
-<button onclick="show('home')">выйти</button>
 </div>
+
 </div>
 
 <script>
 
-const BOT_TOKEN="PUT_TOKEN_HERE";
-const CHAT_ID="7910835075";
 const WALLET="UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv";
 
 let orders = JSON.parse(localStorage.getItem("orders")||"[]");
-let currentOrder = null;
+let currentOrder=null;
 
 /* NAV */
 function show(id){
@@ -262,7 +268,7 @@ if(id==="admin") loadOrders();
 function openPay(t,p){
 payTitle.innerText=t;
 payPrice.innerText=p;
-currentOrder = {t,p};
+currentOrder={t,p};
 show('pay');
 }
 
@@ -276,7 +282,7 @@ navigator.clipboard.writeText(WALLET);
 toast("скопировано");
 }
 
-/* FIXED PAYMENT BUTTON */
+/* ORDER FIX */
 function markPaid(){
 
 if(!currentOrder){
@@ -284,70 +290,82 @@ toast("нет заказа");
 return;
 }
 
-let order = {
+let o={
 id:Date.now(),
 product:currentOrder.t,
 price:currentOrder.p,
 status:"ожидание проверки"
 };
 
-orders.push(order);
+orders.push(o);
 localStorage.setItem("orders",JSON.stringify(orders));
 
-document.getElementById("statusText").innerText="статус: ожидание проверки";
-
-toast("оплата отправлена");
+statusText.innerText="статус: ожидание проверки";
+toast("отправлено");
 }
 
-/* AUTH FIXED */
-function register(){
-localStorage.setItem("user",JSON.stringify({
-n:regName.value,
-p:regPass.value
-}));
-toast("зарегистрировано");
-}
-
-function loginUser(){
-let u=JSON.parse(localStorage.getItem("user"));
-if(u && u.n===regName.value && u.p===regPass.value){
-userBox.style.display="block";
-userName.innerText=u.n;
-toast("вход выполнен");
-}else toast("ошибка");
-}
-
-function logoutUser(){
-userBox.style.display="none";
-}
-
-/* ADMIN FIX */
+/* ADMIN LOGIN */
 function adminLogin(){
 if(adminPass.value==="rahim_45_pro"){
+adminLogin.style.display="none";
+adminPanel.style.display="block";
+toast("вход выполнен");
 loadOrders();
-toast("админ вход");
 }else toast("неверный пароль");
 }
 
 /* LOAD ORDERS */
 function loadOrders(){
+
 ordersList.innerHTML="";
+orders=JSON.parse(localStorage.getItem("orders")||"[]");
+
 orders.forEach(o=>{
 let d=document.createElement("div");
 d.className="card";
+
 d.innerHTML=`
 <b>#${o.id}</b><br>
 ${o.product}<br>
-${o.status}
+${o.status}<br><br>
+
+<button onclick="setStatus(${o.id},'оплачено')">✔ оплачено</button>
+<button onclick="setStatus(${o.id},'не оплачено')">❌ не оплачено</button>
 `;
+
 ordersList.appendChild(d);
 });
 }
 
-/* SEND */
-function send(){
-if(!tg.value)return;
-toast("отправлено");
+function setStatus(id,status){
+orders=orders.map(o=>{
+if(o.id===id)o.status=status;
+return o;
+});
+localStorage.setItem("orders",JSON.stringify(orders));
+loadOrders();
+}
+
+/* BACK */
+function goHome(){
+show('home');
+}
+
+/* AUTH */
+function register(){
+localStorage.setItem("user",JSON.stringify({n:regName.value,p:regPass.value}));
+}
+
+function loginUser(){
+let u=JSON.parse(localStorage.getItem("user"));
+if(u&&u.n===regName.value&&u.p===regPass.value){
+userBox.style.display="block";
+userName.innerText=u.n;
+}
+}
+
+function logoutUser(){
+userBox.style.display="none";
 }
 
 /* TOAST */
