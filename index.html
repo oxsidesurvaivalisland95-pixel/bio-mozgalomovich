@@ -3,97 +3,124 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CYBER SHOP</title>
+<title>CYBER MARKET X</title>
 
 <style>
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
 body{
-margin:0;
 font-family:Arial;
-background:#05070d;
 color:white;
+min-height:100vh;
 overflow-x:hidden;
+
+background:
+radial-gradient(circle at top left,#00ffe515,transparent 30%),
+radial-gradient(circle at bottom right,#ff00ff12,transparent 30%),
+linear-gradient(180deg,#05070d,#060912,#0a1020);
 }
 
-/* ===== NEON ===== */
-.title{
-text-align:center;
-font-size:42px;
-padding:15px;
-color:#00ffe5;
-text-shadow:0 0 25px #00ffe5,0 0 40px #ff00ff;
-animation:glow 2s infinite;
-}
-
-@keyframes glow{
-0%{text-shadow:0 0 5px #00ffe5}
-50%{text-shadow:0 0 25px #ff00ff}
-100%{text-shadow:0 0 5px #00ffe5}
-}
-
-/* ===== FALLING EFFECT ===== */
-.particle{
+/* scanlines */
+body::before{
+content:"";
 position:fixed;
-top:-10px;
-width:6px;
-height:6px;
-background:#00ffe5;
-border-radius:50%;
-opacity:.6;
-animation:fall linear infinite;
+inset:0;
+pointer-events:none;
+background:repeating-linear-gradient(
+to bottom,
+rgba(255,255,255,0.02),
+rgba(255,255,255,0.02) 1px,
+transparent 3px,
+transparent 6px
+);
+animation:scan 6s linear infinite;
 }
 
-@keyframes fall{
-to{transform:translateY(110vh)}
+@keyframes scan{
+0%{transform:translateY(0);}
+100%{transform:translateY(10px);}
 }
 
-/* ===== UI ===== */
-.page{display:none;padding:20px}
-.page.active{display:block}
-
-.card{
-background:#101826;
-border:1px solid #00ffe5;
-padding:15px;
-margin:10px auto;
-border-radius:12px;
-max-width:420px;
-animation:fade .2s ease;
-}
-
-@keyframes fade{
-from{opacity:0;transform:scale(.95)}
-to{opacity:1;transform:scale(1)}
-}
-
-button{
-width:100%;
-margin-top:8px;
-padding:10px;
-border:none;
-border-radius:10px;
-background:linear-gradient(90deg,#00ffe5,#ff00ff);
-color:white;
+.header{
+text-align:center;
+padding:20px;
+font-size:40px;
 font-weight:bold;
-cursor:pointer;
-}
-
-input{
-width:100%;
-padding:10px;
-margin-top:8px;
-border-radius:10px;
-border:none;
-background:#0d1018;
-color:white;
+color:#00ffe5;
+text-shadow:0 0 20px #00ffe5,0 0 40px #ff00ff;
 }
 
 .nav{
-position:fixed;
-top:10px;
-right:10px;
 display:flex;
-gap:6px;
-z-index:999;
+justify-content:center;
+gap:10px;
+padding:10px;
+background:rgba(0,0,0,0.4);
+backdrop-filter:blur(10px);
+}
+
+button{
+padding:10px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+color:white;
+background:linear-gradient(90deg,#00ffe5,#ff00ff);
+transition:.2s;
+}
+
+button:hover{transform:scale(1.05);}
+
+.page{display:none;padding:20px;}
+.page.active{display:block;}
+
+.card{
+background:rgba(20,25,40,0.85);
+border:1px solid #00ffe5;
+padding:15px;
+margin:10px auto;
+max-width:420px;
+border-radius:15px;
+}
+
+/* toast */
+.toast{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:#111;
+border:1px solid #00ffe5;
+padding:15px;
+border-radius:10px;
+animation:toast 1s forwards;
+}
+
+@keyframes toast{
+0%{opacity:0;}
+20%{opacity:1;}
+80%{opacity:1;}
+100%{opacity:0;}
+}
+
+/* cyber rain */
+.rain{
+position:fixed;
+top:-50px;
+color:#00ffe5;
+font-size:14px;
+opacity:0.8;
+animation:fall linear forwards;
+pointer-events:none;
+text-shadow:0 0 10px #00ffe5;
+}
+
+@keyframes fall{
+to{
+transform:translateY(110vh);
+opacity:0;
+}
 }
 
 </style>
@@ -101,44 +128,40 @@ z-index:999;
 
 <body>
 
-<div class="title">CYBER SHOP</div>
+<div class="header">CYBER MARKET</div>
 
 <div class="nav">
-<button onclick="show('home')">home</button>
-<button onclick="show('cart')">cart</button>
-<button onclick="show('history')">history</button>
-<button onclick="show('admin')">admin</button>
+<button onclick="show('home')">HOME</button>
+<button onclick="show('cart')">CART</button>
+<button onclick="show('history')">HISTORY</button>
+<button onclick="show('wallet')">WALLET</button>
+<button onclick="show('admin')">ADMIN</button>
 </div>
 
 <!-- HOME -->
 <div id="home" class="page active">
 
 <div class="card">
-1 неделя — 300₽ / 4$ / 2 TON
-<button onclick="add('1 неделя')">добавить</button>
+<h3>1 неделя</h3>
+<button onclick="add('1 неделя')">Добавить</button>
 </div>
 
 <div class="card">
-1 месяц — 1000₽ / 13$ / 6 TON
-<button onclick="add('1 месяц')">добавить</button>
+<h3>1 месяц</h3>
+<button onclick="add('1 месяц')">Добавить</button>
 </div>
 
 <div class="card">
-навсегда — 4000₽ / 52$ / 25 TON
-<button onclick="add('навсегда')">добавить</button>
+<h3>Навсегда</h3>
+<button onclick="add('Навсегда')">Добавить</button>
 </div>
 
 <div class="card">
-💳 TON WALLET:
-<br><br>
-UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv
-</div>
-
-<div class="card">
-<input id="login" placeholder="login">
-<input id="pass" placeholder="password">
-<button onclick="register()">register</button>
-<button onclick="login()">login</button>
+<h3>Аккаунт</h3>
+<input id="login">
+<input id="pass" type="password">
+<button onclick="register()">Регистрация</button>
+<button onclick="login()">Вход</button>
 </div>
 
 </div>
@@ -149,187 +172,222 @@ UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv
 <!-- HISTORY -->
 <div id="history" class="page"></div>
 
-<!-- ADMIN -->
-<div id="admin" class="page">
-
+<!-- WALLET -->
+<div id="wallet" class="page">
 <div class="card">
-<input id="adminPass" placeholder="admin password">
-<button onclick="adminLogin()">login admin</button>
+<h3>TON WALLET</h3>
+<p id="walletText">UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv</p>
+<button onclick="copyWallet()">Скопировать</button>
+</div>
 </div>
 
+<!-- ADMIN -->
+<div id="admin" class="page">
+<div class="card">
+<h3>ADMIN</h3>
+<input id="adminPass">
+<button onclick="adminLogin()">Войти</button>
+</div>
 <div id="adminPanel"></div>
-
 </div>
 
 <script>
 
-/* ===== SAFE GUARD (ЧТОБЫ НЕ БЫЛ БЕЛЫЙ ЭКРАН) ===== */
-window.onerror = () => true;
+let users = JSON.parse(localStorage.getItem("users")||"{}");
+let current = localStorage.getItem("current") || null;
+let isAdmin = false;
 
-/* ===== STATE ===== */
-let user = localStorage.getItem("user") || null;
-let cart = [];
-let admin = false;
-let orders = JSON.parse(localStorage.getItem("orders") || "[]");
+/* storage per user */
+function cartKey(){return "cart_"+current;}
+function orderKey(){return "orders_"+current;}
 
-/* ===== LOAD USER DATA ===== */
-function load(){
-if(user){
-cart = JSON.parse(localStorage.getItem("cart_"+user) || "[]");
-}
-}
+function getCart(){return JSON.parse(localStorage.getItem(cartKey())||"[]");}
+function getOrders(){return JSON.parse(localStorage.getItem(orderKey())||"[]");}
 
-/* ===== NAV ===== */
+function saveCart(d){localStorage.setItem(cartKey(),JSON.stringify(d));}
+function saveOrders(d){localStorage.setItem(orderKey(),JSON.stringify(d));}
+
+/* nav */
 function show(id){
-document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.querySelectorAll(".page").forEach(e=>e.classList.remove("active"));
 document.getElementById(id).classList.add("active");
 render();
 }
 
-/* ===== AUTH ===== */
+/* toast */
+function toast(t){
+let d=document.createElement("div");
+d.className="toast";
+d.innerText=t;
+document.body.appendChild(d);
+setTimeout(()=>d.remove(),1000);
+}
+
+/* auth */
 function register(){
-let u = login.value;
-let p = pass.value;
-
-if(!u||!p) return;
-
-let users = JSON.parse(localStorage.getItem("users") || "{}");
-
-users[u] = {pass:p};
+let l=document.getElementById("login").value;
+let p=document.getElementById("pass").value;
+users[l]=p;
 localStorage.setItem("users",JSON.stringify(users));
-
-localStorage.setItem("cart_"+u,"[]");
-localStorage.setItem("history_"+u,"[]");
-
-user = u;
-localStorage.setItem("user",u);
-
-load();
-render();
+toast("ok");
 }
 
 function login(){
-let u = login.value;
-let p = pass.value;
-
-let users = JSON.parse(localStorage.getItem("users") || "{}");
-
-if(users[u] && users[u].pass === p){
-user = u;
-localStorage.setItem("user",u);
-
-load();
+let l=document.getElementById("login").value;
+let p=document.getElementById("pass").value;
+if(users[l]===p){
+current=l;
+localStorage.setItem("current",l);
+toast("вход");
 render();
 }
 }
 
-/* ===== CART ===== */
+/* add */
 function add(item){
-if(!user) return;
+if(!current) return toast("войдите");
 
-cart.push(item);
-localStorage.setItem("cart_"+user,JSON.stringify(cart));
+let cart=getCart();
+cart.push({user:current,item});
+saveCart(cart);
+
+toast("добавлено");
+render();
+}
+
+/* code */
+function code(){
+return "CYB-"+Math.random().toString(36).substr(2,6).toUpperCase();
+}
+
+/* buy */
+function buy(i){
+
+let cart=getCart();
+let orders=getOrders();
+
+let c=code();
+
+toast("ОЖИДАЙТЕ ОПЛАТЫ");
+
+let wallet="UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv";
+
+setTimeout(()=>{
+window.open(`ton://transfer/${wallet}?text=ORDER_${c}`,"_blank");
+},800);
+
+orders.push({...cart[i],status:"ожидание",code:c});
+
+cart.splice(i,1);
+
+saveCart(cart);
+saveOrders(orders);
 
 render();
 }
 
-/* ===== ORDER ===== */
-function order(i){
-if(!user) return;
-
-let item = cart[i];
-
-orders.push({
-id:Date.now(),
-user:user,
-item:item,
-status:"pending"
-});
-
-localStorage.setItem("orders",JSON.stringify(orders));
-
-let h = JSON.parse(localStorage.getItem("history_"+user) || "[]");
-h.push(item);
-localStorage.setItem("history_"+user,JSON.stringify(h));
-
+/* delete */
+function del(i){
+let cart=getCart();
+cart.splice(i,1);
+saveCart(cart);
 render();
 }
 
-/* ===== ADMIN ===== */
+/* admin */
 function adminLogin(){
-if(adminPass.value === "admin123"){
-admin = true;
+if(document.getElementById("adminPass").value==="rahim_45_pro"){
+isAdmin=true;
+toast("admin");
 render();
 }
 }
 
-function setStatus(id,status){
-orders = orders.map(o=>{
-if(o.id===id)o.status=status;
-return o;
-});
-localStorage.setItem("orders",JSON.stringify(orders));
+function approve(i){
+let o=getOrders();
+o[i].status="оплачено";
+saveOrders(o);
 render();
 }
 
-/* ===== RENDER SAFE ===== */
+function reject(i){
+let o=getOrders();
+o[i].status="отклонено";
+saveOrders(o);
+render();
+}
+
+/* render */
 function render(){
 
-/* CART */
-let c = document.getElementById("cart");
-c.innerHTML = "";
-
-if(user){
-cart = JSON.parse(localStorage.getItem("cart_"+user) || "[]");
-
-cart.forEach((i,idx)=>{
-c.innerHTML += `
+/* cart */
+let c=document.getElementById("cart");
+let cart=getCart();
+c.innerHTML="";
+cart.forEach((e,i)=>{
+c.innerHTML+=`
 <div class="card">
-${i}
-<button onclick="order(${idx})">buy</button>
+${e.item}
+<button onclick="buy(${i})">Купить</button>
+<button onclick="del(${i})">Удалить</button>
 </div>`;
 });
-}
 
-/* HISTORY */
-let h = document.getElementById("history");
-h.innerHTML = "";
-
-if(user){
-let data = JSON.parse(localStorage.getItem("history_"+user) || "[]");
-
-data.forEach(i=>{
-h.innerHTML += `<div class="card">${i}</div>`;
-});
-}
-
-/* ADMIN */
-let a = document.getElementById("adminPanel");
-a.innerHTML = "";
-
-if(admin){
+/* history */
+let h=document.getElementById("history");
+let orders=getOrders();
+h.innerHTML="";
 orders.forEach(o=>{
-a.innerHTML += `
+h.innerHTML+=`
 <div class="card">
-USER: ${o.user}<br>
-ITEM: ${o.item}<br>
-STATUS: ${o.status}
-<button onclick="setStatus(${o.id},'paid')">paid</button>
-<button onclick="setStatus(${o.id},'cancel')">cancel</button>
+${o.item} - ${o.status}<br>
+<b>${o.code}</b>
+</div>`;
+});
+
+/* admin */
+if(isAdmin){
+let a=document.getElementById("adminPanel");
+a.innerHTML="";
+
+let all=[];
+
+for(let k in localStorage){
+if(k.startsWith("orders_")){
+all=all.concat(JSON.parse(localStorage.getItem(k)));
+}
+}
+
+all.forEach((o,i)=>{
+a.innerHTML+=`
+<div class="card">
+${o.user}<br>
+${o.item}<br>
+${o.status}<br>
+<b>${o.code}</b><br><br>
+<button onclick="approve(${i})">ОПЛАЧЕНО</button>
+<button onclick="reject(${i})">ОТКЛОНИТЬ</button>
 </div>`;
 });
 }
-
 }
 
-/* ===== PARTICLES ===== */
-for(let i=0;i<25;i++){
-let p=document.createElement("div");
-p.className="particle";
-p.style.left=Math.random()*100+"vw";
-p.style.animationDuration=(3+Math.random()*5)+"s";
-document.body.appendChild(p);
+/* wallet */
+function copyWallet(){
+navigator.clipboard.writeText(document.getElementById("walletText").innerText);
+toast("скопировано");
 }
+
+/* cyber rain */
+setInterval(()=>{
+let r=document.createElement("div");
+r.className="rain";
+r.innerText="|";
+r.style.left=Math.random()*100+"vw";
+r.style.animationDuration=(3+Math.random()*5)+"s";
+document.body.appendChild(r);
+setTimeout(()=>r.remove(),8000);
+},120);
 
 render();
 
