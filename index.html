@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CYBER MARKET</title>
+<title>CYBER RESTORED</title>
 
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -15,9 +15,9 @@ body{
 margin:0;
 font-family:Arial;
 background:
-radial-gradient(circle at top left,#00ffe522,transparent),
-radial-gradient(circle at bottom right,#ff00ff22,transparent),
-linear-gradient(180deg,#05070d,#060912,#0a1020);
+radial-gradient(circle,#00ffe522,transparent),
+radial-gradient(circle,#ff00ff22,transparent),
+#05070d;
 color:white;
 overflow-x:hidden;
 }
@@ -25,9 +25,9 @@ overflow-x:hidden;
 .header{
 text-align:center;
 padding:20px;
-font-size:34px;
+font-size:30px;
 color:#00ffe5;
-text-shadow:0 0 20px #00ffe5;
+text-shadow:0 0 15px #00ffe5;
 }
 
 .nav{
@@ -35,8 +35,6 @@ display:flex;
 justify-content:center;
 gap:10px;
 padding:10px;
-background:rgba(0,0,0,0.4);
-backdrop-filter:blur(10px);
 }
 
 button{
@@ -46,7 +44,6 @@ padding:10px 14px;
 border-radius:10px;
 color:white;
 cursor:pointer;
-box-shadow:0 0 10px #00ffe5;
 }
 
 .page{display:none;padding:20px;}
@@ -56,7 +53,7 @@ box-shadow:0 0 10px #00ffe5;
 max-width:420px;
 margin:10px auto;
 padding:15px;
-background:rgba(10,12,20,0.85);
+background:#111827;
 border:1px solid #00ffe5;
 border-radius:12px;
 }
@@ -65,41 +62,8 @@ input{
 width:100%;
 padding:10px;
 margin-top:10px;
-border-radius:8px;
 border:none;
-}
-
-.toast{
-position:fixed;
-bottom:80px;
-left:50%;
-transform:translateX(-50%);
-background:#00ffe5;
-color:black;
-padding:10px 15px;
-border-radius:10px;
-animation:toast 1.5s ease;
-z-index:9999;
-}
-
-@keyframes toast{
-0%{opacity:0;transform:translate(-50%,20px);}
-20%{opacity:1;}
-80%{opacity:1;}
-100%{opacity:0;transform:translate(-50%,-20px);}
-}
-
-.cyberRain{
-position:fixed;
-top:-50px;
-color:#00ffe5;
-font-size:14px;
-pointer-events:none;
-animation:fall linear forwards;
-}
-
-@keyframes fall{
-to{transform:translateY(110vh);opacity:0;}
+border-radius:8px;
 }
 
 .order{
@@ -109,13 +73,26 @@ border:1px solid #00ffe5;
 border-radius:10px;
 }
 
-.socials{
+.toast{
 position:fixed;
-bottom:15px;
+bottom:20px;
 left:50%;
 transform:translateX(-50%);
-display:flex;
-gap:10px;
+background:#00ffe5;
+color:black;
+padding:10px;
+border-radius:8px;
+}
+
+.cyberRain{
+position:fixed;
+top:-50px;
+color:#00ffe5;
+animation:fall linear forwards;
+}
+
+@keyframes fall{
+to{transform:translateY(110vh);opacity:0;}
 }
 
 </style>
@@ -123,7 +100,7 @@ gap:10px;
 
 <body>
 
-<div class="header">CYBER MARKET</div>
+<div class="header">CYBER RESTORED</div>
 
 <div class="nav">
 <button onclick="show('auth')">AUTH</button>
@@ -136,7 +113,7 @@ gap:10px;
 <!-- AUTH -->
 <div id="auth" class="page active">
 <div class="card">
-<h3>LOGIN / REGISTER</h3>
+<h3>AUTH</h3>
 <input id="email" placeholder="email">
 <input id="password" type="password" placeholder="password">
 <button onclick="register()">REGISTER</button>
@@ -146,31 +123,18 @@ gap:10px;
 
 <!-- SHOP -->
 <div id="shop" class="page">
-
 <div class="card">
-<h3>1 неделя</h3>
-<p>300₽ / 4$ / 2💎</p>
-<button onclick="addCart('1 неделя',2)">В КОРЗИНУ</button>
+<h3>SHOP</h3>
+<button onclick="addCart('1 week',2)">1 WEEK</button>
+<button onclick="addCart('1 month',6)">1 MONTH</button>
+<button onclick="addCart('forever',25)">FOREVER</button>
 </div>
-
-<div class="card">
-<h3>1 месяц</h3>
-<p>1000₽ / 13$ / 6💎</p>
-<button onclick="addCart('1 месяц',6)">В КОРЗИНУ</button>
-</div>
-
-<div class="card">
-<h3>Навсегда</h3>
-<p>4000₽ / 52$ / 25💎</p>
-<button onclick="addCart('Навсегда',25)">В КОРЗИНУ</button>
-</div>
-
 </div>
 
 <!-- CART -->
 <div id="cart" class="page">
 <div class="card">
-<h3>КОРЗИНА</h3>
+<h3>CART</h3>
 <div id="cartBox"></div>
 </div>
 </div>
@@ -196,30 +160,14 @@ gap:10px;
 <!-- WALLET -->
 <div class="card">
 <h3>WALLET</h3>
-
 <input id="wallet" value="UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv" readonly>
-
-<button onclick="copyWallet()">СКОПИРОВАТЬ</button>
+<button onclick="copyWallet()">COPY</button>
 <button onclick="openTon()">TONKEEPER</button>
-</div>
-
-<!-- SOCIALS -->
-<div class="socials">
-
-<a href="tg://resolve?domain=YOUR_USERNAME"
-onclick="setTimeout(()=>window.open('https://t.me/YOUR_USERNAME','_blank'),200)">
-<button>TELEGRAM</button>
-</a>
-
-<a href="https://www.tiktok.com/@YOUR_USERNAME" target="_blank">
-<button>TIKTOK</button>
-</a>
-
 </div>
 
 <script>
 
-/* FIREBASE SAFE */
+/* SAFE INIT */
 let auth=null;
 let db=null;
 
@@ -239,8 +187,8 @@ db=firebase.firestore();
 
 /* UI */
 function show(id){
-document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-document.getElementById(id).classList.add('active');
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.getElementById(id).classList.add("active");
 }
 
 /* TOAST */
@@ -252,45 +200,38 @@ document.body.appendChild(d);
 setTimeout(()=>d.remove(),1500);
 }
 
-/* AUTH */
+/* AUTH FIXED */
 function register(){
 auth.createUserWithEmailAndPassword(email.value,password.value)
 .then(()=>toast("REGISTER OK"))
-.catch(()=>toast("ERROR"));
+.catch(e=>toast(e.message));
 }
 
 function login(){
 auth.signInWithEmailAndPassword(email.value,password.value)
 .then(()=>toast("LOGIN OK"))
-.catch(()=>toast("WRONG"));
+.catch(e=>toast(e.message));
 }
 
-/* CART */
+/* CART RESTORED */
 let cart=[];
 
 function addCart(n,p){
 cart.push({n,p});
-toast("ADDED");
 renderCart();
+toast("ADDED");
 }
 
-/* ✅ FIXED CART WITH DELETE BUTTON */
 function renderCart(){
-const box=document.getElementById("cartBox");
-if(!box) return;
-
-box.innerHTML=cart.map((i,k)=>`
+cartBox.innerHTML=cart.map((i,k)=>`
 <div class="order">
-${i.n} - ${i.p}💎
-
+${i.n} - ${i.p}
 <button onclick="buy('${i.n}',${i.p})">BUY</button>
 <button onclick="removeItem(${k})">DELETE</button>
-
 </div>
 `).join("");
 }
 
-/* DELETE ITEM */
 function removeItem(i){
 cart.splice(i,1);
 renderCart();
@@ -299,8 +240,6 @@ toast("REMOVED");
 
 /* BUY */
 function buy(n,p){
-if(!auth?.currentUser) return toast("LOGIN FIRST");
-
 db.collection("orders").add({
 uid:auth.currentUser.uid,
 email:auth.currentUser.email,
@@ -310,11 +249,10 @@ code:"CYB-"+Math.random().toString(36).slice(2,10),
 status:"pending",
 time:Date.now()
 });
-
 toast("ORDER SENT");
 }
 
-/* HISTORY */
+/* HISTORY FIXED */
 auth.onAuthStateChanged(u=>{
 if(!u) return;
 
@@ -340,7 +278,6 @@ ${d.data().email}<br>
 ${d.data().product}<br>
 ${d.data().code}<br>
 ${d.data().status}<br>
-
 <button onclick="paid('${d.id}')">PAID</button>
 <button onclick="del('${d.id}')">DEL</button>
 </div>
@@ -369,7 +306,7 @@ window.open("https://tonviewer.com/"+wallet.value,"_blank");
 },400);
 }
 
-/* CYBER RAIN */
+/* CYBER RAIN RESTORED */
 setInterval(()=>{
 const r=document.createElement("div");
 r.className="cyberRain";
