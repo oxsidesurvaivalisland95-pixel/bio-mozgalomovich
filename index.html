@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -5,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CYBER MARKET</title>
 
-<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -48,7 +48,6 @@ input { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:1px so
     <button onclick="show('admin')">АДМИН</button>
 </div>
 
-<!-- АККАУНТ -->
 <div id="auth" class="page active">
     <div class="card" id="authContent">
         <h3>ВХОД / РЕГИСТРАЦИЯ</h3>
@@ -64,26 +63,12 @@ input { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:1px so
     </div>
 </div>
 
-<!-- МАГАЗИН -->
 <div id="shop" class="page">
-    <div class="card">
-        <h3>1 неделя</h3>
-        <span class="price-tag">300₽ / 4$ / 2 TON</span>
-        <button onclick="toCart('1 неделя','300₽ / 4$ / 2 TON')" style="width:100%">В КОРЗИНУ</button>
-    </div>
-    <div class="card">
-        <h3>1 месяц</h3>
-        <span class="price-tag">1000₽ / 13$ / 6 TON</span>
-        <button onclick="toCart('1 месяц','1000₽ / 13$ / 6 TON')" style="width:100%">В КОРЗИНУ</button>
-    </div>
-    <div class="card">
-        <h3>Навсегда</h3>
-        <span class="price-tag">4000₽ / 52$ / 25 TON</span>
-        <button onclick="toCart('Навсегда','4000₽ / 52$ / 25 TON')" style="width:100%">В КОРЗИНУ</button>
-    </div>
+    <div class="card"><h3>1 неделя</h3><span class="price-tag">300₽ / 4$ / 2 TON</span><button onclick="toCart('1 неделя','300₽ / 4$ / 2 TON')" style="width:100%">В КОРЗИНУ</button></div>
+    <div class="card"><h3>1 месяц</h3><span class="price-tag">1000₽ / 13$ / 6 TON</span><button onclick="toCart('1 месяц','1000₽ / 13$ / 6 TON')" style="width:100%">В КОРЗИНУ</button></div>
+    <div class="card"><h3>Навсегда</h3><span class="price-tag">4000₽ / 52$ / 25 TON</span><button onclick="toCart('Навсегда','4000₽ / 52$ / 25 TON')" style="width:100%">В КОРЗИНУ</button></div>
 </div>
 
-<!-- КОРЗИНА -->
 <div id="cart" class="page">
     <div class="card">
         <h3>КОРЗИНА</h3>
@@ -96,15 +81,10 @@ input { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:1px so
     </div>
 </div>
 
-<!-- ИСТОРИЯ -->
 <div id="history" class="page">
-    <div class="card">
-        <h3>ИСТОРИЯ ЗАКАЗОВ</h3>
-        <div id="h_list">Загрузка...</div>
-    </div>
+    <div class="card"><h3>ИСТОРИЯ ЗАКАЗОВ</h3><div id="h_list">Загрузка...</div></div>
 </div>
 
-<!-- АДМИНКА -->
 <div id="admin" class="page">
     <div class="card">
         <h3>АДМИН-ПАНЕЛЬ</h3>
@@ -139,15 +119,9 @@ function msg(t) {
     document.body.appendChild(d); setTimeout(()=>d.remove(),2500); 
 }
 
-// Google Login
 function loginGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider)
-        .then(() => location.reload())
-        .catch(e => {
-            console.error(e);
-            alert("Ошибка Google: " + e.message + "\nУбедитесь, что Google включен в консоли Firebase.");
-        });
+    auth.signInWithPopup(provider).then(()=>location.reload()).catch(e=>alert("Ошибка: Добавьте домен в консоли Firebase (Authentication -> Settings)"));
 }
 
 function doReg() {
@@ -166,10 +140,8 @@ function drawCart() {
     if(!basket.length) { b.innerHTML="Пусто"; p.style.display="none"; return; }
     p.style.display="block";
     b.innerHTML = basket.map((x,i)=>`
-        <div class="order">
-            <b>${x.n}</b><br><small>${x.pr}</small><br>
-            <button onclick="sendOrder('${x.n}','${x.pr}',${i})" style="margin-top:8px; background:#00ffe5; color:#000;">ОФОРМИТЬ</button>
-        </div>
+        <div class="order"><b>${x.n}</b><br><small>${x.pr}</small><br>
+        <button onclick="sendOrder('${x.n}','${x.pr}',${i})" style="margin-top:8px; background:#00ffe5; color:#000;">ОФОРМИТЬ</button></div>
     `).join("");
 }
 
@@ -199,24 +171,19 @@ auth.onAuthStateChanged(u => {
             h.innerHTML = s.docs.map(d => {
                 const x = d.data();
                 const isPaid = x.status === 'paid';
-                const date = new Date(x.time).toLocaleString('ru-RU');
-                return `
-                <div class="order" style="border-color:${isPaid?'#0f0':'#ffae00'}" onclick="checkPaid('${x.status}', '${x.code}')">
-                    <b>${x.product}</b><br>
-                    <small>${x.price}</small><br>
-                    <span class="order-date">${date}</span>
+                return `<div class="order" style="border-color:${isPaid?'#0f0':'#ffae00'}" onclick="checkPaid('${x.status}', '${x.code}')">
+                    <b>${x.product}</b><br><small>${x.price}</small><br>
+                    <span class="order-date">${new Date(x.time).toLocaleString()}</span>
                     Код: ${x.code}<br>
-                    Статус: <span class="${isPaid?'status-paid':'status-wait'}">${isPaid?'ОПЛАЧЕНО ✅':'ОЖИДАНИЕ ⏳'}</span>
-                </div>`;
+                    Статус: <span class="${isPaid?'status-paid':'status-wait'}">${isPaid?'ОПЛАЧЕНО ✅':'ОЖИДАНИЕ ⏳'}</span></div>`;
             }).join("");
         });
     } else { h.innerHTML = "Войдите в аккаунт"; }
 });
 
 function checkPaid(status, code) {
-    if(status === 'paid') {
-        alert("ОПЛАЧЕНО! Скиньте код @mozgalomovich: " + code);
-    } else { msg("Ждем оплаты"); }
+    if(status === 'paid') alert("ОПЛАЧЕНО! Скиньте код @mozgalomovich: " + code);
+    else msg("Ждем оплаты");
 }
 
 function goAdmin() {
@@ -224,15 +191,17 @@ function goAdmin() {
         document.getElementById("a_lock").style.display="none";
         document.getElementById("a_panel").style.display="block";
         db.collection("orders").orderBy("time","desc").onSnapshot(s => {
-            document.getElementById("all_orders").innerHTML = s.docs.map(d => `
-                <div class="order" style="font-size:12px">
-                    ${d.data().email}<br><b>${d.data().product}</b><br>
-                    <small>${new Date(d.data().time).toLocaleString()}</small><br>
-                    Код: <b>${d.data().code}</b><br>
-                    <button onclick="db.collection('orders').doc('${d.id}').update({status:'paid'})">ОПЛАТИТЬ</button>
+            document.getElementById("all_orders").innerHTML = s.docs.map(d => {
+                const x = d.data();
+                const isPaid = x.status === 'paid';
+                return `<div class="order" style="border-color:${isPaid?'#0f0':'#ffae00'}; font-size:12px">
+                    ${x.email}<br><b>${x.product}</b> [${x.price}]<br>
+                    Статус: <b style="color:${isPaid?'#0f0':'#ffae00'}">${isPaid?'ОПЛАЧЕН':'НОВЫЙ'}</b><br>
+                    Код: <b>${x.code}</b><br>
+                    ${!isPaid ? `<button onclick="db.collection('orders').doc('${d.id}').update({status:'paid'})">ПОДТВЕРДИТЬ ОПЛАТУ</button>` : ''}
                     <button onclick="db.collection('orders').doc('${d.id}').delete()" style="background:red">УДАЛИТЬ</button>
-                </div>
-            `).join("");
+                </div>`;
+            }).join("");
         });
     } else msg("Пароль!");
 }
