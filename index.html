@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MOZGALOM MARKET</title>
+    <title>MOZGALOM MARKET 2.0</title>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -11,128 +11,111 @@
 
     <style>
         :root { --n: #00ffe5; --p: #ff00ff; --bg: #05070d; }
-        body { 
-            margin:0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color:white; 
-            display: flex; flex-direction: column; min-height: 100vh;
-        }
-
-        /* Шапка */
+        body { margin:0; font-family: sans-serif; background: var(--bg); color:white; display: flex; flex-direction: column; min-height: 100vh; }
+        
+        /* Дизайн без обрезаний */
         .header { text-align:center; padding:30px 10px; border-bottom: 1px solid var(--n); }
-        h1 { margin:0; font-size:32px; color: var(--n); text-shadow: 0 0 15px var(--n); text-transform: uppercase; }
-
-        /* Навигация - теперь кнопки не тормозят */
-        .nav { 
-            display:flex; justify-content:center; gap:8px; padding:12px; 
-            background: rgba(10, 15, 30, 0.9); position:sticky; top:0; z-index:100;
-            border-bottom: 1px solid var(--n); flex-wrap: wrap;
-        }
-
-        button { 
-            background: linear-gradient(45deg, var(--n), var(--p)); 
-            border: none; padding: 10px 15px; border-radius: 8px; 
-            color: white; font-weight: bold; cursor: pointer;
-        }
-
-        /* Контент - исправил обрезание */
+        .nav { display:flex; justify-content:center; gap:8px; padding:12px; background: rgba(10, 15, 30, 0.9); position:sticky; top:0; z-index:100; border-bottom: 1px solid var(--n); flex-wrap: wrap; }
+        
+        button { background: linear-gradient(45deg, var(--n), var(--p)); border: none; padding: 10px 15px; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; }
+        
         .page { display:none; padding:15px; width: 100%; box-sizing: border-box; }
         .page.active { display:block; }
 
-        .card { 
-            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(0, 255, 229, 0.2);
-            border-radius: 15px; padding: 20px; margin-bottom: 15px; text-align: center;
-        }
-
+        .card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(0, 255, 229, 0.2); border-radius: 15px; padding: 20px; margin-bottom: 15px; text-align: center; }
         input { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:1px solid #333; background:#000; color:white; box-sizing: border-box; }
 
-        /* Кошелек */
-        .wallet-box {
-            background: #111; border: 1px dashed var(--n); padding: 15px; border-radius: 10px; margin: 15px 0;
-            cursor: pointer; transition: 0.3s;
-        }
-        .wallet-box:active { background: var(--n); color: #000; }
-
-        /* Футер (Твои ссылки) */
-        footer {
-            background: #000; padding: 30px 10px; text-align: center;
-            border-top: 1px solid var(--p); margin-top: auto;
-        }
+        /* Кошелек и Кнопка Tonkeeper */
+        .ton-btn { background: #0088cc; color: white; padding: 15px; border-radius: 12px; display: block; text-decoration: none; font-weight: bold; margin-top: 10px; }
+        
+        /* Футер */
+        footer { background: #000; padding: 30px 10px; text-align: center; border-top: 1px solid var(--p); margin-top: auto; }
         .footer-links { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
-        .footer-links a {
-            color: white; text-decoration: none; font-weight: bold; font-size: 12px;
-            padding: 10px 15px; border: 1px solid var(--p); border-radius: 20px;
-        }
+        .footer-links a { color: white; text-decoration: none; font-weight: bold; font-size: 12px; padding: 10px 15px; border: 1px solid var(--p); border-radius: 20px; }
 
-        /* Оптимизированный фон (не лагает) */
-        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.2; }
+        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.1; pointer-events: none; }
     </style>
 </head>
 <body>
 
 <canvas id="bg-canvas"></canvas>
 
-<div class="header">
-    <h1>MOZGALOM</h1>
-</div>
+<div class="header"><h1>MOZGALOM</h1></div>
 
 <div class="nav">
     <button onclick="show('shop')">МАРКЕТ</button>
     <button onclick="show('wallet')">КОШЕЛЕК</button>
-    <button onclick="show('auth')">АККАУНТ</button>
+    <button onclick="show('auth')">ПРОФИЛЬ</button>
     <button onclick="show('history')">ЗАКАЗЫ</button>
+    <button onclick="show('admin')" style="background:none; border:1px solid var(--p); color:var(--p)">АДМИН</button>
 </div>
 
-<!-- МАГАЗИН -->
+<!-- МАРКЕТ -->
 <div id="shop" class="page active">
     <div class="card">
         <h3>1 НЕДЕЛЯ (PRO)</h3>
-        <p style="color:var(--n); font-size:20px; font-weight:bold;">300₽ / 2 TON</p>
-        <button onclick="buy('1 НЕДЕЛЯ','300₽')" style="width:100%">КУПИТЬ</button>
+        <p style="color:var(--n); font-size:22px;">300₽ / 2 TON</p>
+        <button onclick="buy('1 НЕДЕЛЯ','300₽')" style="width:100%">ОФОРМИТЬ</button>
     </div>
     <div class="card">
         <h3>1 МЕСЯЦ (ULTRA)</h3>
-        <p style="color:var(--n); font-size:20px; font-weight:bold;">1000₽ / 6 TON</p>
-        <button onclick="buy('1 МЕСЯЦ','1000₽')" style="width:100%">КУПИТЬ</button>
+        <p style="color:var(--n); font-size:22px;">1000₽ / 6 TON</p>
+        <button onclick="buy('1 МЕСЯЦ','1000₽')" style="width:100%">ОФОРМИТЬ</button>
+    </div>
+    <div class="card">
+        <h3>НАВСЕГДА (LEGEND)</h3>
+        <p style="color:var(--n); font-size:22px;">3500₽ / 20 TON</p>
+        <button onclick="buy('НАВСЕГДА','3500₽')" style="width:100%">ОФОРМИТЬ</button>
     </div>
 </div>
 
-<!-- КОШЕЛЕК -->
+<!-- КОШЕЛЕК (С КНОПКОЙ TONKEEPER) -->
 <div id="wallet" class="page">
     <div class="card">
-        <h3>ОПЛАТА TON</h3>
-        <p>Нажмите на адрес, чтобы скопировать:</p>
-        <div class="wallet-box" onclick="copyWallet()">
-            <strong id="wallet-addr">UQB1...ВАШ_АДРЕС...</strong>
+        <h3>ОПЛАТА ЧЕРЕЗ TON</h3>
+        <p>Адрес кошелька (нажми, чтобы скопировать):</p>
+        <div style="background:#111; padding:10px; border-radius:5px; cursor:pointer; font-size:12px;" onclick="copyW()">
+            <span id="w-addr">UQB1O8Y5I...ТВОЙ_АДРЕС...</span>
         </div>
-        <p style="font-size:12px; color:var(--p)">После оплаты заказ будет активирован админом.</p>
+        
+        <a id="tonkeeper-link" href="https://tonkeeper.com/transfer/UQB1O8Y5I...ТВОЙ_АДРЕС..." class="ton-btn">
+            💎 ОТКРЫТЬ В TONKEEPER
+        </a>
     </div>
 </div>
 
-<!-- АККАУНТ -->
+<!-- ПРОФИЛЬ -->
 <div id="auth" class="page">
     <div class="card" id="authContent">
         <h3>ВХОД</h3>
-        <input id="u_mail" type="email" placeholder="Email">
-        <input id="u_pass" type="password" placeholder="Пароль">
+        <input id="u_mail" type="email" placeholder="Email"><br>
+        <input id="u_pass" type="password" placeholder="Пароль"><br>
         <button onclick="doLogin()" style="width:100%">ВОЙТИ</button>
-        <button onclick="loginGoogle()" style="width:100%; margin-top:10px; background:white; color:black">GOOGLE</button>
+        <button onclick="loginGoogle()" style="width:100%; margin-top:10px; background:#fff; color:#000;">GOOGLE</button>
     </div>
 </div>
 
-<!-- ИСТОРИЯ -->
+<!-- ЗАКАЗЫ -->
 <div id="history" class="page">
+    <div class="card"><h3>ВАШИ ЗАКАЗЫ</h3><div id="h_list"></div></div>
+</div>
+
+<!-- АДМИН-ПАНЕЛЬ (ВЕРНУЛ) -->
+<div id="admin" class="page">
     <div class="card">
-        <h3>ИСТОРИЯ</h3>
-        <div id="h_list">Пусто...</div>
+        <h3>АДМИН-ДОСТУП</h3>
+        <input id="a_pass" type="password" placeholder="Пароль админа">
+        <button onclick="goAdmin()" style="width:100%">ВОЙТИ В ПАНЕЛЬ</button>
+        <div id="a_panel" style="display:none; margin-top:20px; text-align:left;"></div>
     </div>
 </div>
 
 <footer>
     <div class="footer-links">
-        <a href="https://t.me/bio_mozgalom" target="_blank">✈️ НАШ КАНАЛ</a>
+        <a href="https://t.me/bio_mozgalom" target="_blank">✈️ КАНАЛ</a>
         <a href="https://www.tiktok.com/@mozgalomovich" target="_blank">🎵 TIKTOK</a>
         <a href="https://t.me/mozgalomovich" target="_blank" style="border-color:#0f0">💬 АДМИН</a>
     </div>
-    <div style="font-size:10px; opacity:0.5;">MOZGALOM 2026</div>
 </footer>
 
 <script>
@@ -156,58 +139,58 @@ function show(id) {
     document.getElementById(id).classList.add('active'); 
 }
 
-function copyWallet() {
-    const addr = document.getElementById('wallet-addr').innerText;
-    navigator.clipboard.writeText(addr);
-    alert("Адрес скопирован!");
+function copyW() {
+    navigator.clipboard.writeText(document.getElementById('w-addr').innerText);
+    alert("Скопировано!");
 }
 
 function buy(name, price) {
     if(!auth.currentUser) return alert("Войдите в аккаунт!");
     const promo = prompt("Промокод:");
-    let finalPrice = price;
+    let finalP = price;
     if(promo && promo.toLowerCase() === 'fullter2026') {
-        finalPrice = "СКИДКА (fullter2026)";
+        finalP = "СО СКИДКОЙ (fullter2026)";
         alert("Промокод активирован!");
     }
-    const orderId = "MZ-" + Math.random().toString(36).substr(2,6).toUpperCase();
+    const oid = "MZ-" + Math.random().toString(36).substr(2,6).toUpperCase();
     db.collection("orders").add({
-        uid: auth.currentUser.uid,
-        email: auth.currentUser.email,
-        product: name,
-        price: finalPrice,
-        code: orderId,
-        status: "pending",
-        time: Date.now()
+        uid: auth.currentUser.uid, email: auth.currentUser.email,
+        product: name, price: finalP, code: oid, status: "pending", time: Date.now()
     }).then(() => {
-        const text = `🚀 ЗАКАЗ\nТовар: ${name}\nЮзер: ${auth.currentUser.email}\nЦена: ${finalPrice}\nID: ${orderId}`;
-        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(text)}`, {mode:'no-cors'});
+        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent("🛒 НОВЫЙ ЗАКАЗ: "+name+"\nЮзер: "+auth.currentUser.email+"\nПромо: "+promo)}`, {mode:'no-cors'});
         alert("Заказ создан! Оплатите в разделе КОШЕЛЕК.");
         show('history');
     });
 }
 
-// Управление аккаунтом
 auth.onAuthStateChanged(u => {
     if(u) {
         document.getElementById("authContent").innerHTML = `<h3>АККАУНТ</h3><p>${u.email}</p><button onclick="auth.signOut().then(()=>location.reload())" style="width:100%">ВЫЙТИ</button>`;
         db.collection("orders").where("uid","==",u.uid).onSnapshot(s => {
-            document.getElementById("h_list").innerHTML = s.docs.map(d => {
-                const x = d.data();
-                return `<div style="border-bottom:1px solid #333; padding:10px;">${x.product} - ${x.status=='paid'?'ОПЛАЧЕНО ✅':'ЖДЕМ ⏳'}</div>`;
-            }).join("");
+            document.getElementById("h_list").innerHTML = s.docs.map(d => `<div class="card">${d.data().product} - ${d.data().status=='paid'?'ОПЛАЧЕНО ✅':'ЖДЕМ ОПЛАТЫ'}</div>`).join("");
         });
     }
 });
 
-function doLogin() {
-    const e = document.getElementById("u_mail").value, p = document.getElementById("u_pass").value;
-    auth.signInWithEmailAndPassword(e,p).then(()=>location.reload());
+function goAdmin() {
+    if(document.getElementById("a_pass").value === "rahim_45_pro") {
+        document.getElementById("a_panel").style.display="block";
+        db.collection("orders").orderBy("time","desc").onSnapshot(s => {
+            document.getElementById("a_panel").innerHTML = s.docs.map(d => `
+                <div style="font-size:10px; border-bottom:1px solid #333; margin-bottom:10px;">
+                    ${d.data().email} | ${d.data().product} <br>
+                    <button onclick="db.collection('orders').doc('${d.id}').update({status:'paid'})">ОК</button>
+                    <button onclick="db.collection('orders').doc('${d.id}').delete()" style="background:red">X</button>
+                </div>
+            `).join("");
+        });
+    }
 }
 
+function doLogin() { auth.signInWithEmailAndPassword(document.getElementById("u_mail").value, document.getElementById("u_pass").value).then(()=>location.reload()); }
 function loginGoogle() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(()=>location.reload()); }
 
-// ЛЕГКАЯ АНИМАЦИЯ ФОНА (НЕ ТОРМОЗИТ)
+// Анимация фона
 const canvas = document.getElementById('bg-canvas');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth; canvas.height = window.innerHeight;
@@ -221,7 +204,7 @@ function draw() {
         else drops[i] += 20;
     });
 }
-setInterval(draw, 50);
+setInterval(draw, 60);
 </script>
 </body>
 </html>
