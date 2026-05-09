@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MOZGALOM ELITE 10 | IRIDIUM</title>
+    <title>MOZGALOM ELITE 10</title>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -11,263 +11,149 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
-        :root { 
-            --n: #00ffe5; 
-            --p: #ff00ff; 
-            --iridium: linear-gradient(135deg, #00ffe5, #7000ff, #ff00ff);
-            --bg: #03050a; 
-            --card: rgba(255, 255, 255, 0.06); 
-        }
+        :root { --n: #00ffe5; --p: #ff00ff; --bg: #05070d; }
+        body { margin:0; font-family: 'Montserrat', sans-serif; background: var(--bg); color: #fff; overflow-x: hidden; }
         
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { margin:0; font-family: 'Montserrat', sans-serif; background: var(--bg); color: #fff; min-height: 100vh; overflow-x: hidden; }
+        /* КРАСНАЯ ПОЛОСКА (Live Ticker) */
+        .live-ticker { background: rgba(255, 0, 0, 0.8); color: white; padding: 5px; text-align: center; font-size: 10px; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #ff4444; box-shadow: 0 0 15px rgba(255,0,0,0.5); }
 
-        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.4; }
+        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.3; }
+        .header { text-align:center; padding:25px; border-bottom: 2px solid var(--n); background: rgba(0,0,0,0.8); }
+        .neon-title { font-family: 'Orbitron'; font-size: 26px; font-weight: 900; color: var(--n); text-shadow: 0 0 10px var(--n); letter-spacing: 3px; }
 
-        .header { 
-            text-align:center; padding:30px; border-bottom: 2px solid var(--n); 
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); 
-            box-shadow: 0 0 40px rgba(0,255,229,0.2);
-        }
+        .nav { display:flex; gap:10px; padding:12px; overflow-x:auto; background: #000; sticky; top:0; z-index:1000; border-bottom: 1px solid var(--p); }
+        .nav button { flex:0 0 auto; background:transparent; border:1px solid var(--n); padding:10px 18px; border-radius:12px; color:var(--n); font-weight:bold; cursor:pointer; }
+        .nav button.active { background: var(--n); color:#000; }
 
-        .neon-title { 
-            font-family: 'Orbitron'; font-size: 28px; font-weight: 900; 
-            background: var(--iridium); background-size: 300%; 
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
-            animation: flow 5s infinite linear; text-transform: uppercase; letter-spacing: 5px; 
-        }
-        @keyframes flow { 0% { background-position: 0%; } 100% { background-position: 300%; } }
+        .page { display:none; padding:15px; max-width: 500px; margin:0 auto; padding-bottom: 100px; }
+        .page.active { display:block; }
 
-        .nav { 
-            display:flex; gap:12px; padding:15px; overflow-x:auto; 
-            background: rgba(0,0,0,0.95); position:sticky; top:0; z-index:1000; 
-            border-bottom: 1px solid var(--p);
-        }
-        .nav::-webkit-scrollbar { display: none; }
-        .nav button { 
-            flex:0 0 auto; background:rgba(255,255,255,0.03); border:1px solid rgba(0,255,229,0.4); 
-            padding:12px 20px; border-radius:15px; color:#fff; font-weight:bold; 
-            font-size:12px; cursor:pointer; transition: 0.3s; 
-        }
-        .nav button.active { 
-            background: var(--iridium); color:#fff; border:none; 
-            box-shadow: 0 0 20px rgba(112, 0, 255, 0.7); transform: scale(1.05);
-        }
-
-        .page { display:none; padding:20px; width:100%; max-width: 500px; margin:0 auto; padding-bottom: 150px; }
-        .page.active { display:block; animation: slideUp 0.4s ease; }
-        @keyframes slideUp { from { opacity:0; transform: translateY(30px); } to { opacity:1; transform: translateY(0); } }
-
-        .card { 
-            background: var(--card); border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 25px; padding: 25px; margin-bottom: 25px; 
-            backdrop-filter: blur(15px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
-            transition: 0.3s; position: relative; overflow: hidden;
-        }
-        .card:hover { border-color: var(--n); transform: translateY(-5px); }
-
-        .price-tag { 
-            font-size: 38px; font-weight: 900; color: var(--n); 
-            font-family: 'Orbitron'; margin: 15px 0; text-shadow: 0 0 15px var(--n); 
-        }
+        .card { background: rgba(255,255,255,0.05); border: 1px solid rgba(0,255,229,0.3); border-radius: 20px; padding: 25px; margin-bottom: 20px; }
+        .price-tag { font-size: 34px; font-weight: 900; color: #fff; font-family: 'Orbitron'; text-shadow: 0 0 10px var(--n); }
         
-        .buy-btn { 
-            width:100%; padding:20px; border-radius:18px; border:none; 
-            background: var(--iridium); color:#fff; font-weight:900; 
-            cursor:pointer; font-family:'Orbitron'; text-transform: uppercase; 
-            transition: 0.2s; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-        .buy-btn:active { transform: scale(0.95); }
+        /* КНОПКА ОТКРЫТЬ (из презентации) */
+        .open-btn { width:100%; padding:20px; border-radius:15px; border:none; background: #4a86f7; color:#fff; font-weight:900; cursor:pointer; font-family:'Montserrat'; font-size: 18px; box-shadow: 0 4px 15px rgba(74,134,247,0.4); transition: 0.3s; }
+        .open-btn:active { transform: scale(0.98); }
 
-        .roulette-box { 
-            height:110px; border:3px solid var(--p); border-radius:20px; 
-            margin:20px 0; overflow:hidden; position:relative; background:#000; 
-            box-shadow: inset 0 0 20px var(--p);
-        }
-        .roulette-inner { display:flex; align-items:center; position:absolute; left:0; transition: 6s cubic-bezier(0.1, 0, 0, 1); }
-        .roulette-item { width:90px; text-align:center; font-size:35px; flex-shrink:0; }
+        .buy-btn { width:100%; padding:15px; border-radius:12px; border:none; background: linear-gradient(45deg, var(--n), var(--p)); color:#fff; font-weight:900; cursor:pointer; }
 
-        .order-item { 
-            border-radius: 18px; background: rgba(255,255,255,0.04); 
-            padding: 20px; margin-bottom: 12px; border-left: 5px solid var(--n);
-        }
-        .status-badge { 
-            float: right; padding: 4px 10px; border-radius: 50px; 
-            font-size: 9px; font-weight: bold; text-transform: uppercase;
-        }
-        .status-paid { background: #0f8; color: #000; box-shadow: 0 0 10px #0f8; }
-        .status-pending { background: #555; color: #fff; }
+        .order-item { border-left: 5px solid var(--n); margin-bottom: 10px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 0 15px 15px 0; }
+        .status-paid { color: #0f8; font-weight: bold; text-shadow: 0 0 5px #0f8; }
 
-        input { 
-            width:100%; padding:18px; margin:10px 0; border-radius:15px; 
-            border:1px solid rgba(0,255,229,0.3); background:rgba(0,0,0,0.7); 
-            color:#fff; font-family: 'Montserrat';
-        }
-
-        .footer { padding:40px; text-align:center; background: #000; border-top: 1px solid var(--p); }
-        .f-links a { color:var(--n); text-decoration:none; margin:0 15px; font-weight:bold; font-size: 13px; }
+        input { width:100%; padding:15px; margin:10px 0; border-radius:12px; border:1px solid var(--n); background:#000; color:#fff; }
+        .footer { background:#000; padding:20px; text-align:center; border-top: 1px solid var(--p); }
+        .footer a { color:var(--n); text-decoration:none; font-weight:bold; margin: 0 10px; }
     </style>
 </head>
 <body>
+
+<div class="live-ticker" id="ticker">🔥 КТО-ТО КУПИЛ ДЕФ НАВСЕГДА! СИСТЕМА АКТИВНА...</div>
 
 <canvas id="bg-canvas"></canvas>
 
 <div class="header">
     <div class="neon-title">MOZGALOM ELITE 10</div>
-    <div id="live-status" style="font-size: 9px; color: var(--n); margin-top: 8px; letter-spacing: 1px;">СИНХРОНИЗАЦИЯ С TON BLOCKCHAIN...</div>
 </div>
 
 <div class="nav">
-    <button id="n-shop" onclick="show('shop')" class="active">МАРКЕТ</button>
-    <button id="n-cases" onclick="show('cases')">КЕЙСЫ</button>
-    <button id="n-history" onclick="show('history')">ЗАКАЗЫ</button>
-    <button id="n-auth" onclick="show('auth')">ПРОФИЛЬ</button>
-    <button id="n-admin" onclick="show('admin')" style="color:var(--p)">ADM</button>
+    <button onclick="show('shop')" class="active">МАГАЗИН</button>
+    <button onclick="show('history')">МОИ ЗАКАЗЫ</button>
+    <button onclick="show('auth')">ПРОФИЛЬ</button>
 </div>
 
 <div id="shop" class="page active">
     <div class="card">
-        <h3 style="margin:0; opacity: 0.8;">1 НЕДЕЛЯ (PRO)</h3>
+        <h3 style="margin:0">ДЕФЕР: 1 НЕДЕЛЯ</h3>
         <div class="price-tag">300₽</div>
-        <button class="buy-btn" onclick="buy('1 НЕДЕЛЯ PRO', 300)">КУПИТЬ</button>
+        <button class="open-btn" onclick="buy('ДЕФ 1 НЕДЕЛЯ', 300)">Открыть</button>
     </div>
     <div class="card">
-        <h3 style="margin:0; opacity: 0.8;">1 МЕСЯЦ (ULTRA)</h3>
+        <h3 style="margin:0">ДЕФЕР: 1 МЕСЯЦ</h3>
         <div class="price-tag">1000₽</div>
-        <button class="buy-btn" onclick="buy('1 МЕСЯЦ ULTRA', 1000)">КУПИТЬ</button>
+        <button class="open-btn" onclick="buy('ДЕФ 1 МЕСЯЦ', 1000)">Открыть</button>
     </div>
     <div class="card">
-        <h3 style="margin:0; opacity: 0.8;">НАВСЕГДА (LEGEND)</h3>
-        <div class="price-tag">3500₽</div>
-        <button class="buy-btn" onclick="buy('LEGEND FOREVER', 3500)">КУПИТЬ</button>
-    </div>
-</div>
-
-<div id="cases" class="page">
-    <div class="card" style="text-align:center;">
-        <h2 style="font-family: Orbitron; color: var(--p);">LUCKY SPIN</h2>
-        <div class="roulette-box">
-            <div class="roulette-inner" id="rollInner"></div>
-            <div style="position:absolute; top:0; left:50%; width:3px; height:100%; background:var(--n); z-index:10; box-shadow: 0 0 15px var(--n);"></div>
-        </div>
-        <div id="caseAction">
-            <button class="buy-btn" onclick="buy('CASE SPIN', 100)">КУПИТЬ КРУТКУ (100₽)</button>
-        </div>
+        <h3 style="margin:0">ДЕФЕР: НАВСЕГДА</h3>
+        <div class="price-tag">4000₽</div>
+        <button class="open-btn" onclick="buy('ДЕФ НАВСЕГДА', 4000)">Открыть</button>
     </div>
 </div>
 
 <div id="history" class="page">
     <div class="card" style="border-color: var(--p);">
-        <h3 style="margin:0; color: var(--p)">АВТО-ОПЛАТА TON</h3>
-        <p style="font-size: 11px;">Переведи TON на кошелек. В комментарии к платежу **ОБЯЗАТЕЛЬНО** напиши ID заказа.</p>
-        <div style="background:#000; padding:15px; border-radius:15px; border: 1px solid var(--n); margin: 10px 0;">
-            <div style="font-size: 9px; color: var(--n); margin-bottom: 5px;">КОШЕЛЕК:</div>
-            <code id="w-addr" onclick="copyW()" style="font-size: 10px; word-break: break-all; cursor: pointer;">UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv</code>
-        </div>
+        <h3 style="margin:0; color:var(--p)">ОПЛАТА TON</h3>
+        <p style="font-size:10px;">Копируй кошелек и кидай TON. **ID заказа в коммент!**</p>
+        <code id="w-addr" onclick="copyW()" style="font-size:11px; color:var(--n); cursor:pointer;">UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv</code>
     </div>
-    <div id="h_list">Загрузка данных...</div>
+    <div id="h_list">Загрузка...</div>
 </div>
 
 <div id="auth" class="page">
     <div id="uProfile" style="display:none;">
         <div class="card">
-            <span id="uStatus" class="status-badge status-paid">USER</span>
-            <h3 id="uEmail" style="margin:0;">...</h3>
-            <div style="margin-top:20px;">
-                <div style="font-size:10px; margin-bottom:5px;">УРОВЕНЬ ЛОЯЛЬНОСТИ</div>
-                <div style="width:100%; height:10px; background:#111; border-radius:5px; overflow:hidden;">
-                    <div id="lvlFill" style="height:100%; width:5%; background: var(--iridium); box-shadow: 0 0 10px var(--n);"></div>
-                </div>
-            </div>
-            <button onclick="auth.signOut().then(()=>location.reload())" style="margin-top:20px; background:red; border:none; color:#fff; width:100%; padding:12px; border-radius:12px; font-weight:bold; cursor:pointer;">ВЫЙТИ</button>
+            <h3 id="uEmail">...</h3>
+            <button class="buy-btn" onclick="auth.signOut().then(()=>location.reload())">ВЫЙТИ</button>
         </div>
     </div>
     <div id="loginCard" class="card">
-        <h3 style="text-align:center; font-family: Orbitron;">АВТОРИЗАЦИЯ</h3>
+        <h3>ВХОД</h3>
         <input id="u_mail" type="email" placeholder="Email">
         <input id="u_pass" type="password" placeholder="Пароль">
         <button class="buy-btn" onclick="doLogin()">ВОЙТИ</button>
-        <button onclick="loginGoogle()" style="width:100%; margin-top:10px; background:#fff; color:#000; font-weight:bold; padding:15px; border:none; border-radius:12px; cursor:pointer;">GOOGLE LOGIN</button>
-    </div>
-</div>
-
-<div id="admin" class="page">
-    <div class="card">
-        <h3 style="font-family: Orbitron;">ROOT ACCESS</h3>
-        <input id="a_pass" type="password" placeholder="Консольный пароль">
-        <button class="buy-btn" onclick="goAdmin()">ВХОД</button>
-        <div id="a_panel" style="display:none; margin-top:20px;"></div>
     </div>
 </div>
 
 <div class="footer">
-    <div class="f-links">
-        <a href="https://t.me/bio_mozgalom">КАНАЛ</a>
-        <a href="https://t.me/mozgalomovich">АДМИН</a>
-    </div>
+    <a href="https://t.me/bio_mozgalom">КАНАЛ</a>
+    <a href="https://t.me/mozgalomovich">АДМИН</a>
 </div>
 
 <script>
-// --- ПАРАМЕТРЫ (БЕЗ ИЗМЕНЕНИЙ) ---
 const API_KEY = "AHNKVNLN4TE6CIIAAAAOTL47DIXMBIMQGWIH32JC36VUSZ2CSTP5SPMUMBNYSUAFANATP4I";
 const MY_WALLET = "UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv";
 const TG_TOKEN = "8538869779:AAGSu2F22Tx0TAtRH2gXPlF4ZNsPVKTt3lw";
 const TG_CHAT_ID = "7910835075";
 
-const firebaseConfig = { 
-    apiKey: "AIzaSyD94vjwnRQIYC-2Le_nmxtsVKlU6Oww6VE", 
-    authDomain: "mozgalom-site.firebaseapp.com", 
-    projectId: "mozgalom-site", 
-    storageBucket: "mozgalom-site.appspot.com", 
-    appId: "1:564649897907:web:61503121e661fb6a82a5c6" 
-};
-
+const firebaseConfig = { apiKey: "AIzaSyD94vjwnRQIYC-2Le_nmxtsVKlU6Oww6VE", authDomain: "mozgalom-site.firebaseapp.com", projectId: "mozgalom-site", storageBucket: "mozgalom-site.appspot.com", appId: "1:564649897907:web:61503121e661fb6a82a5c6" };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
 function show(id) {
     document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-    document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    document.getElementById('n-'+id).classList.add('active');
 }
 
-// --- АВТО-ОПЛАТА (НОВОЕ) ---
-async function checkPayments() {
+// АВТО-ПРОВЕРКА TON
+async function checkTon() {
     try {
-        const res = await fetch(`https://toncenter.com/api/v2/getTransactions?address=${MY_WALLET}&limit=15&api_key=${API_KEY}`);
+        const res = await fetch(`https://toncenter.com/api/v2/getTransactions?address=${MY_WALLET}&limit=10&api_key=${API_KEY}`);
         const data = await res.json();
         if(!data.ok) return;
 
         const pending = await db.collection("orders").where("status", "==", "pending").get();
-        
         data.result.forEach(tx => {
             const comment = tx.in_msg.message;
-            if(!comment) return;
-            
             pending.forEach(doc => {
-                if(comment.toUpperCase().includes(doc.data().code.toUpperCase())) {
+                if(comment && comment.includes(doc.data().code)) {
                     db.collection("orders").doc(doc.id).update({ status: "paid" });
-                    document.getElementById('live-status').innerText = `✅ ОПЛАТА ПОДТВЕРЖДЕНА ДЛЯ: ${doc.data().code}`;
                 }
             });
         });
-    } catch(e) { console.log("Blockchain error..."); }
+    } catch(e) {}
 }
-setInterval(checkPayments, 30000);
+setInterval(checkTon, 30000);
 
-// --- ЛОГИКА ЗАКАЗОВ (БЕЗ ИЗМЕНЕНИЙ) ---
 function buy(name, price) {
-    if(!auth.currentUser) return alert("СНАЧАЛА ВОЙДИ!");
+    if(!auth.currentUser) return alert("ВОЙДИ В АКК");
     const orderId = "MZ" + Math.random().toString(36).substr(2,4).toUpperCase();
     db.collection("orders").add({
         uid: auth.currentUser.uid, email: auth.currentUser.email,
         product: name, price: price, code: orderId,
-        status: "pending", timestamp: Date.now(), time: new Date().toLocaleString()
+        status: "pending", timestamp: Date.now()
     }).then(() => {
-        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent("🛒 НОВЫЙ ЗАКАЗ\nID: "+orderId+"\nТовар: "+name+"\nЮзер: "+auth.currentUser.email)}`, {mode:'no-cors'});
-        alert(`ЗАКАЗ СОЗДАН!\nID: ${orderId}\nОплати TON с этим ID в комментарии.`);
+        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent("🛒 ЗАКАЗ: "+orderId+"\n"+name)}`, {mode:'no-cors'});
+        alert(`ЗАКАЗ: ${orderId}\nОплати на TON и укажи этот ID в комменте!`);
         show('history');
     });
 }
@@ -277,88 +163,40 @@ auth.onAuthStateChanged(u => {
         document.getElementById('loginCard').style.display = 'none';
         document.getElementById('uProfile').style.display = 'block';
         document.getElementById('uEmail').innerText = u.email;
-        
         db.collection("orders").where("uid","==",u.uid).onSnapshot(s => {
-            let count = s.docs.length;
-            document.getElementById('lvlFill').style.width = Math.min((count * 10), 100) + "%";
-            document.getElementById('uStatus').innerText = count >= 5 ? "ELITE" : "USER";
-
-            const paidSpin = s.docs.find(d => d.data().product === "CASE SPIN" && d.data().status === "paid");
-            if(paidSpin) {
-                document.getElementById('caseAction').innerHTML = `<button class="buy-btn" style="background:var(--n); color:#000;" onclick="startRoll('${paidSpin.id}')">КРУТИТЬ КЕЙС</button>`;
-            } else {
-                document.getElementById('caseAction').innerHTML = `<button class="buy-btn" onclick="buy('CASE SPIN', 100)">КУПИТЬ КРУТКУ (100₽)</button>`;
-            }
-
-            document.getElementById("h_list").innerHTML = s.docs.sort((a,b)=>b.data().timestamp - a.data().timestamp).map(d => `
+            document.getElementById("h_list").innerHTML = s.docs.map(d => `
                 <div class="order-item">
-                    <span class="status-badge status-${d.data().status}">${d.data().status}</span>
-                    <b style="color:var(--n)">${d.data().product}</b><br>
-                    <small>ID: ${d.data().code} | ${d.data().time}</small>
+                    <b>${d.data().product}</b> [${d.data().code}] <br>
+                    Статус: <span class="${d.data().status === 'paid' ? 'status-paid' : ''}">${d.data().status.toUpperCase()}</span>
                 </div>
             `).join("");
         });
     }
 });
 
-// --- КЕЙСЫ ---
-const items = ['💎', '🔥', '👑', '⚡', '💰', '⭐', '🍀'];
-function initRoll() {
-    const inner = document.getElementById('rollInner');
-    for(let i=0; i<80; i++) {
-        const div = document.createElement('div');
-        div.className = 'roulette-item';
-        div.innerText = items[Math.floor(Math.random()*items.length)];
-        inner.appendChild(div);
-    }
-}
-initRoll();
+function doLogin() { auth.signInWithEmailAndPassword(document.getElementById("u_mail").value, document.getElementById("u_pass").value); }
+function copyW() { navigator.clipboard.writeText(MY_WALLET); alert("КОПИРОВАНО"); }
 
-function startRoll(id) {
-    const inner = document.getElementById('rollInner');
-    const move = Math.floor(Math.random() * 3000) + 1500;
-    inner.style.transform = `translateX(-${move}px)`;
-    setTimeout(() => {
-        alert("ВЫИГРЫШ: " + items[Math.floor(Math.random()*items.length)] + "! Напиши админу.");
-        db.collection("orders").doc(id).delete();
-    }, 6000);
-}
-
-// --- СЕРВИСНЫЕ ФУНКЦИИ ---
-function doLogin() { auth.signInWithEmailAndPassword(document.getElementById("u_mail").value, document.getElementById("u_pass").value).catch(e=>alert(e.message)); }
-function loginGoogle() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(()=>location.reload()); }
-function copyW() { navigator.clipboard.writeText(MY_WALLET); alert("КОШЕЛЕК СКОПИРОВАН"); }
-function goAdmin() { 
-    if(document.getElementById("a_pass").value === "rahim_45_pro") {
-        document.getElementById("a_panel").style.display = "block";
-        db.collection("orders").orderBy("timestamp", "desc").onSnapshot(s => {
-            document.getElementById("a_panel").innerHTML = s.docs.map(d => `
-                <div style="background:rgba(255,255,255,0.05); padding:10px; margin-bottom:10px; border-radius:10px; font-size:10px;">
-                    ${d.data().email}<br><b>${d.data().product} (${d.data().code})</b><br>
-                    <button onclick="db.collection('orders').doc('${d.id}').update({status:'paid'})">ОПЛАТИТЬ</button>
-                    <button onclick="db.collection('orders').doc('${d.id}').delete()">УДАЛИТЬ</button>
-                </div>
-            `).join("");
-        });
-    }
-}
-
-// --- МАТРИЦА ---
+// MATRIX BG
 const canvas = document.getElementById('bg-canvas');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-const cols = Array(Math.floor(canvas.width/20)).fill(0);
-function matrix() {
-    ctx.fillStyle = 'rgba(3, 5, 10, 0.15)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.font = '15px monospace';
-    cols.forEach((y, i) => {
-        ctx.fillStyle = Math.random() > 0.5 ? '#00ffe5' : '#ff00ff';
+const columns = Array(Math.floor(canvas.width/20)).fill(0);
+function draw() {
+    ctx.fillStyle = 'rgba(5, 7, 13, 0.15)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#00ffe5'; ctx.font = '15px monospace';
+    columns.forEach((y, i) => {
         ctx.fillText(Math.floor(Math.random()*2), i*20, y);
-        if(y > canvas.height && Math.random() > 0.98) cols[i] = 0; else cols[i] += 20;
+        if(y > canvas.height && Math.random() > 0.98) columns[i] = 0; else columns[i] += 20;
     });
 }
-setInterval(matrix, 70);
+setInterval(draw, 70);
+
+// КРАСНАЯ ПОЛОСКА (Live Updates)
+const buyers = ['da***', 'ki***', 'ma***', 're***'];
+setInterval(() => {
+    document.getElementById('ticker').innerText = `🔥 ЮЗЕР ${buyers[Math.floor(Math.random()*buyers.length)]} КУПИЛ ДЕФ НАВСЕГДА!`;
+}, 10000);
 </script>
 </body>
 </html>
