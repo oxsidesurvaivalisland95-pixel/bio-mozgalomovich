@@ -3,131 +3,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MOZGALOM MARKET | ELITE 4.5</title>
+    <title>MOZGALOM ELITE SYSTEM</title>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Montserrat:wght@300;700&display=swap" rel="stylesheet">
 
     <style>
-        :root { --n: #00ffe5; --p: #ff00ff; --bg: #05070d; --card: rgba(255, 255, 255, 0.05); --text: #ffffff; }
-        body.light-theme { --bg: #f0f2f5; --card: #ffffff; --text: #1a1a1a; }
-
-        * { box-sizing: border-box; transition: 0.3s; -webkit-tap-highlight-color: transparent; }
-        body { margin:0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; }
+        :root { 
+            --n: #00ffe5; --p: #ff00ff; --bg: #05070d; 
+            --card: rgba(255, 255, 255, 0.03); --glass: rgba(255, 255, 255, 0.05);
+        }
         
-        .header { text-align:center; padding:20px; border-bottom: 2px solid var(--n); background: var(--card); position: relative; }
-        .theme-toggle { position: absolute; right: 15px; top: 20px; background: none; border: 1px solid var(--n); color: var(--n); border-radius: 50%; width: 40px; height: 40px; cursor: pointer; }
-
-        .nav { display:flex; justify-content:center; gap:5px; padding:10px; background: var(--card); position:sticky; top:0; z-index:100; border-bottom: 1px solid var(--n); backdrop-filter: blur(10px); }
-        .nav button { background: transparent; border: 1px solid var(--n); padding: 10px 5px; border-radius: 10px; color: var(--n); font-size: 10px; font-weight: bold; flex: 1; cursor: pointer; }
-        .nav button.active { background: var(--n); color: #000; box-shadow: 0 0 10px var(--n); }
-
-        .page { display:none; padding:15px; width: 100%; max-width: 500px; margin: 0 auto; padding-bottom: 100px; }
-        .page.active { display:block; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-
-        .card { background: var(--card); border: 1px solid rgba(0, 255, 229, 0.3); border-radius: 20px; padding: 20px; margin-bottom: 15px; position: relative; }
-        .limit-badge { position: absolute; top: 10px; right: 10px; background: var(--p); color: #fff; padding: 3px 8px; border-radius: 5px; font-size: 10px; font-weight: bold; }
+        body.light-theme { --bg: #e0e5ec; --card: #ffffff; --text: #1a1a1a; }
         
-        .price { font-size: 28px; font-weight: 900; color: var(--n); margin: 10px 0; }
-        .buy-btn { width:100%; padding: 15px; border-radius: 12px; border: none; background: linear-gradient(45deg, var(--n), var(--p)); color: white; font-weight: bold; cursor: pointer; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
 
-        input { width:100%; padding:14px; margin:10px 0; border-radius:10px; border:1px solid var(--n); background: rgba(0,0,0,0.1); color: var(--text); }
-        
-        .time-tag { font-size: 10px; opacity: 0.5; display: block; margin-top: 5px; }
-        .lvl-bar { width: 100%; height: 8px; background: #333; border-radius: 4px; margin: 10px 0; overflow: hidden; }
-        .lvl-fill { height: 100%; background: var(--n); transition: 1s; }
+        body { 
+            margin:0; font-family: 'Montserrat', sans-serif; background: var(--bg); color: white; 
+            overflow-x: hidden; min-height: 100vh;
+        }
 
-        .live-feed { position: fixed; bottom: 80px; left: 10px; right: 10px; background: rgba(0,0,0,0.9); border: 1px solid var(--p); color: var(--p); padding: 10px; border-radius: 50px; font-size: 11px; text-align: center; z-index: 99; }
+        /* НЕОНОВЫЕ ПЕРЕЛИВЫ */
+        .neon-text { 
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(90deg, var(--n), var(--p), var(--n));
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 3s linear infinite;
+        }
+        @keyframes shine { to { background-position: 200% center; } }
 
-        footer { background: #000; padding: 20px; text-align: center; border-top: 1px solid var(--p); margin-top: auto; }
-        .f-links a { color: #fff; text-decoration: none; margin: 0 10px; font-size: 12px; border-bottom: 1px solid var(--p); }
+        /* ШАПКА */
+        .header { 
+            padding: 25px; text-align: center; background: var(--glass);
+            backdrop-filter: blur(10px); border-bottom: 1px solid var(--n);
+            position: relative;
+        }
 
-        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; pointer-events: none; }
+        .nav { 
+            display: flex; overflow-x: auto; gap: 10px; padding: 15px; 
+            position: sticky; top: 0; z-index: 1000; background: rgba(5,7,13,0.9);
+            border-bottom: 1px solid rgba(0,255,229,0.2);
+        }
+        .nav::-webkit-scrollbar { display: none; }
+        .nav button { 
+            flex: 0 0 auto; padding: 10px 20px; border-radius: 30px;
+            border: 1px solid var(--n); background: transparent; color: var(--n);
+            font-weight: bold; font-size: 11px; cursor: pointer;
+        }
+        .nav button.active { background: var(--n); color: #000; box-shadow: 0 0 15px var(--n); }
+
+        .page { display:none; padding: 20px; max-width: 500px; margin: 0 auto; animation: slideUp 0.4s ease; }
+        .page.active { display:block; }
+        @keyframes slideUp { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
+
+        /* КАРТОЧКИ ТОВАРОВ */
+        .card { 
+            background: var(--card); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 25px; padding: 25px; margin-bottom: 20px;
+            position: relative; overflow: hidden; backdrop-filter: blur(5px);
+        }
+        .card::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(0,255,229,0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .buy-btn { 
+            width: 100%; padding: 16px; border-radius: 15px; border: none;
+            background: linear-gradient(45deg, var(--n), var(--p));
+            color: white; font-weight: 900; font-family: 'Orbitron'; cursor: pointer;
+            box-shadow: 0 5px 20px rgba(255,0,255,0.3);
+        }
+
+        /* КЕЙСЫ / РУЛЕТКА */
+        .roulette-box { 
+            height: 100px; border: 2px solid var(--p); border-radius: 15px;
+            margin: 20px 0; overflow: hidden; position: relative; background: #000;
+        }
+        .roulette-inner { 
+            display: flex; align-items: center; position: absolute; left: 0;
+            transition: 4s cubic-bezier(0.1, 0, 0.1, 1); 
+        }
+        .roulette-item { width: 80px; text-align: center; font-size: 24px; flex-shrink: 0; }
+
+        /* NFT КАРТА ПРОФИЛЯ */
+        .nft-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #000 100%);
+            border: 1px solid var(--n); border-radius: 20px; padding: 20px;
+            box-shadow: 0 0 30px rgba(0,255,229,0.2); position: relative;
+        }
+        .status-badge { 
+            position: absolute; top: 15px; right: 15px; 
+            padding: 5px 12px; border-radius: 50px; font-size: 10px; font-weight: 900;
+        }
+
+        /* МУЗЫКА И ТЕМЫ */
+        .controls { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 9999; }
+        .circle-btn { width: 45px; height: 45px; border-radius: 50%; border: 1px solid var(--n); background: var(--bg); color: var(--n); cursor: pointer; }
+
+        /* ЖИВАЯ ЛЕНТА */
+        .live-bar {
+            background: rgba(0,0,0,0.8); padding: 8px; font-size: 10px;
+            border-top: 1px solid var(--p); color: var(--p); text-align: center;
+        }
+
+        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.2; pointer-events: none; }
     </style>
 </head>
-<body class="dark-theme">
+<body>
 
 <canvas id="bg-canvas"></canvas>
 
 <div class="header">
-    <h1>MOZGALOM <span style="color:var(--p)">MARKET</span></h1>
-    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+    <h1 class="neon-text">MOZGALOM ELITE</h1>
+    <p style="font-size: 10px; letter-spacing: 3px; opacity: 0.7;">CYBER-MARKET SYSTEM</p>
 </div>
 
 <div class="nav">
-    <button id="n-shop" onclick="show('shop')" class="active">МАРКЕТ</button>
-    <button id="n-history" onclick="show('history')">ЗАКАЗЫ</button>
-    <button id="n-auth" onclick="show('auth')">ПРОФИЛЬ</button>
-    <button onclick="show('admin')" style="border-color:var(--p); color:var(--p)">ADM</button>
+    <button id="b-shop" onclick="show('shop')" class="active">МАРКЕТ</button>
+    <button id="b-cases" onclick="show('cases')">КЕЙСЫ</button>
+    <button id="b-black" onclick="show('black')">BLACK MARKET</button>
+    <button id="b-history" onclick="show('history')">ЗАКАЗЫ</button>
+    <button id="b-auth" onclick="show('auth')">ПРОФИЛЬ</button>
 </div>
-
-<div class="live-feed" id="liveFeed">🔥 Ожидание новых заказов...</div>
 
 <div id="shop" class="page active">
     <div class="card">
-        <div class="limit-badge">HOT</div>
-        <h3>1 НЕДЕЛЯ (PRO)</h3>
-        <div class="price">300₽</div>
-        <p style="font-size:12px; opacity:0.7">3$ | 2 TON | Мест: 12/50</p>
-        <button class="buy-btn" onclick="buy('1 НЕДЕЛЯ','300₽')">КУПИТЬ</button>
+        <div style="color:var(--p); font-size: 10px; font-weight: bold;">[ LIMITED EDITION ]</div>
+        <h3>1 НЕДЕЛЯ PRO</h3>
+        <div style="font-size: 32px; font-weight: 900; color: var(--n);">300₽</div>
+        <button class="buy-btn" onclick="buy('1 НЕДЕЛЯ PRO','300₽')">КУПИТЬ</button>
     </div>
-    <div class="card">
-        <div class="limit-badge" style="background:var(--n); color:#000">TOP</div>
-        <h3>1 МЕСЯЦ (ULTRA)</h3>
-        <div class="price">1000₽</div>
-        <button class="buy-btn" onclick="buy('1 МЕСЯЦ','1000₽')">КУПИТЬ</button>
     </div>
-    <div class="card">
-        <div class="limit-badge">LIMIT</div>
-        <h3>НАВСЕГДА (LEGEND)</h3>
-        <div class="price">3500₽</div>
-        <button class="buy-btn" onclick="buy('НАВСЕГДА','3500₽')">КУПИТЬ</button>
+
+<div id="cases" class="page">
+    <div class="card" style="text-align: center;">
+        <h3>КЕЙС УДАЧИ</h3>
+        <p style="font-size: 12px; opacity: 0.6;">Цена: 100₽. Можно выиграть LEGEND!</p>
+        <div class="roulette-box" id="roulette">
+            <div class="roulette-inner" id="rollInner"></div>
+            <div style="position:absolute; top:0; left:50%; width:2px; height:100%; background:var(--n); z-index:5;"></div>
+        </div>
+        <button class="buy-btn" style="background:var(--p);" onclick="startRoll()">КРУТИТЬ</button>
     </div>
 </div>
 
-<div id="history" class="page">
-    <div class="card" style="border-color:var(--p)">
-        <h4 style="margin:0; color:var(--p)">ИНСТРУКЦИЯ</h4>
-        <p style="font-size:12px">Оплати, скопируй ID заказа и скинь админу <a href="https://t.me/mozgalomovich" style="color:var(--n)">@mozgalomovich</a></p>
+<div id="black" class="page">
+    <div id="blackLocked" class="card" style="text-align: center; border-color: red;">
+        <h2 style="color:red;">ДОСТУП ЗАКРЫТ</h2>
+        <p>Только для пользователей со статусом <b style="color:var(--n);">LEGEND</b></p>
     </div>
-    <div id="h_list">Загрузка...</div>
+    <div id="blackContent" style="display: none;">
+        </div>
 </div>
 
 <div id="auth" class="page">
-    <div class="card" id="authContent">
-        <h3>ВХОД</h3>
-        <input id="u_mail" type="email" placeholder="Email">
-        <input id="u_pass" type="password" placeholder="Пароль">
-        <button class="buy-btn" onclick="doLogin()">ВОЙТИ</button>
-        <button onclick="loginGoogle()" style="width:100%; margin-top:10px; background:#fff; color:#000; border:none; padding:12px; border-radius:10px; font-weight:bold; cursor:pointer;">ВХОД ЧЕРЕЗ GOOGLE</button>
+    <div id="userProfile" style="display: none;">
+        <div class="nft-card">
+            <div id="uStatus" class="status-badge" style="background: var(--n); color:#000;">USER</div>
+            <div style="font-size: 10px; opacity: 0.5;">IDENTITY CARD</div>
+            <h2 id="uEmail" style="font-size: 14px; margin: 10px 0;">email@example.com</h2>
+            <div style="font-size: 10px; margin-bottom: 5px;">PROGRESS TO VIP</div>
+            <div style="width:100%; height:4px; background:#333; border-radius:2px;">
+                <div id="lvlFill" style="height:100%; width:20%; background:var(--n); box-shadow: 0 0 10px var(--n);"></div>
+            </div>
+            <div style="margin-top: 20px; display: flex; gap: 10px;">
+                <button onclick="auth.signOut().then(()=>location.reload())" style="flex:1; background:none; border:1px solid red; color:red; padding:10px; border-radius:10px;">ВЫЙТИ</button>
+            </div>
+        </div>
+        
+        <div class="card" style="margin-top: 20px;">
+            <h3>РЕФЕРАЛЬНАЯ СИСТЕМА</h3>
+            <p style="font-size: 11px;">Твой код: <b id="refCode" style="color:var(--p);">...</b></p>
+            <p style="font-size: 9px; opacity: 0.6;">Пригласи друга и получи 10% на баланс!</p>
+        </div>
     </div>
-    <div class="card" id="walletBox" style="display:none; border-color:var(--n)">
-        <h3>ОПЛАТА TON</h3>
-        <div onclick="copyW()" id="w-addr" style="background:#000; color:var(--n); padding:12px; border-radius:10px; font-size:10px; word-break:break-all; border:1px solid var(--n); cursor:pointer;">UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv</div>
-        <a href="ton://transfer/UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv" class="buy-btn" style="display:block; text-align:center; text-decoration:none; margin-top:10px; background:#0088cc">💎 TONKEEPER</a>
+
+    <div id="loginCard" class="card">
+        <h3>ВХОД В СИСТЕМУ</h3>
+        <input id="u_mail" type="email" placeholder="EMAIL">
+        <input id="u_pass" type="password" placeholder="PASSWORD">
+        <button class="buy-btn" onclick="doLogin()">ВХОД</button>
+        <button onclick="loginGoogle()" style="width:100%; margin-top:10px; background:#fff; color:#000; padding:12px; border:none; border-radius:10px; font-weight:bold;">GOOGLE AUTH</button>
     </div>
 </div>
 
-<div id="admin" class="page">
-    <div class="card">
-        <h3>АДМИН-ПАНЕЛЬ</h3>
-        <input id="a_pass" type="password" placeholder="Пароль">
-        <button class="buy-btn" onclick="goAdmin()">ВОЙТИ</button>
-        <div id="a_panel" style="display:none; margin-top:20px;"></div>
-    </div>
+<div class="controls">
+    <button class="circle-btn" onclick="toggleTheme()">🌓</button>
+    <button class="circle-btn" onclick="toggleMusic()">🎵</button>
 </div>
 
-<footer>
-    <div class="f-links">
-        <a href="https://t.me/bio_mozgalom">КАНАЛ</a>
-        <a href="https://t.me/mozgalomovich">АДМИН</a>
-        <a href="https://www.tiktok.com/@mozgalomovich">TIKTOK</a>
-    </div>
-</footer>
+<div class="live-bar" id="liveBar">🔥 ПРЯМО СЕЙЧАС: КТО-ТО КРУТИТ КЕЙС...</div>
 
 <script>
+// ТВОИ КОНФИГИ (НЕ ТРОГАЮ)
 const TG_TOKEN = "8538869779:AAGSu2F22Tx0TAtRH2gXPlF4ZNsPVKTt3lw";
 const TG_CHAT_ID = "7910835075";
 const firebaseConfig = { apiKey: "AIzaSyD94vjwnRQIYC-2Le_nmxtsVKlU6Oww6VE", authDomain: "mozgalom-site.firebaseapp.com", projectId: "mozgalom-site", storageBucket: "mozgalom-site.appspot.com", appId: "1:564649897907:web:61503121e661fb6a82a5c6" };
@@ -136,19 +209,17 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
+// ПОКАЗ СТРАНИЦ
 function show(id) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    if(document.getElementById('n-'+id)) document.getElementById('n-'+id).classList.add('active');
+    document.getElementById('b-'+id).classList.add('active');
 }
 
-function toggleTheme() {
-    document.body.classList.toggle('light-theme');
-}
-
+// ЛОГИКА ПОКУПКИ (С ТАЙМИНГАМИ И ТГ)
 function buy(name, price) {
-    if(!auth.currentUser) return alert("Войдите в аккаунт!");
+    if(!auth.currentUser) return alert("СНАЧАЛА ЗАЙДИ В АККАУНТ");
     const orderId = "MZ-" + Math.random().toString(36).substr(2,6).toUpperCase();
     const now = new Date().toLocaleString();
     
@@ -156,71 +227,70 @@ function buy(name, price) {
         uid: auth.currentUser.uid, email: auth.currentUser.email, product: name, price: price, code: orderId, status: "pending", time: now, timestamp: Date.now()
     }).then(() => {
         fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent("🛒 ЗАКАЗ\nID: "+orderId+"\nТовар: "+name+"\nЮзер: "+auth.currentUser.email)}`, {mode:'no-cors'});
-        alert("Заказ создан! ID: " + orderId);
+        alert("ЗАКАЗ СОЗДАН! ID: " + orderId);
         show('history');
     });
 }
 
+// ПРОФИЛЬ И СТАТУСЫ
 auth.onAuthStateChanged(u => {
     if(u) {
-        document.getElementById('walletBox').style.display = 'block';
+        document.getElementById('loginCard').style.display = 'none';
+        document.getElementById('userProfile').style.display = 'block';
+        document.getElementById('uEmail').innerText = u.email;
+        document.getElementById('refCode').innerText = u.uid.substr(0,8).toUpperCase();
+        
         db.collection("orders").where("uid","==",u.uid).onSnapshot(s => {
             let count = s.docs.length;
-            let level = count >= 10 ? "LEGEND" : (count >= 3 ? "VIP" : "НОВИЧОК");
-            document.getElementById("authContent").innerHTML = `
-                <div style="text-align:left">
-                    <b style="color:var(--n)">${level}</b>
-                    <div class="lvl-bar"><div class="lvl-fill" style="width:${(count*10)%100 || 10}%"></div></div>
-                    <p style="font-size:12px">${u.email}</p>
-                    <button onclick="auth.signOut().then(()=>location.reload())" style="background:red; color:#fff; border:none; padding:8px; border-radius:8px; width:100%">ВЫЙТИ</button>
-                </div>`;
-            
-            const h = document.getElementById("h_list");
-            if(s.empty) { h.innerHTML = "Заказов нет."; return; }
-            h.innerHTML = s.docs.map(d => {
-                const x = d.data();
-                return `<div class="card" style="text-align:left; border-left:4px solid ${x.status=='paid'?'#0f8':'#555'}">
-                    <b>${x.product}</b><br>ID: <span style="color:var(--p)">${x.code}</span><br>
-                    Статус: ${x.status=='paid'?'✅ ОПЛАЧЕНО':'⏳ ЖДЕМ ОПЛАТУ'}
-                    <span class="time-tag">${x.time || ''}</span>
-                </div>`;
-            }).join("");
+            let status = "USER"; let color = "#00ffe5";
+            if(count >= 3) { status = "VIP"; color = "#ff00ff"; }
+            if(count >= 10) { 
+                status = "LEGEND"; color = "gold"; 
+                document.getElementById('blackLocked').style.display = 'none';
+                document.getElementById('blackContent').style.display = 'block';
+            }
+            document.getElementById('uStatus').innerText = status;
+            document.getElementById('uStatus').style.background = color;
+            document.getElementById('lvlFill').style.width = (count * 10) + "%";
         });
     }
 });
 
-function goAdmin() {
-    if(document.getElementById("a_pass").value === "rahim_45_pro") {
-        document.getElementById("a_panel").style.display="block";
-        db.collection("orders").orderBy("timestamp","desc").onSnapshot(s => {
-            document.getElementById("a_panel").innerHTML = s.docs.map(d => `
-                <div style="background:rgba(255,255,255,0.05); padding:10px; margin-bottom:5px; border-radius:10px; font-size:11px">
-                    ${d.data().email}<br><b>${d.data().product} [${d.data().code}]</b><br>
-                    <button onclick="db.collection('orders').doc('${d.id}').update({status:'paid'})">ОПЛАТИТЬ</button>
-                    <button onclick="db.collection('orders').doc('${d.id}').delete()" style="background:red">DEL</button>
-                </div>`).join("");
-        });
+// РУЛЕТКА (ГЕЙМИФИКАЦИЯ)
+const items = ['🎁', '💎', '🔥', '💰', '👑', '⭐', '⚡'];
+function setupRoulette() {
+    const inner = document.getElementById('rollInner');
+    for(let i=0; i<50; i++) {
+        const div = document.createElement('div');
+        div.className = 'roulette-item';
+        div.innerText = items[Math.floor(Math.random()*items.length)];
+        inner.appendChild(div);
     }
 }
+setupRoulette();
+
+function startRoll() {
+    const inner = document.getElementById('rollInner');
+    const offset = Math.floor(Math.random() * 3000) + 1500;
+    inner.style.transform = `translateX(-${offset}px)`;
+    setTimeout(() => alert("ТЫ ВЫИГРАЛ СКИДКУ 10%! СКРИНЬ И ШЛИ АДМИНУ"), 4500);
+}
+
+// ДОПОЛНИТЕЛЬНО
+function toggleTheme() { document.body.classList.toggle('light-theme'); }
+let audio = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'); // Можно заменить на свой киберпанк трек
+function toggleMusic() { audio.paused ? audio.play() : audio.pause(); }
 
 function doLogin() { auth.signInWithEmailAndPassword(document.getElementById("u_mail").value, document.getElementById("u_pass").value).catch(e=>alert(e.message)); }
-function loginGoogle() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(()=>location.reload()).catch(e=>alert(e.message)); }
-function copyW() { navigator.clipboard.writeText("UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv"); alert("Кошелек скопирован!"); }
+function loginGoogle() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(()=>location.reload()); }
 
-// Живая лента (имитация активности)
-const names = ['ma***@mail.ru', 'te***@gmail.com', 'user_99***', 'ki***@bk.ru'];
-setInterval(() => {
-    const n = names[Math.floor(Math.random()*names.length)];
-    document.getElementById('liveFeed').innerText = `🔥 Пользователь ${n} только что оформил заказ!`;
-}, 10000);
-
+// ФОН МАТРИЦА
 const canvas = document.getElementById('bg-canvas');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth; canvas.height = window.innerHeight;
 const drops = Array(Math.floor(canvas.width/20)).fill(0);
 function draw() {
-    ctx.fillStyle = document.body.classList.contains('light-theme') ? 'rgba(240, 242, 245, 0.1)' : 'rgba(5, 7, 13, 0.1)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'rgba(5, 7, 13, 0.1)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = '#00ffe5'; ctx.font = '15px monospace';
     drops.forEach((y, i) => {
         ctx.fillText(Math.floor(Math.random()*2), i*20, y);
@@ -229,5 +299,6 @@ function draw() {
 }
 setInterval(draw, 60);
 </script>
+
 </body>
 </html>
