@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CYBER MARKET</title>
 
-<!-- Подключение Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -23,11 +22,10 @@ button:active { transform: scale(0.95); }
 .card { max-width:400px; margin:10px auto; padding:20px; background:rgba(20,25,40,0.9); border:1px solid #00ffe5; border-radius:12px; }
 input { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:1px solid #333; background:#000; color:white; box-sizing:border-box; }
 .toast { position:fixed; bottom:100px; left:50%; transform:translateX(-50%); background:#00ffe5; color:#000; padding:10px 20px; border-radius:8px; font-weight:bold; z-index:1000; }
-.order { margin-top:10px; padding:12px; border:1px solid #333; border-left:3px solid #00ffe5; border-radius:8px; background:rgba(255,255,255,0.03); line-height:1.5; }
+.order { margin-top:10px; padding:12px; border:1px solid #333; border-left:3px solid #00ffe5; border-radius:8px; background:rgba(255,255,255,0.03); cursor:pointer; }
 .socials { position:fixed; bottom:0; left:0; right:0; display:flex; justify-content:center; gap:10px; padding:15px; background:rgba(0,0,0,0.9); }
 .status-wait { color: #ffae00; font-weight: bold; }
 .status-paid { color: #00ff00; font-weight: bold; }
-/* Кибер-дождь */
 .cyberRain { position:fixed; top:-20px; color:#00ffe5; font-size:12px; pointer-events:none; z-index:-1; animation:fall linear forwards; }
 @keyframes fall { to { transform:translateY(110vh); opacity:0; } }
 </style>
@@ -52,7 +50,7 @@ input { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:1px so
     <div class="card" id="authContent">
         <h3>ВХОД / РЕГИСТРАЦИЯ</h3>
         <input id="u_mail" type="email" placeholder="Email">
-        <input id="u_pass" type="password" placeholder="Пароль (6+ знаков)">
+        <input id="u_pass" type="password" placeholder="Пароль">
         <div style="display:flex; gap:10px;">
             <button onclick="doReg()" style="flex:1">СОЗДАТЬ</button>
             <button onclick="doLogin()" style="flex:1">ВОЙТИ</button>
@@ -73,10 +71,9 @@ input { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:1px so
         <h3>КОРЗИНА</h3>
         <div id="cartList">Пусто</div>
         <div id="payArea" style="display:none; margin-top:15px; border-top:1px solid #333; padding-top:10px;">
-            <p style="font-size:13px; color:#00ffe5"><b>КАК КУПИТЬ:</b><br>1. Переведите TON на адрес.<br>2. Нажмите оформить.<br>3. Скиньте код админу <b>@mozgalomovich</b></p>
+            <p style="font-size:12px; color:#00ffe5">Оплатите TON и нажмите кнопку ниже:</p>
             <input id="addr" value="UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv" readonly>
             <button onclick="copyW()" style="width:100%; margin-bottom:5px">КОПИРОВАТЬ АДРЕС</button>
-            <button onclick="window.location.href='tonkeeper://'" style="width:100%; background:#0088cc">TONKEEPER</button>
         </div>
     </div>
 </div>
@@ -85,7 +82,7 @@ input { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:1px so
 <div id="history" class="page">
     <div class="card">
         <h3>ИСТОРИЯ ЗАКАЗОВ</h3>
-        <div id="h_list">Войдите в аккаунт</div>
+        <div id="h_list">Загрузка данных...</div>
     </div>
 </div>
 
@@ -101,14 +98,11 @@ input { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:1px so
     </div>
 </div>
 
-<!-- СОЦСЕТИ -->
 <div class="socials">
     <a href="https://t.me/bio_mozgalom" target="_blank"><button style="background:#0088cc">TG КАНАЛ</button></a>
-    <a href="https://www.tiktok.com/@mozgalomovich?_r=1&_t=ZS-96E1FTEA933" target="_blank"><button style="background:#000; border:1px solid #f0f">TIKTOK</button></a>
 </div>
 
 <script>
-// Твои ключи Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyD94vjwnRQIYC-2Le_nmxtsVKlU6Oww6VE",
     authDomain: "mozgalom-site.firebaseapp.com",
@@ -117,12 +111,9 @@ const firebaseConfig = {
     appId: "1:564649897907:web:61503121e661fb6a82a5c6"
 };
 
-let auth, db;
-try {
-    firebase.initializeApp(firebaseConfig);
-    auth = firebase.auth(); 
-    db = firebase.firestore();
-} catch(e) { console.error("Ошибка инициализации:", e); }
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
 function show(id) { 
     document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); 
@@ -134,75 +125,77 @@ function msg(t) {
     document.body.appendChild(d); setTimeout(()=>d.remove(),2500); 
 }
 
-// Авторизация
 function doReg() {
     const e = document.getElementById("u_mail").value, p = document.getElementById("u_pass").value;
-    auth.createUserWithEmailAndPassword(e,p).then(()=>msg("АККАУНТ СОЗДАН")).catch(err=>msg("Ошибка: "+err.message));
+    auth.createUserWithEmailAndPassword(e,p).then(()=>location.reload()).catch(err=>msg(err.message));
 }
 function doLogin() {
     const e = document.getElementById("u_mail").value, p = document.getElementById("u_pass").value;
-    auth.signInWithEmailAndPassword(e,p).then(()=>msg("ВХОД ВЫПОЛНЕН")).catch(()=>msg("Неверные данные"));
+    auth.signInWithEmailAndPassword(e,p).then(()=>location.reload()).catch(()=>msg("Ошибка входа"));
 }
 
-// Корзина
 let basket = [];
-function toCart(n,p) { basket.push({n,p}); msg("ДОБАВЛЕНО"); drawCart(); }
+function toCart(n,p) { basket.push({n,p}); msg("В корзине"); drawCart(); }
 function drawCart() {
     const b = document.getElementById("cartList"), p = document.getElementById("payArea");
     if(!basket.length) { b.innerHTML="Пусто"; p.style.display="none"; return; }
     p.style.display="block";
     b.innerHTML = basket.map((x,i)=>`
         <div class="order">
-            <b>${x.n}</b> — ${x.p}💎 <br>
-            <button onclick="sendOrder('${x.n}',${x.p},${i})" style="margin-top:8px; background:#00ffe5; color:#000;">ОФОРМИТЬ</button>
-            <button onclick="basket.splice(${i},1);drawCart();" style="background:red;">УДАЛИТЬ</button>
+            <b>${x.n}</b><br>
+            <button onclick="sendOrder('${x.n}',${i})" style="margin-top:5px; background:#00ffe5; color:#000;">ОФОРМИТЬ</button>
         </div>
     `).join("");
 }
 
-// Отправка заказа
-function sendOrder(productName, price, index) {
-    if(!auth.currentUser) return msg("НУЖЕН ВХОД!");
-    const uniqueCode = "CB-" + Math.random().toString(36).substr(2,7).toUpperCase();
-    
+function sendOrder(n, i) {
+    if(!auth.currentUser) return msg("Войдите!");
+    const code = "CB-" + Math.random().toString(36).substr(2,7).toUpperCase();
     db.collection("orders").add({
         uid: auth.currentUser.uid,
         email: auth.currentUser.email,
-        product: productName,
-        code: uniqueCode,
+        product: n,
+        code: code,
         status: "pending",
         time: Date.now()
     }).then(() => {
-        alert("ЗАКАЗ ОФОРМЛЕН!\nКод: " + uniqueCode + "\n\nСкиньте этот код @mozgalomovich для активации.");
-        basket.splice(index, 1);
-        drawCart();
-        show('history');
-    }).catch(() => msg("Ошибка базы данных!"));
+        alert("Заказ создан! Код: "+code);
+        basket.splice(i,1); drawCart(); show('history');
+    });
 }
 
-// Следим за пользователем
 auth.onAuthStateChanged(u => {
+    const h = document.getElementById("h_list");
     if(u) {
         document.getElementById("authContent").innerHTML = `<h3>АККАУНТ</h3><p>${u.email}</p><button onclick="auth.signOut().then(()=>location.reload())" style="width:100%">ВЫЙТИ</button>`;
         
-        // Загрузка истории
-        db.collection("orders").where("uid","==",u.uid).orderBy("time","desc").onSnapshot(s => {
-            const h = document.getElementById("h_list");
-            if(s.empty) return h.innerHTML = "Заказов пока нет.";
+        // Загрузка истории без задержек
+        db.collection("orders").where("uid","==",u.uid).onSnapshot(s => {
+            if(s.empty) return h.innerHTML = "Заказов нет.";
             h.innerHTML = s.docs.map(d => {
                 const x = d.data();
                 const isPaid = x.status === 'paid';
-                return `<div class="order" style="border-color:${isPaid?'#0f0':'#ffae00'}">
+                return `
+                <div class="order" style="border-color:${isPaid?'#0f0':'#ffae00'}" onclick="checkPaid('${x.status}', '${x.code}')">
                     <b>${x.product}</b><br>
-                    Код: <span style="color:#00ffe5">${x.code}</span><br>
-                    Статус: <span class="${isPaid?'status-paid':'status-wait'}">${isPaid?'ОПЛАЧЕНО ✅':'В ОЖИДАНИИ ⏳'}</span>
+                    Код: ${x.code}<br>
+                    Статус: <span class="${isPaid?'status-paid':'status-wait'}">${isPaid?'ОПЛАЧЕНО ✅':'ОЖИДАНИЕ ⏳'}</span>
                 </div>`;
             }).join("");
         });
+    } else {
+        h.innerHTML = "Войдите в аккаунт";
     }
 });
 
-// Админка
+function checkPaid(status, code) {
+    if(status === 'paid') {
+        alert("ОПЛАЧЕНО!\n\nНапишите нашему менеджеру @mozgalomovich и скиньте код заказа: " + code + ", чтобы получить ваш товар.");
+    } else {
+        msg("Ожидайте подтверждения админом");
+    }
+}
+
 function goAdmin() {
     if(document.getElementById("a_pass").value === "rahim_45_pro") {
         document.getElementById("a_lock").style.display="none";
@@ -210,19 +203,17 @@ function goAdmin() {
         db.collection("orders").orderBy("time","desc").onSnapshot(s => {
             document.getElementById("all_orders").innerHTML = s.docs.map(d => `
                 <div class="order" style="font-size:12px">
-                    ${d.data().email} -> <b>${d.data().product}</b><br>
-                    Код: <b>${d.data().code}</b><br>
-                    <button onclick="db.collection('orders').doc('${d.id}').update({status:'paid'})">ОПЛАЧЕНО</button>
+                    ${d.data().email}<br><b>${d.data().product}</b> [${d.data().code}]<br>
+                    <button onclick="db.collection('orders').doc('${d.id}').update({status:'paid'})">ОПЛАТИТЬ</button>
                     <button onclick="db.collection('orders').doc('${d.id}').delete()" style="background:red">УДАЛИТЬ</button>
                 </div>
             `).join("");
         });
-    } else msg("НЕВЕРНЫЙ ПАРОЛЬ");
+    } else msg("Пароль!");
 }
 
-function copyW() { const i=document.getElementById("addr"); i.select(); navigator.clipboard.writeText(i.value); msg("АДРЕС КОПИРОВАН"); }
+function copyW() { const i=document.getElementById("addr"); i.select(); navigator.clipboard.writeText(i.value); msg("Скопировано"); }
 
-// Эффект дождя
 setInterval(()=>{
     const r=document.createElement("div"); r.className="cyberRain"; r.innerText="01";
     r.style.left=Math.random()*100+"vw"; r.style.animationDuration=(2+Math.random()*3)+"s";
