@@ -12,48 +12,27 @@
     <style>
         :root { --n: #00ffe5; --p: #ff00ff; --bg: #05070d; }
         body { margin:0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color:white; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
-        
         .header { text-align:center; padding:40px 10px; border-bottom: 2px solid var(--n); background: linear-gradient(to bottom, #0a0f1e, var(--bg)); }
         .nav { display:flex; justify-content:center; gap:10px; padding:15px; background: rgba(10, 15, 30, 0.95); position:sticky; top:0; z-index:100; border-bottom: 1px solid var(--n); backdrop-filter: blur(10px); flex-wrap: wrap; }
-        
-        button { background: linear-gradient(45deg, var(--n), var(--p)); border: none; padding: 12px 20px; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        button:hover { transform: translateY(-2px); box-shadow: 0 0 15px var(--n); }
-        
+        button { background: linear-gradient(45deg, var(--n), var(--p)); border: none; padding: 12px 20px; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .page { display:none; padding:20px; width: 100%; box-sizing: border-box; max-width: 600px; margin: 0 auto; }
-        .page.active { display:block; animation: slideUp 0.4s ease; }
-        @keyframes slideUp { from { transform: translateY(20px); opacity:0; } to { transform: translateY(0); opacity:1; } }
-
-        .card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(0, 255, 229, 0.3); border-radius: 20px; padding: 25px; margin-bottom: 20px; text-align: center; position: relative; }
-        input { width:100%; padding:14px; margin:10px 0; border-radius:10px; border:1px solid #333; background:#000; color:white; box-sizing: border-box; font-size: 16px; }
-
-        .price-box { margin: 15px 0; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 12px; }
-        .p-main { color: var(--n); font-size: 26px; font-weight: 900; display: block; }
-        .p-sub { color: #ccc; font-size: 14px; display: block; margin-top: 5px; }
-
+        .page.active { display:block; }
+        .card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(0, 255, 229, 0.3); border-radius: 20px; padding: 25px; margin-bottom: 20px; text-align: center; }
+        input { width:100%; padding:14px; margin:10px 0; border-radius:10px; border:1px solid #333; background:#000; color:white; box-sizing: border-box; }
         .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-top: 10px; }
         .status-pending { background: #555; color: #fff; }
-        .status-paid { background: #00ff88; color: #000; box-shadow: 0 0 10px #00ff88; }
-
-        .order-code { font-family: 'Courier New', monospace; color: var(--p); background: rgba(255,0,255,0.1); padding: 5px 10px; border-radius: 5px; border: 1px solid rgba(255,0,255,0.3); }
-
-        .ton-btn { background: #0088cc; color: white; padding: 18px; border-radius: 15px; display: block; text-decoration: none; font-weight: bold; margin-top: 15px; text-align: center; box-shadow: 0 5px 20px rgba(0,136,204,0.3); }
-
-        /* Админ-кнопки */
-        .adm-btn-ok { background: #00ff88; color: #000; padding: 8px; margin: 2px; font-size: 10px; }
-        .adm-btn-wait { background: #ffcc00; color: #000; padding: 8px; margin: 2px; font-size: 10px; }
-        .adm-btn-del { background: #ff4444; color: #fff; padding: 8px; margin: 2px; font-size: 10px; }
-
+        .status-paid { background: #00ff88; color: #000; }
+        .order-code { font-family: monospace; color: var(--p); background: rgba(255,0,255,0.1); padding: 5px 10px; border-radius: 5px; border: 1px solid rgba(255,0,255,0.3); }
+        .ton-btn { background: #0088cc; color: white; padding: 18px; border-radius: 15px; display: block; text-decoration: none; font-weight: bold; margin-top: 15px; text-align: center; }
         footer { background: #000; padding: 40px 10px; text-align: center; border-top: 2px solid var(--p); margin-top: auto; }
         .footer-links { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
         .footer-links a { color: white; text-decoration: none; font-weight: bold; font-size: 12px; padding: 12px 20px; border: 1px solid var(--p); border-radius: 50px; }
-
         #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; pointer-events: none; }
     </style>
 </head>
 <body>
 
 <canvas id="bg-canvas"></canvas>
-
 <div class="header"><h1>MOZGALOM</h1></div>
 
 <div class="nav">
@@ -64,59 +43,27 @@
     <button onclick="show('admin')" style="background:none; border:1px solid var(--p); color:var(--p)">АДМИН</button>
 </div>
 
-<!-- МАРКЕТ -->
 <div id="shop" class="page active">
-    <div class="card">
-        <h3>1 НЕДЕЛЯ (PRO)</h3>
-        <div class="price-box">
-            <span class="p-main">300₽</span>
-            <span class="p-sub">3$ | 2 TON</span>
-        </div>
-        <button onclick="buy('1 НЕДЕЛЯ','300₽ / 3$ / 2 TON')" style="width:100%">КУПИТЬ</button>
-    </div>
-    <div class="card">
-        <h3>1 МЕСЯЦ (ULTRA)</h3>
-        <div class="price-box">
-            <span class="p-main">1000₽</span>
-            <span class="p-sub">10$ | 6 TON</span>
-        </div>
-        <button onclick="buy('1 МЕСЯЦ','1000₽ / 10$ / 6 TON')" style="width:100%">КУПИТЬ</button>
-    </div>
-    <div class="card">
-        <h3>НАВСЕГДА (LEGEND)</h3>
-        <div class="price-box">
-            <span class="p-main">3500₽</span>
-            <span class="p-sub">35$ | 20 TON</span>
-        </div>
-        <button onclick="buy('НАВСЕГДА','3500₽ / 35$ / 20 TON')" style="width:100%">КУПИТЬ</button>
-    </div>
+    <div class="card"><h3>1 НЕДЕЛЯ (PRO)</h3><p>300₽ / 3$ / 2 TON</p><button onclick="buy('1 НЕДЕЛЯ','300₽ / 3$ / 2 TON')" style="width:100%">КУПИТЬ</button></div>
+    <div class="card"><h3>1 МЕСЯЦ (ULTRA)</h3><p>1000₽ / 10$ / 6 TON</p><button onclick="buy('1 МЕСЯЦ','1000₽ / 10$ / 6 TON')" style="width:100%">КУПИТЬ</button></div>
+    <div class="card"><h3>НАВСЕГДА (LEGEND)</h3><p>3500₽ / 35$ / 20 TON</p><button onclick="buy('НАВСЕГДА','3500₽ / 35$ / 20 TON')" style="width:100%">КУПИТЬ</button></div>
 </div>
 
-<!-- КОШЕЛЕК -->
 <div id="wallet" class="page">
     <div class="card">
         <h3>ОПЛАТА TON</h3>
-        <p>Нажми на адрес, чтобы скопировать:</p>
-        <div id="w-addr" style="background:#000; padding:15px; border-radius:10px; cursor:pointer; font-size:10px; word-break:break-all; border:1px solid var(--n); color: var(--n);" onclick="copyW()">
-            UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv
-        </div>
-        
-        <a id="ton-link" href="ton://transfer/UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv" class="ton-btn">
-            💎 ОТКРЫТЬ TONKEEPER
-        </a>
-        <p style="font-size:11px; opacity:0.6; margin-top:15px;">После перевода статус заказа обновится в Истории.</p>
+        <div id="w-addr" style="background:#000; padding:15px; border-radius:10px; cursor:pointer; font-size:10px; word-break:break-all; border:1px solid var(--n); color: var(--n);" onclick="copyW()">UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv</div>
+        <a href="ton://transfer/UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv" class="ton-btn">💎 ОТКРЫТЬ TONKEEPER</a>
     </div>
 </div>
 
-<!-- ИСТОРИЯ -->
 <div id="history" class="page">
     <div class="card">
         <h3>ВАШИ ЗАКАЗЫ</h3>
-        <div id="h_list">Войдите в профиль...</div>
+        <div id="h_list">Загрузка истории...</div>
     </div>
 </div>
 
-<!-- АККАУНТ -->
 <div id="auth" class="page">
     <div class="card" id="authContent">
         <h3>ВХОД</h3>
@@ -127,13 +74,12 @@
     </div>
 </div>
 
-<!-- АДМИН-ПАНЕЛЬ -->
 <div id="admin" class="page">
     <div class="card">
-        <h3>УПРАВЛЕНИЕ</h3>
-        <input id="a_pass" type="password" placeholder="Код доступа">
-        <button onclick="goAdmin()" style="width:100%">ВОЙТИ В ПАНЕЛЬ</button>
-        <div id="a_panel" style="display:none; margin-top:25px; text-align:left;"></div>
+        <h3>АДМИН</h3>
+        <input id="a_pass" type="password" placeholder="Пароль">
+        <button onclick="goAdmin()" style="width:100%">ВОЙТИ</button>
+        <div id="a_panel" style="display:none; margin-top:20px; text-align:left;"></div>
     </div>
 </div>
 
@@ -148,14 +94,7 @@
 <script>
 const TG_TOKEN = "8538869779:AAGSu2F22Tx0TAtRH2gXPlF4ZNsPVKTt3lw";
 const TG_CHAT_ID = "7910835075";
-
-const firebaseConfig = {
-    apiKey: "AIzaSyD94vjwnRQIYC-2Le_nmxtsVKlU6Oww6VE",
-    authDomain: "mozgalom-site.firebaseapp.com",
-    projectId: "mozgalom-site",
-    storageBucket: "mozgalom-site.appspot.com",
-    appId: "1:564649897907:web:61503121e661fb6a82a5c6"
-};
+const firebaseConfig = { apiKey: "AIzaSyD94vjwnRQIYC-2Le_nmxtsVKlU6Oww6VE", authDomain: "mozgalom-site.firebaseapp.com", projectId: "mozgalom-site", storageBucket: "mozgalom-site.appspot.com", appId: "1:564649897907:web:61503121e661fb6a82a5c6" };
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
@@ -166,50 +105,37 @@ function show(id) {
     document.getElementById(id).classList.add('active'); 
 }
 
-function copyW() {
-    navigator.clipboard.writeText(document.getElementById('w-addr').innerText);
-    alert("Кошелек скопирован!");
-}
+function copyW() { navigator.clipboard.writeText(document.getElementById('w-addr').innerText); alert("Кошелек скопирован!"); }
 
 function buy(name, price) {
-    if(!auth.currentUser) return alert("Сначала войдите в аккаунт!");
-    const promo = prompt("Промокод (если есть):");
-    let finalP = price;
-    if(promo && promo.toLowerCase() === 'fullter2026') {
-        finalP = "PROMO: " + price;
-        alert("Промокод активирован!");
-    }
+    if(!auth.currentUser) return alert("Сначала войдите!");
     const orderId = "MZ-" + Math.random().toString(36).substr(2,6).toUpperCase();
-    
-    db.collection("orders").add({
-        uid: auth.currentUser.uid,
-        email: auth.currentUser.email,
-        product: name,
-        price: finalP,
-        code: orderId,
-        status: "pending",
-        time: Date.now()
-    }).then(() => {
-        const text = `🚀 НОВЫЙ ЗАКАЗ\nID: ${orderId}\nТовар: ${name}\nСумма: ${finalP}\nЮзер: ${auth.currentUser.email}`;
-        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(text)}`, {mode:'no-cors'});
+    db.collection("orders").add({ uid: auth.currentUser.uid, email: auth.currentUser.email, product: name, price: price, code: orderId, status: "pending", time: Date.now() })
+    .then(() => {
+        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent("🛒 ЗАКАЗ: "+name+"\nID: "+orderId+"\nЮзер: "+auth.currentUser.email)}`, {mode:'no-cors'});
         alert("Заказ создан! Код: " + orderId);
         show('history');
     });
 }
 
+// ИСПРАВЛЕННАЯ ФУНКЦИЯ ИСТОРИИ
 auth.onAuthStateChanged(u => {
     if(u) {
         document.getElementById("authContent").innerHTML = `<h3>АККАУНТ</h3><p>${u.email}</p><button onclick="auth.signOut().then(()=>location.reload())" style="width:100%">ВЫЙТИ</button>`;
-        // Подгрузка истории
-        db.collection("orders").where("uid","==",u.uid).orderBy("time","desc").onSnapshot(s => {
-            document.getElementById("h_list").innerHTML = s.docs.length ? s.docs.map(d => {
+        // Убрал orderBy, чтобы точно работало без индексов
+        db.collection("orders").where("uid","==",u.uid).onSnapshot(s => {
+            const hList = document.getElementById("h_list");
+            if (s.empty) { hList.innerHTML = "У вас нет заказов."; return; }
+            hList.innerHTML = s.docs.map(d => {
                 const x = d.data();
                 return `<div class="card" style="text-align:left; padding:15px;">
                     <b>${x.product}</b> <br>
                     Код: <span class="order-code">${x.code}</span> <br>
                     Статус: <span class="status-badge ${x.status=='paid'?'status-paid':'status-pending'}">${x.status=='paid'?'ОПЛАЧЕНО':'ОЖИДАНИЕ'}</span>
                 </div>`;
-            }).join("") : "У вас нет активных заказов.";
+            }).join("");
+        }, err => {
+            document.getElementById("h_list").innerHTML = "Ошибка базы: " + err.message;
         });
     }
 });
@@ -217,25 +143,22 @@ auth.onAuthStateChanged(u => {
 function goAdmin() {
     if(document.getElementById("a_pass").value === "rahim_45_pro") {
         document.getElementById("a_panel").style.display="block";
-        db.collection("orders").orderBy("time","desc").onSnapshot(s => {
-            document.getElementById("a_panel").innerHTML = s.docs.map(d => `
-                <div style="background:#111; padding:10px; margin-bottom:10px; border-radius:10px; font-size:12px; border-left:4px solid var(--p);">
-                    <b>${d.data().email}</b> <br>
-                    ${d.data().product} [${d.data().code}] <br>
-                    Статус: ${d.data().status} <br>
-                    <button class="adm-btn-ok" onclick="db.collection('orders').doc('${d.id}').update({status:'paid'})">ОПЛАЧЕНО</button>
-                    <button class="adm-btn-wait" onclick="db.collection('orders').doc('${d.id}').update({status:'pending'})">ОЖИДАНИЕ</button>
-                    <button class="adm-btn-del" onclick="db.collection('orders').doc('${d.id}').delete()">УДАЛИТЬ</button>
-                </div>
-            `).join("");
+        db.collection("orders").onSnapshot(s => {
+            document.getElementById("a_panel").innerHTML = s.docs.map(d => {
+                const x = d.data();
+                return `<div style="background:#111; padding:10px; margin-bottom:10px; border-radius:10px; font-size:12px;">
+                    <b>${x.email}</b><br>${x.product} [${x.code}]<br>
+                    <button onclick="db.collection('orders').doc('${d.id}').update({status:'paid'})">ОПЛАТИТЬ</button>
+                    <button onclick="db.collection('orders').doc('${d.id}').delete()" style="background:red">УДАЛИТЬ</button>
+                </div>`;
+            }).join("");
         });
-    } else { alert("Неверный код!"); }
+    }
 }
 
-function doLogin() { auth.signInWithEmailAndPassword(document.getElementById("u_mail").value, document.getElementById("u_pass").value).then(()=>location.reload()).catch(e=>alert("Ошибка: "+e.message)); }
+function doLogin() { auth.signInWithEmailAndPassword(document.getElementById("u_mail").value, document.getElementById("u_pass").value).then(()=>location.reload()).catch(e=>alert(e.message)); }
 function loginGoogle() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(()=>location.reload()); }
 
-// Анимация фона
 const canvas = document.getElementById('bg-canvas');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth; canvas.height = window.innerHeight;
