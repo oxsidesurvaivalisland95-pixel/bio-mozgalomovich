@@ -3,320 +3,420 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CYBER RESTORED</title>
+<title>CYBER MARKET</title>
 
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
 <style>
-
-body{
-margin:0;
-font-family:Arial;
-background:
-radial-gradient(circle,#00ffe522,transparent),
-radial-gradient(circle,#ff00ff22,transparent),
-#05070d;
-color:white;
-overflow-x:hidden;
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: 
+        radial-gradient(circle at top left, #00ffe522, transparent),
+        radial-gradient(circle at bottom right, #ff00ff22, transparent),
+        linear-gradient(180deg, #05070d, #060912, #0a1020);
+    color: white;
+    overflow-x: hidden;
+    min-height: 100vh;
 }
 
-.header{
-text-align:center;
-padding:20px;
-font-size:30px;
-color:#00ffe5;
-text-shadow:0 0 15px #00ffe5;
+.header {
+    text-align: center;
+    padding: 20px 10px;
 }
 
-.nav{
-display:flex;
-justify-content:center;
-gap:10px;
-padding:10px;
+.header h1 {
+    margin: 0;
+    font-size: 34px;
+    color: #00ffe5;
+    text-shadow: 0 0 20px #00ffe5;
 }
 
-button{
-background:linear-gradient(90deg,#00ffe5,#ff00ff);
-border:none;
-padding:10px 14px;
-border-radius:10px;
-color:white;
-cursor:pointer;
+.user-tag {
+    font-size: 14px;
+    color: #ff00ff;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 5px;
 }
 
-.page{display:none;padding:20px;}
-.page.active{display:block;}
-
-.card{
-max-width:420px;
-margin:10px auto;
-padding:15px;
-background:#111827;
-border:1px solid #00ffe5;
-border-radius:12px;
+.nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
-input{
-width:100%;
-padding:10px;
-margin-top:10px;
-border:none;
-border-radius:8px;
+button {
+    background: linear-gradient(90deg, #00ffe5, #ff00ff);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 10px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 255, 229, 0.3);
+    transition: 0.3s;
 }
 
-.order{
-margin-top:10px;
-padding:10px;
-border:1px solid #00ffe5;
-border-radius:10px;
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px #00ffe5;
 }
 
-.toast{
-position:fixed;
-bottom:20px;
-left:50%;
-transform:translateX(-50%);
-background:#00ffe5;
-color:black;
-padding:10px;
-border-radius:8px;
+.page { display: none; padding: 20px; padding-bottom: 100px; }
+.page.active { display: block; animation: fadeIn 0.5s; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.card {
+    max-width: 420px;
+    margin: 15px auto;
+    padding: 20px;
+    background: rgba(10, 12, 20, 0.85);
+    border: 1px solid #00ffe5;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 255, 229, 0.1);
 }
 
-.cyberRain{
-position:fixed;
-top:-50px;
-color:#00ffe5;
-animation:fall linear forwards;
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: 1px solid #333;
+    background: #000;
+    color: white;
+    box-sizing: border-box;
 }
 
-@keyframes fall{
-to{transform:translateY(110vh);opacity:0;}
+.toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #00ffe5;
+    color: black;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: bold;
+    animation: toast 2s ease forwards;
+    z-index: 9999;
 }
 
+@keyframes toast {
+    0% { opacity: 0; transform: translate(-50%, 20px); }
+    15% { opacity: 1; transform: translate(-50%, 0); }
+    85% { opacity: 1; transform: translate(-50%, 0); }
+    100% { opacity: 0; transform: translate(-50%, -20px); }
+}
+
+.cyberRain {
+    position: fixed;
+    top: -50px;
+    color: #00ffe5;
+    font-size: 14px;
+    pointer-events: none;
+    z-index: -1;
+    animation: fall linear forwards;
+}
+
+@keyframes fall { to { transform: translateY(110vh); opacity: 0; } }
+
+.order {
+    margin-top: 10px;
+    padding: 12px;
+    border: 1px solid #333;
+    border-left: 4px solid #00ffe5;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.socials {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+}
+
+.socials a { text-decoration: none; }
 </style>
 </head>
 
 <body>
 
-<div class="header">CYBER RESTORED</div>
+<div class="header">
+    <h1>CYBER MARKET</h1>
+    <div class="user-tag">@mozgalomovich</div>
+</div>
 
 <div class="nav">
-<button onclick="show('auth')">AUTH</button>
-<button onclick="show('shop')">SHOP</button>
-<button onclick="show('cart')">CART</button>
-<button onclick="show('history')">HISTORY</button>
-<button onclick="show('admin')">ADMIN</button>
+    <button onclick="show('auth')">ACCOUNT</button>
+    <button onclick="show('shop')">SHOP</button>
+    <button onclick="show('cart')">CART</button>
+    <button onclick="show('history')">HISTORY</button>
+    <button onclick="show('admin')">ADMIN</button>
 </div>
 
 <!-- AUTH -->
 <div id="auth" class="page active">
-<div class="card">
-<h3>AUTH</h3>
-<input id="email" placeholder="email">
-<input id="password" type="password" placeholder="password">
-<button onclick="register()">REGISTER</button>
-<button onclick="login()">LOGIN</button>
-</div>
+    <div class="card" id="authContent">
+        <h3>ВХОД / РЕГИСТРАЦИЯ</h3>
+        <input id="email" placeholder="Email">
+        <input id="password" type="password" placeholder="Пароль">
+        <button onclick="register()" style="width:48%">РЕГИСТРАЦИЯ</button>
+        <button onclick="login()" style="width:48%">ВОЙТИ</button>
+    </div>
 </div>
 
 <!-- SHOP -->
 <div id="shop" class="page">
-<div class="card">
-<h3>SHOP</h3>
-<button onclick="addCart('1 week',2)">1 WEEK</button>
-<button onclick="addCart('1 month',6)">1 MONTH</button>
-<button onclick="addCart('forever',25)">FOREVER</button>
-</div>
+    <div class="card">
+        <h3>1 неделя</h3>
+        <p>300₽ / 4$ / 2💎</p>
+        <button onclick="addCart('1 неделя', 2)">В КОРЗИНУ</button>
+    </div>
+    <div class="card">
+        <h3>1 месяц</h3>
+        <p>1000₽ / 13$ / 6💎</p>
+        <button onclick="addCart('1 месяц', 6)">В КОРЗИНУ</button>
+    </div>
+    <div class="card">
+        <h3>Навсегда</h3>
+        <p>4000₽ / 52$ / 25💎</p>
+        <button onclick="addCart('Навсегда', 25)">В КОРЗИНУ</button>
+    </div>
 </div>
 
 <!-- CART -->
 <div id="cart" class="page">
-<div class="card">
-<h3>CART</h3>
-<div id="cartBox"></div>
-</div>
+    <div class="card">
+        <h3>ВАША КОРЗИНА</h3>
+        <div id="cartBox">Корзина пуста</div>
+        
+        <div id="paymentBlock" style="display:none; margin-top:20px; border-top:1px solid #333; pt:10px;">
+            <h4>ОПЛАТА ЧЕРЕЗ TON</h4>
+            <p style="font-size:12px; color:#00ffe5;">Скопируйте адрес и переведите нужную сумму</p>
+            <input id="wallet" value="UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv" readonly>
+            <button onclick="copyWallet()" style="width:100%; margin-bottom:5px;">СКОПИРОВАТЬ АДРЕС</button>
+            <button onclick="openTon()" style="width:100%; background: #0088cc;">ОТКРЫТЬ TONKEEPER</button>
+        </div>
+    </div>
 </div>
 
 <!-- HISTORY -->
 <div id="history" class="page">
-<div class="card">
-<h3>HISTORY</h3>
-<div id="hist"></div>
-</div>
+    <div class="card">
+        <h3>ИСТОРИЯ ЗАКАЗОВ</h3>
+        <div id="hist">Войдите, чтобы видеть заказы</div>
+    </div>
 </div>
 
 <!-- ADMIN -->
 <div id="admin" class="page">
-<div class="card">
-<h3>ADMIN</h3>
-<input id="adm" placeholder="password">
-<button onclick="admin()">ENTER</button>
-<div id="orders"></div>
-</div>
+    <div class="card">
+        <h3>ADMIN PANEL</h3>
+        <input id="adm" type="password" placeholder="Admin Password">
+        <button onclick="admin()" style="width:100%">ВОЙТИ В ПАНЕЛЬ</button>
+        <div id="ordersList" style="margin-top:20px;"></div>
+    </div>
 </div>
 
-<!-- WALLET -->
-<div class="card">
-<h3>WALLET</h3>
-<input id="wallet" value="UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv" readonly>
-<button onclick="copyWallet()">COPY</button>
-<button onclick="openTon()">TONKEEPER</button>
+<!-- SOCIALS -->
+<div class="socials">
+    <a href="https://t.me/bio_mozgalom" target="_blank">
+        <button style="background:#0088cc">TELEGRAM</button>
+    </a>
+    <a href="https://www.tiktok.com/@mozgalomovich?_r=1&_t=ZS-96E1FTEA933" target="_blank">
+        <button style="background:#000000; border:1px solid #ff00ff">TIKTOK</button>
+    </a>
 </div>
 
 <script>
+/* FIREBASE CONFIG */
+let auth, db;
+try {
+    firebase.initializeApp({
+        apiKey: "AIzaSyD94vjwnRQIYC-2Le_nmxtsVKlU6Oww6VE",
+        authDomain: "mozgalom-site.firebaseapp.com",
+        projectId: "mozgalom-site",
+        storageBucket: "mozgalom-site.appspot.com",
+        appId: "1:564649897907:web:61503121e661fb6a82a5c6"
+    });
+    auth = firebase.auth();
+    db = firebase.firestore();
+} catch(e) { console.error(e); }
 
-/* SAFE INIT */
-let auth=null;
-let db=null;
-
-try{
-firebase.initializeApp({
-apiKey:"AIzaSyD94vjwnRQIYC-2Le_nmxtsVKlU6Oww6VE",
-authDomain:"mozgalom-site.firebaseapp.com",
-projectId:"mozgalom-site",
-storageBucket:"mozgalom-site.appspot.com",
-appId:"1:564649897907:web:61503121e661fb6a82a5c6"
-});
-
-auth=firebase.auth();
-db=firebase.firestore();
-
-}catch(e){console.log(e);}
-
-/* UI */
-function show(id){
-document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-document.getElementById(id).classList.add("active");
+/* NAVIGATION */
+function show(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
 }
 
-/* TOAST */
-function toast(t){
-const d=document.createElement("div");
-d.className="toast";
-d.innerText=t;
-document.body.appendChild(d);
-setTimeout(()=>d.remove(),1500);
+function toast(t) {
+    const d = document.createElement("div");
+    d.className = "toast";
+    d.innerText = t;
+    document.body.appendChild(d);
+    setTimeout(() => d.remove(), 2000);
 }
 
-/* AUTH FIXED */
-function register(){
-auth.createUserWithEmailAndPassword(email.value,password.value)
-.then(()=>toast("REGISTER OK"))
-.catch(e=>toast(e.message));
+/* AUTH */
+function register() {
+    const e = email.value, p = password.value;
+    if(!e || !p) return toast("ЗАПОЛНИТЕ ПОЛЯ");
+    auth.createUserWithEmailAndPassword(e, p)
+        .then(() => toast("УСПЕШНО ГRegistered"))
+        .catch(err => toast("ОШИБКА"));
 }
 
-function login(){
-auth.signInWithEmailAndPassword(email.value,password.value)
-.then(()=>toast("LOGIN OK"))
-.catch(e=>toast(e.message));
+function login() {
+    const e = email.value, p = password.value;
+    auth.signInWithEmailAndPassword(e, p)
+        .then(() => toast("ВХОД ВЫПОЛНЕН"))
+        .catch(() => toast("ОШИБКА ВХОДА"));
 }
 
-/* CART RESTORED */
-let cart=[];
-
-function addCart(n,p){
-cart.push({n,p});
-renderCart();
-toast("ADDED");
+function logout() {
+    auth.signOut().then(() => location.reload());
 }
 
-function renderCart(){
-cartBox.innerHTML=cart.map((i,k)=>`
-<div class="order">
-${i.n} - ${i.p}
-<button onclick="buy('${i.n}',${i.p})">BUY</button>
-<button onclick="removeItem(${k})">DELETE</button>
-</div>
-`).join("");
+/* SHOP & CART */
+let cart = [];
+function addCart(n, p) {
+    cart.push({n, p});
+    toast("ДОБАВЛЕНО В КОРЗИНУ");
+    renderCart();
 }
 
-function removeItem(i){
-cart.splice(i,1);
-renderCart();
-toast("REMOVED");
+function renderCart() {
+    const box = document.getElementById("cartBox");
+    const pBlock = document.getElementById("paymentBlock");
+    
+    if (cart.length === 0) {
+        box.innerHTML = "Корзина пуста";
+        pBlock.style.display = "none";
+        return;
+    }
+    
+    pBlock.style.display = "block";
+    box.innerHTML = cart.map((item, index) => `
+        <div class="order">
+            <b>${item.n}</b> — ${item.p}💎
+            <div style="margin-top:10px;">
+                <button onclick="confirmBuy('${item.n}', ${item.p}, ${index})" style="padding:5px 10px; font-size:12px;">ОФОРМИТЬ</button>
+                <button onclick="removeItem(${index})" style="padding:5px 10px; font-size:12px; background:red;">УДАЛИТЬ</button>
+            </div>
+        </div>
+    `).join("");
 }
 
-/* BUY */
-function buy(n,p){
-db.collection("orders").add({
-uid:auth.currentUser.uid,
-email:auth.currentUser.email,
-product:n,
-price:p,
-code:"CYB-"+Math.random().toString(36).slice(2,10),
-status:"pending",
-time:Date.now()
-});
-toast("ORDER SENT");
+function removeItem(i) {
+    cart.splice(i, 1);
+    renderCart();
 }
 
-/* HISTORY FIXED */
-auth.onAuthStateChanged(u=>{
-if(!u) return;
+function confirmBuy(n, p, index) {
+    if(!auth.currentUser) return toast("НУЖНО ВОЙТИ");
+    
+    db.collection("orders").add({
+        uid: auth.currentUser.uid,
+        email: auth.currentUser.email,
+        product: n,
+        price: p,
+        code: "CYB-" + Math.random().toString(36).slice(2, 9).toUpperCase(),
+        status: "pending",
+        time: Date.now()
+    }).then(() => {
+        toast("ЗАКАЗ СОЗДАН! ЖДЕМ ОПЛАТЫ");
+        cart.splice(index, 1);
+        renderCart();
+        show('history');
+    });
+}
 
-db.collection("orders")
-.where("uid","==",u.uid)
-.onSnapshot(s=>{
-hist.innerHTML=s.docs.map(d=>`
-<div class="order">
-${d.data().product} | ${d.data().code} | ${d.data().status}
-</div>
-`).join("");
-});
+/* AUTH STATE & HISTORY */
+auth.onAuthStateChanged(user => {
+    if (user) {
+        document.getElementById("authContent").innerHTML = `
+            <h3>ПРОФИЛЬ</h3>
+            <p>Email: ${user.email}</p>
+            <button onclick="logout()" style="width:100%">ВЫЙТИ</button>
+        `;
+        
+        db.collection("orders").where("uid", "==", user.uid).orderBy("time", "desc")
+          .onSnapshot(snap => {
+              const h = document.getElementById("hist");
+              if(snap.empty) return h.innerHTML = "Заказов пока нет";
+              h.innerHTML = snap.docs.map(doc => {
+                  const d = doc.data();
+                  const color = d.status === 'paid' ? '#00ff00' : '#ff00ff';
+                  return `<div class="order" style="border-color:${color}">
+                      <b>${d.product}</b><br>
+                      Код: ${d.code} | <span style="color:${color}">${d.status.toUpperCase()}</span>
+                  </div>`;
+              }).join("");
+          });
+    }
 });
 
 /* ADMIN */
-function admin(){
-if(adm.value!=="rahim_45_pro") return;
-
-db.collection("orders").onSnapshot(s=>{
-orders.innerHTML=s.docs.map(d=>`
-<div class="order">
-${d.data().email}<br>
-${d.data().product}<br>
-${d.data().code}<br>
-${d.data().status}<br>
-<button onclick="paid('${d.id}')">PAID</button>
-<button onclick="del('${d.id}')">DEL</button>
-</div>
-`).join("");
-});
+function admin() {
+    if(document.getElementById("adm").value !== "rahim_45_pro") return toast("ДОСТУП ЗАПРЕЩЕН");
+    
+    db.collection("orders").orderBy("time", "desc").onSnapshot(snap => {
+        document.getElementById("ordersList").innerHTML = snap.docs.map(doc => `
+            <div class="order" style="font-size:12px;">
+                Юзер: ${doc.data().email}<br>
+                Товар: ${doc.data().product} (${doc.data().code})<br>
+                Статус: ${doc.data().status}<br>
+                <button onclick="updateStatus('${doc.id}', 'paid')">ОПЛАЧЕНО</button>
+                <button onclick="updateStatus('${doc.id}', 'del')" style="background:red">УДАЛИТЬ</button>
+            </div>
+        `).join("");
+    });
 }
 
-function paid(id){
-db.collection("orders").doc(id).update({status:"paid"});
+function updateStatus(id, type) {
+    if(type === 'paid') db.collection("orders").doc(id).update({status: "paid"});
+    else db.collection("orders").doc(id).delete();
+    toast("ОБНОВЛЕНО");
 }
 
-function del(id){
-db.collection("orders").doc(id).delete();
+/* UTILS */
+function copyWallet() {
+    navigator.clipboard.writeText(document.getElementById("wallet").value);
+    toast("АДРЕС СКОПИРОВАН");
 }
 
-/* WALLET */
-function copyWallet(){
-navigator.clipboard.writeText(wallet.value);
-toast("COPIED");
+function openTon() {
+    window.location.href = "tonkeeper://";
 }
 
-function openTon(){
-window.location.href="tonkeeper://";
-setTimeout(()=>{
-window.open("https://tonviewer.com/"+wallet.value,"_blank");
-},400);
-}
-
-/* CYBER RAIN RESTORED */
-setInterval(()=>{
-const r=document.createElement("div");
-r.className="cyberRain";
-r.innerText="|";
-r.style.left=Math.random()*100+"vw";
-r.style.animationDuration=(2+Math.random()*4)+"s";
-document.body.appendChild(r);
-setTimeout(()=>r.remove(),7000);
-},80);
-
+/* CYBER RAIN */
+setInterval(() => {
+    const r = document.createElement("div");
+    r.className = "cyberRain";
+    r.innerText = Math.random() > 0.5 ? "1" : "0";
+    r.style.left = Math.random() * 100 + "vw";
+    r.style.animationDuration = (2 + Math.random() * 3) + "s";
+    document.body.appendChild(r);
+    setTimeout(() => r.remove(), 5000);
+}, 150);
 </script>
 
 </body>
