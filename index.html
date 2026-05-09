@@ -3,159 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MOZGALOM CYBER MARKET 2.0</title>
+    <title>MOZGALOM MARKET</title>
 
-    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
     <style>
-        :root {
-            --neon-blue: #00ffe5;
-            --neon-purple: #ff00ff;
-            --dark-bg: #05070d;
-        }
-
+        :root { --n: #00ffe5; --p: #ff00ff; --bg: #05070d; }
         body { 
-            margin:0; font-family: 'Segoe UI', sans-serif; background: var(--dark-bg); color:white; 
-            display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden;
+            margin:0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color:white; 
+            display: flex; flex-direction: column; min-height: 100vh;
         }
 
-        /* ШАПКА */
-        .header { text-align:center; padding:50px 20px; border-bottom: 1px solid rgba(0,255,229,0.3); }
-        .header h1 { 
-            margin:0; font-size:40px; color: var(--neon-blue); 
-            text-shadow: 0 0 20px var(--neon-blue); text-transform: uppercase; letter-spacing: 4px;
-        }
+        /* Шапка */
+        .header { text-align:center; padding:30px 10px; border-bottom: 1px solid var(--n); }
+        h1 { margin:0; font-size:32px; color: var(--n); text-shadow: 0 0 15px var(--n); text-transform: uppercase; }
 
-        /* НАВИГАЦИЯ */
+        /* Навигация - теперь кнопки не тормозят */
         .nav { 
-            display:flex; justify-content:center; gap:10px; padding:15px; 
-            background: rgba(10, 15, 30, 0.95); position:sticky; top:0; z-index:100;
-            backdrop-filter: blur(10px); border-bottom: 1px solid var(--neon-blue);
+            display:flex; justify-content:center; gap:8px; padding:12px; 
+            background: rgba(10, 15, 30, 0.9); position:sticky; top:0; z-index:100;
+            border-bottom: 1px solid var(--n); flex-wrap: wrap;
         }
 
         button { 
-            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple)); 
-            border: none; padding: 12px 20px; border-radius: 12px; 
-            color: white; font-weight: bold; cursor: pointer; transition: 0.3s;
+            background: linear-gradient(45deg, var(--n), var(--p)); 
+            border: none; padding: 10px 15px; border-radius: 8px; 
+            color: white; font-weight: bold; cursor: pointer;
         }
-        button:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--neon-blue); }
 
-        /* СТРАНИЦЫ */
-        .page { display:none; padding:20px; flex: 1; }
-        .page.active { display:block; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* Контент - исправил обрезание */
+        .page { display:none; padding:15px; width: 100%; box-sizing: border-box; }
+        .page.active { display:block; }
 
-        /* КАРТОЧКИ ТОВАРОВ */
         .card { 
-            max-width:400px; margin:20px auto; padding:30px; 
-            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(0, 255, 229, 0.2);
-            border-radius: 25px; text-align: center; position: relative;
-        }
-        .stock { color: #ff4444; font-size: 12px; font-weight: bold; margin-bottom: 10px; }
-        .price { font-size: 28px; color: var(--neon-blue); font-weight: 900; margin: 15px 0; }
-
-        input { 
-            width:100%; padding:14px; margin:10px 0; border-radius:10px; border:1px solid #333; 
-            background:#000; color:white; box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(0, 255, 229, 0.2);
+            border-radius: 15px; padding: 20px; margin-bottom: 15px; text-align: center;
         }
 
-        /* ФУТЕР С ТВОИМИ ССЫЛКАМИ (ТО ЧТО ТЫ ПРОСИЛ) */
+        input { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:1px solid #333; background:#000; color:white; box-sizing: border-box; }
+
+        /* Кошелек */
+        .wallet-box {
+            background: #111; border: 1px dashed var(--n); padding: 15px; border-radius: 10px; margin: 15px 0;
+            cursor: pointer; transition: 0.3s;
+        }
+        .wallet-box:active { background: var(--n); color: #000; }
+
+        /* Футер (Твои ссылки) */
         footer {
-            background: #000; padding: 40px 20px; text-align: center;
-            border-top: 2px solid var(--neon-purple); margin-top: auto;
+            background: #000; padding: 30px 10px; text-align: center;
+            border-top: 1px solid var(--p); margin-top: auto;
         }
-        .footer-links { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 20px; }
+        .footer-links { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
         .footer-links a {
-            color: white; text-decoration: none; font-weight: bold; font-size: 13px;
-            padding: 12px 20px; border: 1px solid var(--neon-purple); border-radius: 50px;
-            box-shadow: 0 0 10px rgba(255, 0, 255, 0.3); transition: 0.3s;
+            color: white; text-decoration: none; font-weight: bold; font-size: 12px;
+            padding: 10px 15px; border: 1px solid var(--p); border-radius: 20px;
         }
-        .footer-links a:hover { background: var(--neon-purple); box-shadow: 0 0 25px var(--neon-purple); }
-        .admin-link { border-color: #00ff00 !important; box-shadow: 0 0 10px #00ff00 !important; }
 
-        /* ЭФФЕКТ МАТРИЦЫ */
-        .rain { position:fixed; top:-20px; color:var(--neon-blue); font-size:12px; pointer-events:none; z-index:-1; animation:fall linear forwards; opacity: 0.15; }
-        @keyframes fall { to { transform:translateY(110vh); } }
+        /* Оптимизированный фон (не лагает) */
+        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.2; }
     </style>
 </head>
 <body>
 
+<canvas id="bg-canvas"></canvas>
+
 <div class="header">
     <h1>MOZGALOM</h1>
-    <div style="color:var(--neon-purple)">PREMIUM SOFTWARE MARKET</div>
 </div>
 
 <div class="nav">
-    <button onclick="show('shop')">МАГАЗИН</button>
-    <button onclick="show('auth')">ПРОФИЛЬ</button>
+    <button onclick="show('shop')">МАРКЕТ</button>
+    <button onclick="show('wallet')">КОШЕЛЕК</button>
+    <button onclick="show('auth')">АККАУНТ</button>
     <button onclick="show('history')">ЗАКАЗЫ</button>
-    <button onclick="show('admin')" style="background:none; border:1px solid var(--neon-purple); color:var(--neon-purple)">ADMIN</button>
 </div>
 
 <!-- МАГАЗИН -->
 <div id="shop" class="page active">
     <div class="card">
-        <div class="stock">ОСТАЛОСЬ: 2 ШТУКИ</div>
-        <h3>1 НЕДЕЛЯ (FULL ACCESS)</h3>
-        <div class="price">300₽ / 2 TON</div>
-        <button onclick="buy('1 НЕДЕЛЯ','300₽')" style="width:100%">КУПИТЬ СЕЙЧАС</button>
+        <h3>1 НЕДЕЛЯ (PRO)</h3>
+        <p style="color:var(--n); font-size:20px; font-weight:bold;">300₽ / 2 TON</p>
+        <button onclick="buy('1 НЕДЕЛЯ','300₽')" style="width:100%">КУПИТЬ</button>
     </div>
     <div class="card">
-        <div class="stock">ОСТАЛОСЬ: 5 ШТУК</div>
-        <h3>1 МЕСЯЦ (ULTIMATE)</h3>
-        <div class="price">1000₽ / 6 TON</div>
-        <button onclick="buy('1 МЕСЯЦ','1000₽')" style="width:100%">КУПИТЬ СЕЙЧАС</button>
+        <h3>1 МЕСЯЦ (ULTRA)</h3>
+        <p style="color:var(--n); font-size:20px; font-weight:bold;">1000₽ / 6 TON</p>
+        <button onclick="buy('1 МЕСЯЦ','1000₽')" style="width:100%">КУПИТЬ</button>
     </div>
 </div>
 
-<!-- ПРОФИЛЬ -->
+<!-- КОШЕЛЕК -->
+<div id="wallet" class="page">
+    <div class="card">
+        <h3>ОПЛАТА TON</h3>
+        <p>Нажмите на адрес, чтобы скопировать:</p>
+        <div class="wallet-box" onclick="copyWallet()">
+            <strong id="wallet-addr">UQB1...ВАШ_АДРЕС...</strong>
+        </div>
+        <p style="font-size:12px; color:var(--p)">После оплаты заказ будет активирован админом.</p>
+    </div>
+</div>
+
+<!-- АККАУНТ -->
 <div id="auth" class="page">
     <div class="card" id="authContent">
-        <h3>ВХОД В СИСТЕМУ</h3>
-        <input id="u_mail" type="email" placeholder="Ваш Email">
+        <h3>ВХОД</h3>
+        <input id="u_mail" type="email" placeholder="Email">
         <input id="u_pass" type="password" placeholder="Пароль">
         <button onclick="doLogin()" style="width:100%">ВОЙТИ</button>
-        <button onclick="loginGoogle()" style="width:100%; margin-top:15px; background:white; color:black">GOOGLE LOGIN</button>
+        <button onclick="loginGoogle()" style="width:100%; margin-top:10px; background:white; color:black">GOOGLE</button>
     </div>
 </div>
 
-<!-- ИСТОРИЯ ЗАКАЗОВ -->
+<!-- ИСТОРИЯ -->
 <div id="history" class="page">
     <div class="card">
-        <h3>ВАШИ ЗАКАЗЫ</h3>
-        <div id="h_list">Войдите в аккаунт, чтобы увидеть историю</div>
+        <h3>ИСТОРИЯ</h3>
+        <div id="h_list">Пусто...</div>
     </div>
 </div>
 
-<!-- АДМИНКА -->
-<div id="admin" class="page">
-    <div class="card">
-        <h3>ADMIN PANEL</h3>
-        <input id="a_pass" type="password" placeholder="Admin Password">
-        <button onclick="goAdmin()" style="width:100%">ВХОД</button>
-        <div id="a_panel" style="display:none; margin-top:20px;"></div>
-    </div>
-</div>
-
-<!-- ФУТЕР С ТВОИМИ ССЫЛКАМИ -->
 <footer>
     <div class="footer-links">
-        <a href="https://t.me/mozgalom" target="_blank">✈️ ТЕЛЕГРАМ КАНАЛ</a>
-        <a href="https://www.tiktok.com/@mozgalomovich" target="_blank">🎵 МОЙ TIKTOK</a>
-        <a href="https://t.me/mozgalomovich" target="_blank" class="admin-link">👨‍💻 СВЯЗЬ С АДМИНОМ</a>
+        <a href="https://t.me/bio_mozgalom" target="_blank">✈️ НАШ КАНАЛ</a>
+        <a href="https://www.tiktok.com/@mozgalomovich" target="_blank">🎵 TIKTOK</a>
+        <a href="https://t.me/mozgalomovich" target="_blank" style="border-color:#0f0">💬 АДМИН</a>
     </div>
-    <div style="font-size: 10px; opacity: 0.3; letter-spacing: 2px;">MOZGALOM SYSTEM 2026 // SECURED BY FIREBASE</div>
+    <div style="font-size:10px; opacity:0.5;">MOZGALOM 2026</div>
 </footer>
 
 <script>
-// ТЕЛЕГРАМ КОНФИГ
 const TG_TOKEN = "8538869779:AAGSu2F22Tx0TAtRH2gXPlF4ZNsPVKTt3lw";
 const TG_CHAT_ID = "7910835075";
 
-// FIREBASE КОНФИГ
 const firebaseConfig = {
     apiKey: "AIzaSyD94vjwnRQIYC-2Le_nmxtsVKlU6Oww6VE",
     authDomain: "mozgalom-site.firebaseapp.com",
@@ -173,83 +156,72 @@ function show(id) {
     document.getElementById(id).classList.add('active'); 
 }
 
-function sendToTG(text) {
-    fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(text)}`, {mode:'no-cors'});
+function copyWallet() {
+    const addr = document.getElementById('wallet-addr').innerText;
+    navigator.clipboard.writeText(addr);
+    alert("Адрес скопирован!");
 }
 
-function loginGoogle() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider).then(()=>location.reload());
-}
-
-function doLogin() {
-    const e = document.getElementById("u_mail").value, p = document.getElementById("u_pass").value;
-    auth.signInWithEmailAndPassword(e,p).then(()=>location.reload()).catch(err=>alert("Ошибка: " + err.message));
-}
-
-// ФУНКЦИЯ ПОКУПКИ С ПРОМОКОДОМ
 function buy(name, price) {
-    if(!auth.currentUser) return alert("Сначала авторизуйтесь!");
-    
-    const promo = prompt("Есть промокод? Введите его:");
-    let resPrice = price;
-    
+    if(!auth.currentUser) return alert("Войдите в аккаунт!");
+    const promo = prompt("Промокод:");
+    let finalPrice = price;
     if(promo && promo.toLowerCase() === 'fullter2026') {
-        resPrice = "СКИДКА АКТИВИРОВАНА (fullter2026)";
-        alert("Промокод fullter2026 применен успешно!");
+        finalPrice = "СКИДКА (fullter2026)";
+        alert("Промокод активирован!");
     }
-
     const orderId = "MZ-" + Math.random().toString(36).substr(2,6).toUpperCase();
-    
     db.collection("orders").add({
         uid: auth.currentUser.uid,
         email: auth.currentUser.email,
         product: name,
-        price: resPrice,
+        price: finalPrice,
         code: orderId,
         status: "pending",
         time: Date.now()
     }).then(() => {
-        sendToTG(`🔥 НОВЫЙ ЗАКАЗ!\nЮзер: ${auth.currentUser.email}\nТовар: ${name}\nПромо: ${promo || 'нет'}\nКод: ${orderId}`);
-        alert("Заказ создан! Код для оплаты: " + orderId);
+        const text = `🚀 ЗАКАЗ\nТовар: ${name}\nЮзер: ${auth.currentUser.email}\nЦена: ${finalPrice}\nID: ${orderId}`;
+        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(text)}`, {mode:'no-cors'});
+        alert("Заказ создан! Оплатите в разделе КОШЕЛЕК.");
         show('history');
     });
 }
 
+// Управление аккаунтом
 auth.onAuthStateChanged(u => {
     if(u) {
-        document.getElementById("authContent").innerHTML = `<h3>АККАУНТ</h3><p style="color:var(--neon-blue)">${u.email}</p><button onclick="auth.signOut().then(()=>location.reload())" style="width:100%">ВЫЙТИ</button>`;
+        document.getElementById("authContent").innerHTML = `<h3>АККАУНТ</h3><p>${u.email}</p><button onclick="auth.signOut().then(()=>location.reload())" style="width:100%">ВЫЙТИ</button>`;
         db.collection("orders").where("uid","==",u.uid).onSnapshot(s => {
             document.getElementById("h_list").innerHTML = s.docs.map(d => {
                 const x = d.data();
-                return `<div style="border:1px solid #333; padding:15px; margin-top:10px; border-radius:15px; background:rgba(255,255,255,0.02)">
-                <b>${x.product}</b><br>Статус: ${x.status=='paid'?'АКТИВИРОВАН ✅':'ЖДЕМ ОПЛАТЫ ⏳'}<br><small>ID: ${x.code}</small></div>`;
+                return `<div style="border-bottom:1px solid #333; padding:10px;">${x.product} - ${x.status=='paid'?'ОПЛАЧЕНО ✅':'ЖДЕМ ⏳'}</div>`;
             }).join("");
         });
     }
 });
 
-function goAdmin() {
-    if(document.getElementById("a_pass").value === "rahim_45_pro") {
-        document.getElementById("a_panel").style.display="block";
-        db.collection("orders").orderBy("time","desc").onSnapshot(s => {
-            document.getElementById("a_panel").innerHTML = s.docs.map(d => {
-                const x = d.data();
-                return `<div style="background:#111; padding:10px; margin-bottom:5px; border-radius:10px; font-size:12px;">
-                ${x.email} - ${x.product}<br>
-                <button onclick="db.collection('orders').doc('${d.id}').update({status:'paid'})">ОПЛАЧЕНО</button>
-                <button onclick="db.collection('orders').doc('${d.id}').delete()" style="background:red">УДАЛИТЬ</button></div>`;
-            }).join("");
-        });
-    }
+function doLogin() {
+    const e = document.getElementById("u_mail").value, p = document.getElementById("u_pass").value;
+    auth.signInWithEmailAndPassword(e,p).then(()=>location.reload());
 }
 
-// ЭФФЕКТ ДОЖДЯ 01
-setInterval(()=>{
-    const r=document.createElement("div"); r.className="rain"; r.innerText="01";
-    r.style.left=Math.random()*100+"vw"; r.style.animationDuration=(2+Math.random()*3)+"s";
-    document.body.appendChild(r); setTimeout(()=>r.remove(),4000);
-},200);
+function loginGoogle() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(()=>location.reload()); }
+
+// ЛЕГКАЯ АНИМАЦИЯ ФОНА (НЕ ТОРМОЗИТ)
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+const drops = Array(Math.floor(canvas.width/20)).fill(0);
+function draw() {
+    ctx.fillStyle = 'rgba(5, 7, 13, 0.1)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#00ffe5'; ctx.font = '15px monospace';
+    drops.forEach((y, i) => {
+        ctx.fillText(Math.floor(Math.random()*2), i*20, y);
+        if(y > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        else drops[i] += 20;
+    });
+}
+setInterval(draw, 50);
 </script>
 </body>
 </html>
