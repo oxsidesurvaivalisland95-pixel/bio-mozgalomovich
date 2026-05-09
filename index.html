@@ -3,70 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MOZGALOM MARKET ELITE</title>
+    <title>MOZGALOM MARKET ELITE 3.0</title>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
     <style>
-        :root { --n: #00ffe5; --p: #ff00ff; --bg: #05070d; }
-        
-        * { box-sizing: border-box; } /* Это чтобы ничего не вылезало за края */
+        :root { --n: #00ffe5; --p: #ff00ff; --bg: #05070d; --card: rgba(255, 255, 255, 0.05); }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body { 
-            margin:0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color:white; 
+            margin:0; font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color:white; 
             display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; 
         }
         
-        .header { text-align:center; padding:25px 10px; border-bottom: 2px solid var(--n); background: #0a0f1e; }
-        h1 { margin:0; font-size: 24px; text-shadow: 0 0 10px var(--n); letter-spacing: 2px; }
+        .header { text-align:center; padding:20px 10px; border-bottom: 2px solid var(--n); background: #0a0f1e; }
+        h1 { margin:0; font-size: 22px; text-shadow: 0 0 10px var(--n); letter-spacing: 2px; }
 
         .nav { 
             display:flex; justify-content:center; gap:5px; padding:10px; 
-            background: rgba(10, 15, 30, 0.9); position:sticky; top:0; z-index:100; 
-            border-bottom: 1px solid var(--n); flex-wrap: wrap; 
+            background: rgba(10, 15, 30, 0.95); position:sticky; top:0; z-index:100; 
+            border-bottom: 1px solid var(--n); backdrop-filter: blur(10px);
         }
         
         .nav button { 
             background: linear-gradient(45deg, var(--n), var(--p)); border: none; 
-            padding: 8px 12px; border-radius: 8px; color: white; font-size: 11px; 
-            font-weight: bold; cursor: pointer; flex: 1 1 auto; max-width: 80px;
+            padding: 10px 5px; border-radius: 8px; color: white; font-size: 10px; 
+            font-weight: bold; cursor: pointer; flex: 1; max-width: 90px; transition: 0.2s;
         }
+        .nav button:active { transform: scale(0.9); }
         
-        .page { display:none; padding:15px; width: 100%; max-width: 500px; margin: 0 auto; }
+        .page { display:none; padding:15px; width: 100%; max-width: 500px; margin: 0 auto; padding-bottom: 100px; }
         .page.active { display:block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+        @keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
 
         .card { 
-            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(0, 255, 229, 0.2); 
-            border-radius: 15px; padding: 20px; margin-bottom: 15px; text-align: center; width: 100%;
+            background: var(--card); border: 1px solid rgba(0, 255, 229, 0.2); 
+            border-radius: 20px; padding: 20px; margin-bottom: 15px; text-align: center; 
         }
         
-        /* ТЕ САМЫЕ ПРЕДУПРЕЖДЕНИЯ */
+        /* Уровни юзера */
+        .user-level { 
+            background: linear-gradient(90deg, #333, #555); padding: 5px 15px; 
+            border-radius: 50px; font-size: 12px; font-weight: bold; display: inline-block; margin-bottom: 10px;
+        }
+        .lvl-legend { background: linear-gradient(90deg, #ff00ff, #00ffe5); color: #000; }
+
         .info-box { 
             background: rgba(255, 0, 255, 0.1); border-left: 4px solid var(--p); 
-            padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: left; 
+            padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: left; font-size: 14px;
         }
-        .info-box b { color: var(--p); display: block; margin-bottom: 5px; }
-        .tg-link { color: var(--n); font-weight: bold; text-decoration: none; border-bottom: 1px solid var(--n); }
+        .tg-link { color: var(--n); font-weight: bold; text-decoration: none; }
 
-        .price-text { font-size: 22px; font-weight: 900; color: var(--n); margin: 10px 0; }
-        .price-sub { font-size: 14px; opacity: 0.7; }
-
-        input { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:1px solid #333; background:#000; color:white; font-size: 16px; }
+        .price-text { font-size: 24px; font-weight: 900; color: var(--n); }
+        input { width:100%; padding:14px; margin:8px 0; border-radius:12px; border:1px solid #333; background:#000; color:white; font-size: 16px; }
         
         .ton-btn { 
-            background: #0088cc; color: white; padding: 15px; border-radius: 12px; 
-            display: block; text-decoration: none; font-weight: bold; margin-top: 15px; 
+            background: #0088cc; color: white; padding: 18px; border-radius: 15px; 
+            display: block; text-decoration: none; font-weight: bold; margin-top: 10px; text-align: center;
         }
 
-        /* Админ-кнопки */
+        /* Админ панель */
+        .adm-status { color: #0f8; font-weight: bold; margin: 10px 0; font-size: 12px; display: none; }
         .adm-row { background: #111; padding: 10px; margin-bottom: 10px; border-radius: 10px; font-size: 11px; text-align: left; border: 1px solid #333; }
-        .adm-btn { padding: 6px; margin: 2px; border: none; border-radius: 4px; font-size: 10px; font-weight: bold; }
 
-        footer { background: #000; padding: 20px 10px; text-align: center; border-top: 1px solid var(--p); margin-top: auto; }
-        .footer-links a { color: white; text-decoration: none; margin: 0 10px; font-size: 12px; opacity: 0.8; }
+        footer { background: #000; padding: 25px 10px; text-align: center; border-top: 2px solid var(--p); margin-top: auto; }
+        .f-links { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        .f-links a { color: white; text-decoration: none; font-size: 11px; font-weight: bold; border: 1px solid #333; padding: 8px 12px; border-radius: 50px; }
 
         #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; pointer-events: none; }
     </style>
@@ -74,12 +78,12 @@
 <body>
 
 <canvas id="bg-canvas"></canvas>
-<div class="header"><h1>MOZGALOM</h1></div>
+<div class="header"><h1>MOZGALOM MARKET</h1></div>
 
 <div class="nav">
     <button onclick="show('shop')">МАРКЕТ</button>
-    <button onclick="show('wallet')">КОШЕЛЕК</button>
-    <button onclick="show('history')">ИСТОРИЯ</button>
+    <button onclick="show('wallet')">ОПЛАТА</button>
+    <button onclick="show('history')">ЗАКАЗЫ</button>
     <button onclick="show('auth')">ПРОФИЛЬ</button>
     <button onclick="show('admin')" style="background:none; border:1px solid var(--p); color:var(--p)">ADM</button>
 </div>
@@ -88,65 +92,66 @@
     <div class="card">
         <h3>1 НЕДЕЛЯ (PRO)</h3>
         <div class="price-text">300₽</div>
-        <div class="price-sub">3$ / 2 TON</div>
-        <button onclick="buy('1 НЕДЕЛЯ','300₽ / 3$ / 2 TON')" style="width:100%; margin-top:10px;">КУПИТЬ</button>
+        <div style="font-size:12px; opacity:0.7">3$ / 2 TON</div>
+        <button onclick="buy('1 НЕДЕЛЯ','300₽ / 3$ / 2 TON')" style="width:100%; margin-top:15px; padding:15px;">ОФОРМИТЬ</button>
     </div>
     <div class="card">
         <h3>1 МЕСЯЦ (ULTRA)</h3>
         <div class="price-text">1000₽</div>
-        <div class="price-sub">10$ / 6 TON</div>
-        <button onclick="buy('1 МЕСЯЦ','1000₽ / 10$ / 6 TON')" style="width:100%; margin-top:10px;">КУПИТЬ</button>
+        <div style="font-size:12px; opacity:0.7">10$ / 6 TON</div>
+        <button onclick="buy('1 МЕСЯЦ','1000₽ / 10$ / 6 TON')" style="width:100%; margin-top:15px; padding:15px;">ОФОРМИТЬ</button>
     </div>
     <div class="card">
         <h3>НАВСЕГДА (LEGEND)</h3>
         <div class="price-text">3500₽</div>
-        <div class="price-sub">35$ / 20 TON</div>
-        <button onclick="buy('НАВСЕГДА','3500₽ / 35$ / 20 TON')" style="width:100%; margin-top:10px;">КУПИТЬ</button>
+        <div style="font-size:12px; opacity:0.7">35$ / 20 TON</div>
+        <button onclick="buy('НАВСЕГДА','3500₽ / 35$ / 20 TON')" style="width:100%; margin-top:15px; padding:15px;">ОФОРМИТЬ</button>
     </div>
 </div>
 
 <div id="wallet" class="page">
     <div class="card">
-        <h3>ОПЛАТА TON</h3>
-        <p style="font-size: 12px;">Адрес (нажми чтобы скопировать):</p>
-        <div id="w-addr" style="background:#000; padding:12px; border-radius:8px; cursor:pointer; font-size:10px; word-break:break-all; border:1px solid var(--n); color: var(--n);" onclick="copyW()">UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv</div>
+        <h3>КРИПТО-КОШЕЛЕК</h3>
+        <p style="font-size: 11px; color: var(--n)">Нажми на адрес ниже, чтобы скопировать:</p>
+        <div id="w-addr" style="background:#000; padding:15px; border-radius:10px; cursor:pointer; font-size:10px; word-break:break-all; border:1px dashed var(--n); color: #fff;" onclick="copyW()">UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv</div>
         <a href="ton://transfer/UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv" class="ton-btn">💎 TONKEEPER</a>
     </div>
 </div>
 
 <div id="history" class="page">
     <div class="info-box">
-        <b>📝 ИНСТРУКЦИЯ ОТ МЕНЕДЖЕРА:</b>
-        После оплаты обязательно скопируйте ID вашего заказа и скиньте его админу.
-        <br><br>
-        Мой ТГ: <a href="https://t.me/mozgalomovich" target="_blank" class="tg-link">@mozgalomovich</a>
+        <b>⚠️ ВАЖНО:</b>
+        После оплаты скиньте <b>ID ЗАКАЗА</b> админу: 
+        <a href="https://t.me/mozgalomovich" target="_blank" class="tg-link">@mozgalomovich</a>
     </div>
-    <div id="h_list">Загрузка ваших данных...</div>
+    <div id="h_list">Войдите в профиль...</div>
 </div>
 
 <div id="auth" class="page">
     <div class="card" id="authContent">
-        <h3>ВХОД</h3>
+        <h3>ВХОД / РЕГИСТРАЦИЯ</h3>
         <input id="u_mail" type="email" placeholder="Email">
         <input id="u_pass" type="password" placeholder="Пароль">
-        <button onclick="doLogin()" style="width:100%; margin-top:10px;">ВОЙТИ</button>
-        <button onclick="loginGoogle()" style="width:100%; margin-top:10px; background:#fff; color:#000;">GOOGLE</button>
+        <button onclick="doLogin()" style="width:100%; margin-top:10px; padding:15px;">ВОЙТИ</button>
+        <button onclick="loginGoogle()" style="width:100%; margin-top:10px; background:#fff; color:#000;">GOOGLE ВХОД</button>
     </div>
 </div>
 
 <div id="admin" class="page">
     <div class="card">
-        <h3>АДМИН-ПАНЕЛЬ</h3>
-        <input id="a_pass" type="password" placeholder="Пароль">
-        <button onclick="goAdmin()" style="width:100%">ВОЙТИ</button>
+        <h3>ВХОД В АДМИНКУ</h3>
+        <div id="adm_ok" class="adm-status">✅ ДОСТУП РАЗРЕШЕН</div>
+        <input id="a_pass" type="password" placeholder="Пароль администратора">
+        <button onclick="goAdmin()" style="width:100%; padding:15px;">АВТОРИЗОВАТЬСЯ</button>
         <div id="a_panel" style="display:none; margin-top:20px;"></div>
     </div>
 </div>
 
 <footer>
-    <div class="footer-links">
-        <a href="https://t.me/bio_mozgalom" target="_blank">КАНАЛ</a>
-        <a href="https://t.me/mozgalomovich" target="_blank">АДМИН</a>
+    <div class="f-links">
+        <a href="https://t.me/bio_mozgalom" target="_blank">✈️ ТГ КАНАЛ</a>
+        <a href="https://t.me/mozgalomovich" target="_blank">💬 АДМИН</a>
+        <a href="https://www.tiktok.com/@mozgalomovich" target="_blank">🎵 TIKTOK</a>
     </div>
 </footer>
 
@@ -164,25 +169,52 @@ function show(id) {
     document.getElementById(id).classList.add('active'); 
 }
 
-function copyW() { navigator.clipboard.writeText(document.getElementById('w-addr').innerText); alert("Кошелек в буфере!"); }
+function copyW() { navigator.clipboard.writeText(document.getElementById('w-addr').innerText); alert("Адрес скопирован!"); }
 
 function buy(name, price) {
-    if(!auth.currentUser) return alert("Сначала залогинься!");
+    if(!auth.currentUser) return alert("Сначала войдите в аккаунт!");
     const orderId = "MZ-" + Math.random().toString(36).substr(2,5).toUpperCase();
-    db.collection("orders").add({ uid: auth.currentUser.uid, email: auth.currentUser.email, product: name, price: price, code: orderId, status: "pending", time: Date.now() })
-    .then(() => {
-        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent("🛒 НОВЫЙ ЗАКАЗ\nID: "+orderId+"\nТовар: "+name+"\nЮзер: "+auth.currentUser.email)}`, {mode:'no-cors'});
-        alert("Заказ оформлен! ID: " + orderId);
+    db.collection("orders").add({ 
+        uid: auth.currentUser.uid, 
+        email: auth.currentUser.email, 
+        product: name, 
+        price: price, 
+        code: orderId, 
+        status: "pending", 
+        time: Date.now() 
+    }).then(() => {
+        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent("🔥 НОВЫЙ ЗАКАЗ\nID: "+orderId+"\nТовар: "+name+"\nЮзер: "+auth.currentUser.email)}`, {mode:'no-cors'});
+        alert("Заказ создан! ID: " + orderId);
         show('history');
     });
 }
 
 auth.onAuthStateChanged(u => {
     if(u) {
-        document.getElementById("authContent").innerHTML = `<h3>АККАУНТ</h3><p style="font-size:12px;">${u.email}</p><button onclick="auth.signOut().then(()=>location.reload())" style="width:100%">ВЫЙТИ</button>`;
+        // Система уровней (зависит от количества заказов)
         db.collection("orders").where("uid","==",u.uid).onSnapshot(s => {
+            let level = "НОВИЧОК";
+            let lvlClass = "";
+            if(s.docs.length >= 3) { level = "VIP ЮЗЕР"; lvlClass = ""; }
+            if(s.docs.length >= 10) { level = "LEGEND"; lvlClass = "lvl-legend"; }
+
+            document.getElementById("authContent").innerHTML = `
+                <div class="user-level ${lvlClass}">${level}</div>
+                <h3>ПРОФИЛЬ</h3>
+                <p style="font-size:12px; opacity:0.6">${u.email}</p>
+                <button onclick="auth.signOut().then(()=>location.reload())" style="width:100%; background:red;">ВЫЙТИ</button>
+            `;
+
             const h = document.getElementById("h_list");
             if(s.empty) { h.innerHTML = "Заказов пока нет."; return; }
+            
+            // Уведомление в браузере
+            s.docChanges().forEach(change => {
+                if (change.type === "modified" && change.doc.data().status === "paid") {
+                    alert("🎉 Ваш заказ " + change.doc.data().code + " ОПЛАЧЕН!");
+                }
+            });
+
             h.innerHTML = s.docs.map(d => {
                 const x = d.data();
                 return `<div class="card" style="text-align:left; border-left:4px solid ${x.status=='paid'?'#0f8':'#555'};">
@@ -197,21 +229,26 @@ auth.onAuthStateChanged(u => {
 
 function goAdmin() {
     if(document.getElementById("a_pass").value === "rahim_45_pro") {
+        document.getElementById("adm_ok").style.display = "block";
         document.getElementById("a_panel").style.display="block";
-        db.collection("orders").onSnapshot(s => {
+        db.collection("orders").orderBy("time", "desc").limit(50).onSnapshot(s => {
             document.getElementById("a_panel").innerHTML = s.docs.map(d => `
                 <div class="adm-row">
                     ${d.data().email} <br> <b>${d.data().product} [${d.data().code}]</b> <br>
-                    <button class="adm-btn" style="background:#0f8" onclick="db.collection('orders').doc('${d.id}').update({status:'paid'})">ОПЛАТА</button>
-                    <button class="adm-btn" style="background:#ff0" onclick="db.collection('orders').doc('${d.id}').update({status:'pending'})">WAIT</button>
-                    <button class="adm-btn" style="background:#f44; color:#fff" onclick="db.collection('orders').doc('${d.id}').delete()">DEL</button>
+                    <button style="background:#0f8; border:none; padding:5px; border-radius:4px; font-weight:bold;" onclick="db.collection('orders').doc('${d.id}').update({status:'paid'})">ОПЛАТА</button>
+                    <button style="background:#ff0; border:none; padding:5px; border-radius:4px; font-weight:bold;" onclick="db.collection('orders').doc('${d.id}').update({status:'pending'})">WAIT</button>
+                    <button style="background:red; color:white; border:none; padding:5px; border-radius:4px;" onclick="db.collection('orders').doc('${d.id}').delete()">DEL</button>
                 </div>
             `).join("");
         });
-    }
+    } else { alert("Неверный пароль админа!"); }
 }
 
-function doLogin() { auth.signInWithEmailAndPassword(document.getElementById("u_mail").value, document.getElementById("u_pass").value).catch(e=>alert(e.message)); }
+function doLogin() { 
+    auth.signInWithEmailAndPassword(document.getElementById("u_mail").value, document.getElementById("u_pass").value)
+    .then(()=>show('shop'))
+    .catch(e=>alert("Ошибка: " + e.message)); 
+}
 function loginGoogle() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(()=>location.reload()); }
 
 const canvas = document.getElementById('bg-canvas');
