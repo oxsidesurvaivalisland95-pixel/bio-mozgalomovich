@@ -8,43 +8,69 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
 
     <style>
-        :root { --n: #00ffe5; --p: #ff00ff; --bg: #05070d; }
-        body { margin:0; font-family: 'Montserrat', sans-serif; background: var(--bg); color: #fff; overflow-x: hidden; }
+        :root { --n: #00ffe5; --p: #ff00ff; }
         
-        .live-ticker { background: #ff0000; color: #fff; padding: 12px; text-align: center; font-size: 13px; font-weight: 900; text-transform: uppercase; border-bottom: 2px solid #fff; position: relative; z-index: 9999; }
+        body { 
+            margin:0; 
+            font-family: 'Montserrat', sans-serif; 
+            background: url('https://i.ibb.co/VpX5v9v/panel-bg.jpg') no-repeat center center fixed; 
+            background-size: cover;
+            color: #fff; 
+            overflow-x: hidden; 
+        }
 
-        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.3; }
-        .header { text-align:center; padding:25px; border-bottom: 2px solid var(--n); background: rgba(0,0,0,0.9); }
+        /* КРАСНАЯ ПОЛОСА */
+        .live-ticker { 
+            background: #ff0000; 
+            color: #fff; 
+            padding: 12px; 
+            text-align: center; 
+            font-size: 13px; 
+            font-weight: 900; 
+            text-transform: uppercase; 
+            border-bottom: 2px solid #fff; 
+            position: relative; 
+            z-index: 9999;
+        }
+
+        .header { text-align:center; padding:25px; border-bottom: 2px solid var(--n); background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
         .neon-title { font-family: 'Orbitron'; font-size: 26px; font-weight: 900; color: var(--n); text-shadow: 0 0 10px var(--n); letter-spacing: 3px; }
 
-        .nav { display:flex; gap:10px; padding:12px; overflow-x:auto; background: #000; position: sticky; top:0; z-index:1000; border-bottom: 1px solid var(--p); }
+        .nav { display:flex; gap:10px; padding:12px; overflow-x:auto; background: rgba(0,0,0,0.9); position: sticky; top:0; z-index:1000; border-bottom: 1px solid var(--p); }
         .nav button { flex:0 0 auto; background:transparent; border:1px solid var(--n); padding:10px 18px; border-radius:12px; color:var(--n); font-weight:bold; cursor:pointer; }
         .nav button.active { background: var(--n); color:#000; }
 
         .page { display:none; padding:15px; max-width: 500px; margin:0 auto; padding-bottom: 100px; }
         .page.active { display:block; }
 
-        .card { background: rgba(255,255,255,0.05); border: 1px solid rgba(0,255,229,0.3); border-radius: 20px; padding: 25px; margin-bottom: 20px; text-align: center; }
-        .price-tag { font-size: 26px; font-weight: 900; color: #fff; margin: 15px 0; font-family: 'Montserrat'; }
+        .card { background: rgba(0,0,0,0.75); border: 1px solid rgba(0,255,229,0.3); border-radius: 20px; padding: 25px; margin-bottom: 20px; text-align: center; backdrop-filter: blur(10px); }
+        .price-tag { font-size: 26px; font-weight: 900; color: #fff; margin: 15px 0; }
         
-        .open-btn { width:100%; padding:20px; border-radius:15px; border:none; background: #a4c2f4; color:#000; font-weight:900; cursor:pointer; font-family:'Montserrat'; font-size: 20px; box-shadow: 0 4px 15px rgba(164,194,244,0.4); }
+        /* ТА САМАЯ СИНЯЯ КНОПКА */
+        .open-btn { 
+            width:100%; padding:20px; border-radius:15px; border:none; 
+            background: #a4c2f4; color:#000; font-weight:900; 
+            cursor:pointer; font-size: 20px; text-transform: uppercase;
+        }
 
         .buy-btn { width:100%; padding:15px; border-radius:12px; border:none; background: linear-gradient(45deg, var(--n), var(--p)); color:#fff; font-weight:900; cursor:pointer; }
-        .status-paid { color: #0f8; font-weight: bold; }
-
-        input { width:100%; padding:15px; margin:10px 0; border-radius:12px; border:1px solid var(--n); background:#000; color:#fff; }
-        .footer { background:#000; padding:30px; text-align:center; border-top: 2px solid var(--p); }
+        
+        input { width:100%; padding:15px; margin:10px 0; border-radius:12px; border:1px solid var(--n); background:rgba(0,0,0,0.8); color:#fff; box-sizing: border-box; }
+        
+        .footer { background:rgba(0,0,0,0.9); padding:35px; text-align:center; border-top: 2px solid var(--p); }
         .footer a { color:var(--n); text-decoration:none; font-weight:bold; margin: 0 15px; font-size: 16px; }
+        
+        .status-paid { color: #0f8; font-weight: bold; }
+        code { display:block; padding:10px; background:rgba(0,0,0,0.5); border-radius:10px; margin:10px 0; word-break: break-all; color: var(--n); }
     </style>
 </head>
 <body>
 
 <div class="live-ticker">🔥 КТО-ТО ТОЛЬКО ЧТО КУПИЛ ДЕФЕР НАВСЕГДА! 🔥</div>
-
-<canvas id="bg-canvas"></canvas>
 
 <div class="header">
     <div class="neon-title">MOZGALOM ELITE 10</div>
@@ -77,112 +103,158 @@
 <div id="history" class="page">
     <div class="card" style="border-color: var(--p);">
         <h3 style="margin:0; color:var(--p)">ОПЛАТА TON</h3>
-        <p style="font-size:11px;">Переведи TON на кошелек. В комментарии укажи ID заказа.</p>
-        <code id="w-addr" onclick="copyW()" style="font-size:11px; color:var(--n); cursor:pointer; word-break: break-all;">UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv</code>
+        <p style="font-size:12px;">Отправь TON на адрес ниже. В <b>комментарии</b> обязательно укажи ID заказа.</p>
+        <code id="w-addr" onclick="copyW()">UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv</code>
+        <p style="font-size:10px; color:#aaa;">Нажми на кошелек, чтобы скопировать</p>
     </div>
-    <div id="h_list"></div>
+    <div id="h_list">Загрузка заказов...</div>
 </div>
 
 <div id="auth" class="page">
     <div id="uProfile" style="display:none;">
         <div class="card">
             <h3 id="uEmail"></h3>
-            <button class="buy-btn" onclick="auth.signOut().then(()=>location.reload())">ВЫЙТИ</button>
+            <button class="buy-btn" onclick="auth.signOut().then(()=>location.reload())">ВЫЙТИ ИЗ АККАУНТА</button>
         </div>
     </div>
     <div id="loginCard" class="card">
-        <h3>ВХОД</h3>
+        <h3>АВТОРИЗАЦИЯ</h3>
         <input id="u_mail" type="email" placeholder="Email">
         <input id="u_pass" type="password" placeholder="Пароль">
         <button class="buy-btn" onclick="doLogin()">ВОЙТИ</button>
+        <p style="font-size:11px; margin-top:15px; color:#aaa;">Нет аккаунта? Он создается автоматически при первом входе.</p>
     </div>
 </div>
 
 <div class="footer">
-    <a href="https://t.me/bio_mozgalom">КАНАЛ</a>
-    <a href="https://t.me/mozgalomovich">АДМИН</a>
+    <a href="https://t.me/bio_mozgalom" target="_blank">КАНАЛ</a>
+    <a href="https://t.me/mozgalomovich" target="_blank">АДМИН</a>
 </div>
 
 <script>
-const API_KEY = "AHNKVNLN4TE6CIIAAAAOTL47DIXMBIMQGWIH32JC36VUSZ2CSTP5SPMUMBNYSUAFANATP4I";
+// --- КОНФИГУРАЦИЯ ---
+const API_KEY_TON = "AHNKVNLN4TE6CIIAAAAOTL47DIXMBIMQGWIH32JC36VUSZ2CSTP5SPMUMBNYSUAFANATP4I";
 const MY_WALLET = "UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv";
 const TG_TOKEN = "8538869779:AAGSu2F22Tx0TAtRH2gXPlF4ZNsPVKTt3lw";
 const TG_CHAT_ID = "7910835075";
 
-const firebaseConfig = { apiKey: "AIzaSyD94vjwnRQIYC-2Le_nmxtsVKlU6Oww6VE", authDomain: "mozgalom-site.firebaseapp.com", projectId: "mozgalom-site", storageBucket: "mozgalom-site.appspot.com", appId: "1:564649897907:web:61503121e661fb6a82a5c6" };
+const firebaseConfig = { 
+    apiKey: "AIzaSyD94vjwnRQIYC-2Le_nmxtsVKlU6Oww6VE", 
+    authDomain: "mozgalom-site.firebaseapp.com", 
+    projectId: "mozgalom-site", 
+    storageBucket: "mozgalom-site.appspot.com", 
+    appId: "1:564649897907:web:61503121e661fb6a82a5c6" 
+};
+
+// --- ИНИЦИАЛИЗАЦИЯ ---
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
 function show(id) {
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+    if(event) event.currentTarget.classList.add('active');
 }
 
+// Проверка транзакций TON
 async function checkTon() {
     try {
-        const res = await fetch(`https://toncenter.com/api/v2/getTransactions?address=${MY_WALLET}&limit=10&api_key=${API_KEY}`);
+        const res = await fetch(`https://toncenter.com/api/v2/getTransactions?address=${MY_WALLET}&limit=20&api_key=${API_KEY_TON}`);
         const data = await res.json();
         if(!data.ok) return;
-        const pending = await db.collection("orders").where("status", "==", "pending").get();
+
+        const pendingOrders = await db.collection("orders").where("status", "==", "pending").get();
+        
         data.result.forEach(tx => {
-            const comment = tx.in_msg.message;
-            pending.forEach(doc => {
-                if(comment && comment.toUpperCase().includes(doc.data().code.toUpperCase())) {
+            const msg = tx.in_msg.message;
+            if(!msg) return;
+
+            pendingOrders.forEach(doc => {
+                const orderData = doc.data();
+                if(msg.toUpperCase().includes(orderData.code.toUpperCase())) {
                     db.collection("orders").doc(doc.id).update({ status: "paid" });
+                    // Уведомление в ТГ об оплате
+                    fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent("✅ ОПЛАЧЕНО!\nID: "+orderData.code+"\nТовар: "+orderData.product)}`, {mode:'no-cors'});
                 }
             });
         });
-    } catch(e) {}
+    } catch(e) { console.error("Ошибка проверки TON:", e); }
 }
-setInterval(checkTon, 30000);
+setInterval(checkTon, 30000); // Раз в 30 сек
 
+// Покупка
 function buy(name, price) {
-    if(!auth.currentUser) return alert("ВОЙДИ");
+    if(!auth.currentUser) {
+        alert("Сначала войдите в профиль!");
+        show('auth');
+        return;
+    }
     const orderId = "MZ" + Math.random().toString(36).substr(2,4).toUpperCase();
+    
     db.collection("orders").add({
-        uid: auth.currentUser.uid, email: auth.currentUser.email,
-        product: name, price: price, code: orderId,
-        status: "pending", timestamp: Date.now()
+        uid: auth.currentUser.uid,
+        email: auth.currentUser.email,
+        product: name,
+        price: price,
+        code: orderId,
+        status: "pending",
+        timestamp: Date.now()
     }).then(() => {
-        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent("🛒 ЗАКАЗ: "+orderId+"\n"+name)}`, {mode:'no-cors'});
-        alert(`ID: ${orderId}\nОплати TON с этим ID в комменте.`);
+        // Уведомление в ТГ о новом заказе
+        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent("🛒 НОВЫЙ ЗАКАЗ\nID: "+orderId+"\nТовар: "+name+"\nЮзер: "+auth.currentUser.email)}`, {mode:'no-cors'});
+        alert(`Заказ ${orderId} создан! Перейдите в раздел ЗАКАЗЫ для оплаты.`);
         show('history');
     });
 }
 
+// Статус юзера
 auth.onAuthStateChanged(u => {
     if(u) {
         document.getElementById('loginCard').style.display = 'none';
         document.getElementById('uProfile').style.display = 'block';
-        document.getElementById('uEmail').innerText = u.email;
-        db.collection("orders").where("uid","==",u.uid).onSnapshot(s => {
+        document.getElementById('uEmail').innerText = "Аккаунт: " + u.email;
+        
+        // Подгрузка заказов в реальном времени
+        db.collection("orders").where("uid","==",u.uid).orderBy("timestamp", "desc").onSnapshot(s => {
+            if(s.empty) {
+                document.getElementById("h_list").innerHTML = "<p>У вас пока нет заказов</p>";
+                return;
+            }
             document.getElementById("h_list").innerHTML = s.docs.map(d => `
-                <div style="background:rgba(255,255,255,0.05); padding:15px; margin-bottom:10px; border-radius:10px;">
-                    <b>${d.data().product}</b> <br>
-                    ID: ${d.data().code} | Статус: <span class="${d.data().status === 'paid' ? 'status-paid' : ''}">${d.data().status.toUpperCase()}</span>
+                <div style="background:rgba(255,255,255,0.05); padding:15px; margin-bottom:10px; border-radius:15px; border-left: 4px solid ${d.data().status === 'paid' ? '#0f8' : var(--n)}; text-align:left;">
+                    <b style="color:var(--n)">${d.data().product}</b> <br>
+                    <span style="font-size:12px;">ID: ${d.data().code}</span> <br>
+                    Статус: <span class="${d.data().status === 'paid' ? 'status-paid' : ''}">${d.data().status.toUpperCase()}</span>
                 </div>
             `).join("");
         });
+    } else {
+        document.getElementById('loginCard').style.display = 'block';
+        document.getElementById('uProfile').style.display = 'none';
     }
 });
 
-function doLogin() { auth.signInWithEmailAndPassword(document.getElementById("u_mail").value, document.getElementById("u_pass").value); }
-function copyW() { navigator.clipboard.writeText(MY_WALLET); alert("СКОПИРОВАНО"); }
-
-const canvas = document.getElementById('bg-canvas');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-const cols = Array(Math.floor(canvas.width/20)).fill(0);
-function draw() {
-    ctx.fillStyle = 'rgba(5, 7, 13, 0.2)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#00ffe5'; ctx.font = '15px monospace';
-    cols.forEach((y, i) => {
-        ctx.fillText(Math.floor(Math.random()*2), i*20, y);
-        if(y > canvas.height && Math.random() > 0.98) cols[i] = 0; else cols[i] += 20;
+// Логин / Регистрация
+function doLogin() { 
+    const m = document.getElementById("u_mail").value;
+    const p = document.getElementById("u_pass").value;
+    if(!m || !p) return alert("Заполни поля!");
+    
+    auth.signInWithEmailAndPassword(m, p).catch(e => {
+        if(e.code === 'auth/user-not-found') {
+            auth.createUserWithEmailAndPassword(m, p).catch(e2 => alert(e2.message));
+        } else {
+            alert(e.message);
+        }
     });
 }
-setInterval(draw, 70);
+
+function copyW() { 
+    navigator.clipboard.writeText(MY_WALLET); 
+    alert("Кошелек скопирован!"); 
+}
 </script>
 </body>
 </html>
