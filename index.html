@@ -26,9 +26,9 @@ input { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:1px so
 .toast { position:fixed; bottom:100px; left:50%; transform:translateX(-50%); background:#00ffe5; color:#000; padding:10px 20px; border-radius:8px; font-weight:bold; z-index:1000; }
 .order { margin-top:10px; padding:12px; border:1px solid #333; border-left:3px solid #00ffe5; border-radius:8px; background:rgba(255,255,255,0.03); cursor:pointer; }
 .price-tag { font-size: 14px; color: #00ffe5; margin-bottom: 10px; display: block; font-weight: bold; }
+.order-date { font-size: 10px; color: #aaa; display: block; margin-top: 5px; }
 .status-wait { color: #ffae00; font-weight: bold; }
 .status-paid { color: #00ff00; font-weight: bold; }
-/* Эффект дождя */
 .cyberRain { position:fixed; top:-20px; color:#00ffe5; font-size:12px; pointer-events:none; z-index:-1; animation:fall linear forwards; }
 @keyframes fall { to { transform:translateY(110vh); opacity:0; } }
 </style>
@@ -68,18 +68,18 @@ input { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:1px so
 <div id="shop" class="page">
     <div class="card">
         <h3>1 неделя</h3>
-        <span class="price-tag">300₽ / 3.50$ / 2💎</span>
-        <button onclick="toCart('1 неделя','300₽ / 3.50$')" style="width:100%">В КОРЗИНУ</button>
+        <span class="price-tag">300₽ / 4$ / 2 TON</span>
+        <button onclick="toCart('1 неделя','300₽ / 4$ / 2 TON')" style="width:100%">В КОРЗИНУ</button>
     </div>
     <div class="card">
         <h3>1 месяц</h3>
-        <span class="price-tag">1000₽ / 11.50$ / 6💎</span>
-        <button onclick="toCart('1 месяц','1000₽ / 11.50$')" style="width:100%">В КОРЗИНУ</button>
+        <span class="price-tag">1000₽ / 13$ / 6 TON</span>
+        <button onclick="toCart('1 месяц','1000₽ / 13$ / 6 TON')" style="width:100%">В КОРЗИНУ</button>
     </div>
     <div class="card">
         <h3>Навсегда</h3>
-        <span class="price-tag">4000₽ / 45.00$ / 25💎</span>
-        <button onclick="toCart('Навсегда','4000₽ / 45.00$')" style="width:100%">В КОРЗИНУ</button>
+        <span class="price-tag">4000₽ / 52$ / 25 TON</span>
+        <button onclick="toCart('Навсегда','4000₽ / 52$ / 25 TON')" style="width:100%">В КОРЗИНУ</button>
     </div>
 </div>
 
@@ -89,9 +89,9 @@ input { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:1px so
         <h3>КОРЗИНА</h3>
         <div id="cartList">Пусто</div>
         <div id="payArea" style="display:none; margin-top:15px; border-top:1px solid #333; padding-top:10px;">
-            <p style="font-size:12px; color:#00ffe5">Оплатите по реквизитам и оформите заказ:</p>
+            <p style="font-size:12px; color:#00ffe5">Оплатите TON и оформите заказ:</p>
             <input id="addr" value="UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv" readonly>
-            <button onclick="copyW()" style="width:100%; margin-bottom:5px">КОПИРОВАТЬ TON АДРЕС</button>
+            <button onclick="copyW()" style="width:100%; margin-bottom:5px">КОПИРОВАТЬ АДРЕС</button>
         </div>
     </div>
 </div>
@@ -100,7 +100,7 @@ input { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:1px so
 <div id="history" class="page">
     <div class="card">
         <h3>ИСТОРИЯ ЗАКАЗОВ</h3>
-        <div id="h_list">Загрузка данных...</div>
+        <div id="h_list">Загрузка...</div>
     </div>
 </div>
 
@@ -117,7 +117,6 @@ input { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:1px so
 </div>
 
 <script>
-// Конфигурация Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyD94vjwnRQIYC-2Le_nmxtsVKlU6Oww6VE",
     authDomain: "mozgalom-site.firebaseapp.com",
@@ -140,13 +139,17 @@ function msg(t) {
     document.body.appendChild(d); setTimeout(()=>d.remove(),2500); 
 }
 
-// АВТОРИЗАЦИЯ GOOGLE
+// Google Login
 function loginGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider).then(()=>location.reload()).catch(e=>msg("Ошибка Google: "+e.message));
+    auth.signInWithPopup(provider)
+        .then(() => location.reload())
+        .catch(e => {
+            console.error(e);
+            alert("Ошибка Google: " + e.message + "\nУбедитесь, что Google включен в консоли Firebase.");
+        });
 }
 
-// Обычная авторизация
 function doReg() {
     const e = document.getElementById("u_mail").value, p = document.getElementById("u_pass").value;
     auth.createUserWithEmailAndPassword(e,p).then(()=>location.reload()).catch(err=>msg(err.message));
@@ -156,9 +159,8 @@ function doLogin() {
     auth.signInWithEmailAndPassword(e,p).then(()=>location.reload()).catch(()=>msg("Ошибка входа"));
 }
 
-// Логика корзины
 let basket = [];
-function toCart(n,pr) { basket.push({n,pr}); msg("Добавлено в корзину"); drawCart(); }
+function toCart(n,pr) { basket.push({n,pr}); msg("Добавлено"); drawCart(); }
 function drawCart() {
     const b = document.getElementById("cartList"), p = document.getElementById("payArea");
     if(!basket.length) { b.innerHTML="Пусто"; p.style.display="none"; return; }
@@ -171,9 +173,8 @@ function drawCart() {
     `).join("");
 }
 
-// Отправка заказа
 function sendOrder(n, pr, i) {
-    if(!auth.currentUser) return msg("Сначала войдите в аккаунт!");
+    if(!auth.currentUser) return msg("Войдите!");
     const code = "CB-" + Math.random().toString(36).substr(2,7).toUpperCase();
     db.collection("orders").add({
         uid: auth.currentUser.uid,
@@ -184,46 +185,40 @@ function sendOrder(n, pr, i) {
         status: "pending",
         time: Date.now()
     }).then(() => {
-        alert("Заказ оформлен!\nВаш код: "+code+"\n\nСкиньте его @mozgalomovich для активации.");
+        alert("Заказ создан! Код: "+code);
         basket.splice(i,1); drawCart(); show('history');
     });
 }
 
-// Мониторинг состояния пользователя
 auth.onAuthStateChanged(u => {
     const h = document.getElementById("h_list");
     if(u) {
         document.getElementById("authContent").innerHTML = `<h3>АККАУНТ</h3><p>${u.email}</p><button onclick="auth.signOut().then(()=>location.reload())" style="width:100%">ВЫЙТИ</button>`;
-        
-        // Загрузка истории в реальном времени
         db.collection("orders").where("uid","==",u.uid).onSnapshot(s => {
-            if(s.empty) return h.innerHTML = "Заказов пока нет.";
+            if(s.empty) return h.innerHTML = "Заказов нет.";
             h.innerHTML = s.docs.map(d => {
                 const x = d.data();
                 const isPaid = x.status === 'paid';
+                const date = new Date(x.time).toLocaleString('ru-RU');
                 return `
                 <div class="order" style="border-color:${isPaid?'#0f0':'#ffae00'}" onclick="checkPaid('${x.status}', '${x.code}')">
-                    <b>${x.product}</b> (${x.price})<br>
-                    Код: <span style="color:#00ffe5">${x.code}</span><br>
-                    Статус: <span class="${isPaid?'status-paid':'status-wait'}">${isPaid?'ОПЛАЧЕНО ✅':'В ОЖИДАНИИ ⏳'}</span>
+                    <b>${x.product}</b><br>
+                    <small>${x.price}</small><br>
+                    <span class="order-date">${date}</span>
+                    Код: ${x.code}<br>
+                    Статус: <span class="${isPaid?'status-paid':'status-wait'}">${isPaid?'ОПЛАЧЕНО ✅':'ОЖИДАНИЕ ⏳'}</span>
                 </div>`;
             }).join("");
         });
-    } else {
-        h.innerHTML = "Пожалуйста, войдите в аккаунт";
-    }
+    } else { h.innerHTML = "Войдите в аккаунт"; }
 });
 
-// Клик по заказу в истории
 function checkPaid(status, code) {
     if(status === 'paid') {
-        alert("ТОВАР ОПЛАЧЕН!\n\nНапишите админу @mozgalomovich и назовите код заказа: " + code + ", чтобы забрать покупку.");
-    } else {
-        msg("Ожидайте подтверждения оплаты админом");
-    }
+        alert("ОПЛАЧЕНО! Скиньте код @mozgalomovich: " + code);
+    } else { msg("Ждем оплаты"); }
 }
 
-// Функции Админа
 function goAdmin() {
     if(document.getElementById("a_pass").value === "rahim_45_pro") {
         document.getElementById("a_lock").style.display="none";
@@ -231,19 +226,19 @@ function goAdmin() {
         db.collection("orders").orderBy("time","desc").onSnapshot(s => {
             document.getElementById("all_orders").innerHTML = s.docs.map(d => `
                 <div class="order" style="font-size:12px">
-                    ${d.data().email}<br><b>${d.data().product}</b> [${d.data().price}]<br>
+                    ${d.data().email}<br><b>${d.data().product}</b><br>
+                    <small>${new Date(d.data().time).toLocaleString()}</small><br>
                     Код: <b>${d.data().code}</b><br>
                     <button onclick="db.collection('orders').doc('${d.id}').update({status:'paid'})">ОПЛАТИТЬ</button>
                     <button onclick="db.collection('orders').doc('${d.id}').delete()" style="background:red">УДАЛИТЬ</button>
                 </div>
             `).join("");
         });
-    } else msg("Неверный пароль админа!");
+    } else msg("Пароль!");
 }
 
-function copyW() { const i=document.getElementById("addr"); i.select(); navigator.clipboard.writeText(i.value); msg("Адрес скопирован"); }
+function copyW() { const i=document.getElementById("addr"); i.select(); navigator.clipboard.writeText(i.value); msg("Скопировано"); }
 
-// Анимация фона
 setInterval(()=>{
     const r=document.createElement("div"); r.className="cyberRain"; r.innerText="01";
     r.style.left=Math.random()*100+"vw"; r.style.animationDuration=(2+Math.random()*3)+"s";
