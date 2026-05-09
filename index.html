@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MOZGALOM MARKET ELITE</title>
+    <title>MOZGALOM MARKET</title>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -11,22 +11,33 @@
 
     <style>
         :root { --n: #00ffe5; --p: #ff00ff; --bg: #05070d; }
-        body { margin:0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color:white; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
-        .header { text-align:center; padding:40px 10px; border-bottom: 2px solid var(--n); background: linear-gradient(to bottom, #0a0f1e, var(--bg)); }
-        .nav { display:flex; justify-content:center; gap:10px; padding:15px; background: rgba(10, 15, 30, 0.95); position:sticky; top:0; z-index:100; border-bottom: 1px solid var(--n); backdrop-filter: blur(10px); flex-wrap: wrap; }
-        button { background: linear-gradient(45deg, var(--n), var(--p)); border: none; padding: 12px 20px; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        body { margin:0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color:white; display: flex; flex-direction: column; min-height: 100vh; }
+        
+        .header { text-align:center; padding:30px 10px; border-bottom: 2px solid var(--n); }
+        .nav { display:flex; justify-content:center; gap:8px; padding:15px; background: rgba(10, 15, 30, 0.95); position:sticky; top:0; z-index:100; border-bottom: 1px solid var(--n); backdrop-filter: blur(10px); }
+        
+        button { background: linear-gradient(45deg, var(--n), var(--p)); border: none; padding: 12px 18px; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; }
+        
         .page { display:none; padding:20px; width: 100%; box-sizing: border-box; max-width: 600px; margin: 0 auto; }
-        .page.active { display:block; }
-        .card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(0, 255, 229, 0.3); border-radius: 20px; padding: 25px; margin-bottom: 20px; text-align: center; }
+        .page.active { display:block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+        .card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(0, 255, 229, 0.3); border-radius: 20px; padding: 20px; margin-bottom: 15px; text-align: center; }
+        
+        /* Стиль предупреждения в Истории */
+        .info-alert { background: rgba(255, 0, 255, 0.1); border: 1px solid var(--p); padding: 15px; border-radius: 15px; margin-bottom: 20px; text-align: left; font-size: 14px; }
+        .info-alert b { color: var(--p); }
+        .contact-btn { display: inline-block; margin-top: 10px; color: var(--n); text-decoration: none; font-weight: bold; border-bottom: 1px solid var(--n); }
+
+        .order-item { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 12px; margin-top: 10px; text-align: left; border-left: 4px solid var(--n); }
+        .status-badge { padding: 4px 8px; border-radius: 5px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .status-wait { background: #555; color: #fff; }
+        .status-ok { background: #00ff88; color: #000; }
+
         input { width:100%; padding:14px; margin:10px 0; border-radius:10px; border:1px solid #333; background:#000; color:white; box-sizing: border-box; }
-        .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-top: 10px; }
-        .status-pending { background: #555; color: #fff; }
-        .status-paid { background: #00ff88; color: #000; }
-        .order-code { font-family: monospace; color: var(--p); background: rgba(255,0,255,0.1); padding: 5px 10px; border-radius: 5px; border: 1px solid rgba(255,0,255,0.3); }
         .ton-btn { background: #0088cc; color: white; padding: 18px; border-radius: 15px; display: block; text-decoration: none; font-weight: bold; margin-top: 15px; text-align: center; }
-        footer { background: #000; padding: 40px 10px; text-align: center; border-top: 2px solid var(--p); margin-top: auto; }
-        .footer-links { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
-        .footer-links a { color: white; text-decoration: none; font-weight: bold; font-size: 12px; padding: 12px 20px; border: 1px solid var(--p); border-radius: 50px; }
+
+        footer { background: #000; padding: 30px 10px; text-align: center; border-top: 1px solid var(--p); margin-top: auto; }
         #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; pointer-events: none; }
     </style>
 </head>
@@ -39,16 +50,18 @@
     <button onclick="show('shop')">МАРКЕТ</button>
     <button onclick="show('wallet')">КОШЕЛЕК</button>
     <button onclick="show('history')">ИСТОРИЯ</button>
-    <button onclick="show('auth')">АККАУНТ</button>
-    <button onclick="show('admin')" style="background:none; border:1px solid var(--p); color:var(--p)">АДМИН</button>
+    <button onclick="show('auth')">ПРОФИЛЬ</button>
+    <button onclick="show('admin')" style="background:none; border:1px solid var(--p); color:var(--p)">ADM</button>
 </div>
 
+<!-- МАРКЕТ -->
 <div id="shop" class="page active">
     <div class="card"><h3>1 НЕДЕЛЯ (PRO)</h3><p>300₽ / 3$ / 2 TON</p><button onclick="buy('1 НЕДЕЛЯ','300₽ / 3$ / 2 TON')" style="width:100%">КУПИТЬ</button></div>
     <div class="card"><h3>1 МЕСЯЦ (ULTRA)</h3><p>1000₽ / 10$ / 6 TON</p><button onclick="buy('1 МЕСЯЦ','1000₽ / 10$ / 6 TON')" style="width:100%">КУПИТЬ</button></div>
     <div class="card"><h3>НАВСЕГДА (LEGEND)</h3><p>3500₽ / 35$ / 20 TON</p><button onclick="buy('НАВСЕГДА','3500₽ / 35$ / 20 TON')" style="width:100%">КУПИТЬ</button></div>
 </div>
 
+<!-- КОШЕЛЕК -->
 <div id="wallet" class="page">
     <div class="card">
         <h3>ОПЛАТА TON</h3>
@@ -57,39 +70,41 @@
     </div>
 </div>
 
+<!-- ИСТОРИЯ С ПРЕДУПРЕЖДЕНИЕМ -->
 <div id="history" class="page">
     <div class="card">
         <h3>ВАШИ ЗАКАЗЫ</h3>
-        <div id="h_list">Загрузка истории...</div>
+        
+        <!-- ТО САМОЕ ПРЕДУПРЕЖДЕНИЕ -->
+        <div class="info-alert">
+            <b>⚠️ ВНИМАНИЕ:</b><br>
+            После совершения оплаты, пожалуйста, скопируйте <b>ID ЗАКАЗА</b> и отправьте его нашему менеджеру для мгновенной активации.<br>
+            <a href="https://t.me/mozgalomovich" target="_blank" class="contact-btn">💬 Написать мозгломавичу (ТГ)</a>
+        </div>
+
+        <div id="h_list">Загрузка...</div>
     </div>
 </div>
 
+<!-- ПРОФИЛЬ -->
 <div id="auth" class="page">
     <div class="card" id="authContent">
         <h3>ВХОД</h3>
         <input id="u_mail" type="email" placeholder="Email">
         <input id="u_pass" type="password" placeholder="Пароль">
         <button onclick="doLogin()" style="width:100%">ВОЙТИ</button>
-        <button onclick="loginGoogle()" style="width:100%; margin-top:10px; background:#fff; color:#000;">GOOGLE</button>
     </div>
 </div>
 
+<!-- АДМИНКА -->
 <div id="admin" class="page">
     <div class="card">
-        <h3>АДМИН</h3>
+        <h3>АДМИН-ПАНЕЛЬ</h3>
         <input id="a_pass" type="password" placeholder="Пароль">
-        <button onclick="goAdmin()" style="width:100%">ВОЙТИ</button>
-        <div id="a_panel" style="display:none; margin-top:20px; text-align:left;"></div>
+        <button onclick="goAdmin()" style="width:100%">ВХОД</button>
+        <div id="a_panel" style="display:none; margin-top:20px;"></div>
     </div>
 </div>
-
-<footer>
-    <div class="footer-links">
-        <a href="https://t.me/bio_mozgalom" target="_blank">✈️ КАНАЛ</a>
-        <a href="https://www.tiktok.com/@mozgalomovich" target="_blank">🎵 TIKTOK</a>
-        <a href="https://t.me/mozgalomovich" target="_blank" style="border-color:#0f0">💬 АДМИН</a>
-    </div>
-</footer>
 
 <script>
 const TG_TOKEN = "8538869779:AAGSu2F22Tx0TAtRH2gXPlF4ZNsPVKTt3lw";
@@ -108,35 +123,33 @@ function show(id) {
 function copyW() { navigator.clipboard.writeText(document.getElementById('w-addr').innerText); alert("Кошелек скопирован!"); }
 
 function buy(name, price) {
-    if(!auth.currentUser) return alert("Сначала войдите!");
+    if(!auth.currentUser) return alert("Войдите в аккаунт!");
     const orderId = "MZ-" + Math.random().toString(36).substr(2,6).toUpperCase();
     db.collection("orders").add({ uid: auth.currentUser.uid, email: auth.currentUser.email, product: name, price: price, code: orderId, status: "pending", time: Date.now() })
     .then(() => {
-        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent("🛒 ЗАКАЗ: "+name+"\nID: "+orderId+"\nЮзер: "+auth.currentUser.email)}`, {mode:'no-cors'});
-        alert("Заказ создан! Код: " + orderId);
+        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent("📦 НОВЫЙ ЗАКАЗ\nID: "+orderId+"\nТовар: "+name+"\nЮзер: "+auth.currentUser.email)}`, {mode:'no-cors'});
+        alert("Заказ создан! Код: " + orderId + "\nПерейдите в Историю для связи с админом.");
         show('history');
     });
 }
 
-// ИСПРАВЛЕННАЯ ФУНКЦИЯ ИСТОРИИ
 auth.onAuthStateChanged(u => {
     if(u) {
         document.getElementById("authContent").innerHTML = `<h3>АККАУНТ</h3><p>${u.email}</p><button onclick="auth.signOut().then(()=>location.reload())" style="width:100%">ВЫЙТИ</button>`;
-        // Убрал orderBy, чтобы точно работало без индексов
         db.collection("orders").where("uid","==",u.uid).onSnapshot(s => {
             const hList = document.getElementById("h_list");
-            if (s.empty) { hList.innerHTML = "У вас нет заказов."; return; }
+            if (s.empty) { hList.innerHTML = "У вас пока нет заказов."; return; }
             hList.innerHTML = s.docs.map(d => {
                 const x = d.data();
-                return `<div class="card" style="text-align:left; padding:15px;">
+                return `<div class="order-item">
                     <b>${x.product}</b> <br>
-                    Код: <span class="order-code">${x.code}</span> <br>
-                    Статус: <span class="status-badge ${x.status=='paid'?'status-paid':'status-pending'}">${x.status=='paid'?'ОПЛАЧЕНО':'ОЖИДАНИЕ'}</span>
+                    ID: <span style="color:var(--p)">${x.code}</span> <br>
+                    Статус: <span class="status-badge ${x.status=='paid'?'status-ok':'status-wait'}">${x.status=='paid'?'ОПЛАЧЕНО':'ОЖИДАЕТСЯ'}</span>
                 </div>`;
             }).join("");
-        }, err => {
-            document.getElementById("h_list").innerHTML = "Ошибка базы: " + err.message;
         });
+    } else {
+        document.getElementById("h_list").innerHTML = "Войдите, чтобы увидеть историю.";
     }
 });
 
@@ -146,19 +159,20 @@ function goAdmin() {
         db.collection("orders").onSnapshot(s => {
             document.getElementById("a_panel").innerHTML = s.docs.map(d => {
                 const x = d.data();
-                return `<div style="background:#111; padding:10px; margin-bottom:10px; border-radius:10px; font-size:12px;">
-                    <b>${x.email}</b><br>${x.product} [${x.code}]<br>
-                    <button onclick="db.collection('orders').doc('${d.id}').update({status:'paid'})">ОПЛАТИТЬ</button>
-                    <button onclick="db.collection('orders').doc('${d.id}').delete()" style="background:red">УДАЛИТЬ</button>
+                return `<div style="background:#111; padding:10px; margin-bottom:10px; border-radius:10px; font-size:11px; text-align:left;">
+                    ${x.email} | ${x.product} <br> <b>ID: ${x.code}</b> <br>
+                    <button style="background:#00ff88; color:#000; padding:5px; margin-top:5px;" onclick="db.collection('orders').doc('${d.id}').update({status:'paid'})">ОПЛАТА</button>
+                    <button style="background:#ffcc00; color:#000; padding:5px;" onclick="db.collection('orders').doc('${d.id}').update({status:'pending'})">ОЖИДАНИЕ</button>
+                    <button style="background:#ff4444; color:#fff; padding:5px;" onclick="db.collection('orders').doc('${d.id}').delete()">УДАЛИТЬ</button>
                 </div>`;
             }).join("");
         });
     }
 }
 
-function doLogin() { auth.signInWithEmailAndPassword(document.getElementById("u_mail").value, document.getElementById("u_pass").value).then(()=>location.reload()).catch(e=>alert(e.message)); }
-function loginGoogle() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).then(()=>location.reload()); }
+function doLogin() { auth.signInWithEmailAndPassword(document.getElementById("u_mail").value, document.getElementById("u_pass").value).catch(e=>alert(e.message)); }
 
+// Matrix Background
 const canvas = document.getElementById('bg-canvas');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth; canvas.height = window.innerHeight;
