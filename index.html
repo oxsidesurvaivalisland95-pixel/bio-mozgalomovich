@@ -72,8 +72,8 @@ button:hover {
     box-shadow: 0 0 20px #00ffe5;
 }
 
-.page { display: none; padding: 20px; padding-bottom: 100px; }
-.page.active { display: block; animation: fadeIn 0.5s; }
+.page { display: none; padding: 20px; padding-bottom: 120px; }
+.page.active { display: block; animation: fadeIn 0.4s; }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
@@ -81,10 +81,9 @@ button:hover {
     max-width: 420px;
     margin: 15px auto;
     padding: 20px;
-    background: rgba(10, 12, 20, 0.85);
+    background: rgba(10, 12, 20, 0.9);
     border: 1px solid #00ffe5;
     border-radius: 12px;
-    box-shadow: 0 0 15px rgba(0, 255, 229, 0.1);
 }
 
 input {
@@ -108,8 +107,8 @@ input {
     padding: 12px 20px;
     border-radius: 10px;
     font-weight: bold;
-    animation: toast 2s ease forwards;
     z-index: 9999;
+    animation: toast 2s ease forwards;
 }
 
 @keyframes toast {
@@ -118,18 +117,6 @@ input {
     85% { opacity: 1; transform: translate(-50%, 0); }
     100% { opacity: 0; transform: translate(-50%, -20px); }
 }
-
-.cyberRain {
-    position: fixed;
-    top: -50px;
-    color: #00ffe5;
-    font-size: 14px;
-    pointer-events: none;
-    z-index: -1;
-    animation: fall linear forwards;
-}
-
-@keyframes fall { to { transform: translateY(110vh); opacity: 0; } }
 
 .order {
     margin-top: 10px;
@@ -149,11 +136,21 @@ input {
     justify-content: center;
     gap: 15px;
     padding: 15px;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(5px);
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 1001;
 }
 
-.socials a { text-decoration: none; }
+.cyberRain {
+    position: fixed;
+    top: -50px;
+    color: #00ffe5;
+    font-size: 14px;
+    pointer-events: none;
+    z-index: -1;
+    animation: fall linear forwards;
+}
+
+@keyframes fall { to { transform: translateY(110vh); opacity: 0; } }
 </style>
 </head>
 
@@ -165,21 +162,23 @@ input {
 </div>
 
 <div class="nav">
-    <button onclick="show('auth')">ACCOUNT</button>
-    <button onclick="show('shop')">SHOP</button>
-    <button onclick="show('cart')">CART</button>
-    <button onclick="show('history')">HISTORY</button>
-    <button onclick="show('admin')">ADMIN</button>
+    <button onclick="show('auth')">АККАУНТ</button>
+    <button onclick="show('shop')">МАГАЗИН</button>
+    <button onclick="show('cart')">КОРЗИНА</button>
+    <button onclick="show('history')">ИСТОРИЯ</button>
+    <button onclick="show('admin')">АДМИН</button>
 </div>
 
 <!-- AUTH -->
 <div id="auth" class="page active">
     <div class="card" id="authContent">
         <h3>ВХОД / РЕГИСТРАЦИЯ</h3>
-        <input id="email" placeholder="Email">
-        <input id="password" type="password" placeholder="Пароль">
-        <button onclick="register()" style="width:48%">РЕГИСТРАЦИЯ</button>
-        <button onclick="login()" style="width:48%">ВОЙТИ</button>
+        <input id="email" type="email" placeholder="Email">
+        <input id="password" type="password" placeholder="Пароль (мин. 6 знаков)">
+        <div style="display:flex; gap:10px;">
+            <button onclick="register()" style="flex:1">СОЗДАТЬ</button>
+            <button onclick="login()" style="flex:1">ВОЙТИ</button>
+        </div>
     </div>
 </div>
 
@@ -188,17 +187,17 @@ input {
     <div class="card">
         <h3>1 неделя</h3>
         <p>300₽ / 4$ / 2💎</p>
-        <button onclick="addCart('1 неделя', 2)">В КОРЗИНУ</button>
+        <button onclick="addCart('1 неделя', 2)" style="width:100%">В КОРЗИНУ</button>
     </div>
     <div class="card">
         <h3>1 месяц</h3>
         <p>1000₽ / 13$ / 6💎</p>
-        <button onclick="addCart('1 месяц', 6)">В КОРЗИНУ</button>
+        <button onclick="addCart('1 месяц', 6)" style="width:100%">В КОРЗИНУ</button>
     </div>
     <div class="card">
         <h3>Навсегда</h3>
         <p>4000₽ / 52$ / 25💎</p>
-        <button onclick="addCart('Навсегда', 25)">В КОРЗИНУ</button>
+        <button onclick="addCart('Навсегда', 25)" style="width:100%">В КОРЗИНУ</button>
     </div>
 </div>
 
@@ -208,11 +207,10 @@ input {
         <h3>ВАША КОРЗИНА</h3>
         <div id="cartBox">Корзина пуста</div>
         
-        <div id="paymentBlock" style="display:none; margin-top:20px; border-top:1px solid #333; pt:10px;">
-            <h4>ОПЛАТА ЧЕРЕЗ TON</h4>
-            <p style="font-size:12px; color:#00ffe5;">Скопируйте адрес и переведите нужную сумму</p>
+        <div id="paymentBlock" style="display:none; margin-top:20px; border-top:1px solid #333; padding-top:15px;">
+            <h4>ОПЛАТА TON</h4>
             <input id="wallet" value="UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv" readonly>
-            <button onclick="copyWallet()" style="width:100%; margin-bottom:5px;">СКОПИРОВАТЬ АДРЕС</button>
+            <button onclick="copyWallet()" style="width:100%; margin-bottom:8px;">СКОПИРОВАТЬ АДРЕС</button>
             <button onclick="openTon()" style="width:100%; background: #0088cc;">ОТКРЫТЬ TONKEEPER</button>
         </div>
     </div>
@@ -222,32 +220,33 @@ input {
 <div id="history" class="page">
     <div class="card">
         <h3>ИСТОРИЯ ЗАКАЗОВ</h3>
-        <div id="hist">Войдите, чтобы видеть заказы</div>
+        <div id="hist">Войдите в аккаунт</div>
     </div>
 </div>
 
 <!-- ADMIN -->
 <div id="admin" class="page">
     <div class="card">
-        <h3>ADMIN PANEL</h3>
-        <input id="adm" type="password" placeholder="Admin Password">
-        <button onclick="admin()" style="width:100%">ВОЙТИ В ПАНЕЛЬ</button>
-        <div id="ordersList" style="margin-top:20px;"></div>
+        <h3>ПАНЕЛЬ АДМИНИСТРАТОРА</h3>
+        <div id="adminAuth">
+            <input id="admPass" type="password" placeholder="Введите пароль админа">
+            <button onclick="checkAdmin()" style="width:100%">ВОЙТИ</button>
+        </div>
+        <div id="adminPanel" style="display:none;">
+            <h4>Все заказы:</h4>
+            <div id="ordersList"></div>
+        </div>
     </div>
 </div>
 
 <!-- SOCIALS -->
 <div class="socials">
-    <a href="https://t.me/bio_mozgalom" target="_blank">
-        <button style="background:#0088cc">TELEGRAM</button>
-    </a>
-    <a href="https://www.tiktok.com/@mozgalomovich?_r=1&_t=ZS-96E1FTEA933" target="_blank">
-        <button style="background:#000000; border:1px solid #ff00ff">TIKTOK</button>
-    </a>
+    <a href="https://t.me/bio_mozgalom" target="_blank"><button style="background:#0088cc">TELEGRAM</button></a>
+    <a href="https://www.tiktok.com/@mozgalomovich?_r=1&_t=ZS-96E1FTEA933" target="_blank"><button style="background:#000; border:1px solid #ff00ff">TIKTOK</button></a>
 </div>
 
 <script>
-/* FIREBASE CONFIG */
+/* FIREBASE */
 let auth, db;
 try {
     firebase.initializeApp({
@@ -259,9 +258,9 @@ try {
     });
     auth = firebase.auth();
     db = firebase.firestore();
-} catch(e) { console.error(e); }
+} catch(e) { console.error("Firebase Init Error", e); }
 
-/* NAVIGATION */
+/* UI */
 function show(id) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(id).classList.add('active');
@@ -275,63 +274,62 @@ function toast(t) {
     setTimeout(() => d.remove(), 2000);
 }
 
-/* AUTH */
+/* АВТОРИЗАЦИЯ */
 function register() {
-    const e = email.value, p = password.value;
-    if(!e || !p) return toast("ЗАПОЛНИТЕ ПОЛЯ");
+    const e = document.getElementById("email").value;
+    const p = document.getElementById("password").value;
+    if(!e || p.length < 6) return toast("Email и пароль (мин 6 симв)!");
+    
     auth.createUserWithEmailAndPassword(e, p)
-        .then(() => toast("УСПЕШНО ГRegistered"))
-        .catch(err => toast("ОШИБКА"));
+        .then(() => { toast("АККАУНТ СОЗДАН!"); })
+        .catch(err => { 
+            console.error(err);
+            toast("ОШИБКА: " + err.message); 
+        });
 }
 
 function login() {
-    const e = email.value, p = password.value;
+    const e = document.getElementById("email").value;
+    const p = document.getElementById("password").value;
     auth.signInWithEmailAndPassword(e, p)
-        .then(() => toast("ВХОД ВЫПОЛНЕН"))
-        .catch(() => toast("ОШИБКА ВХОДА"));
+        .then(() => { toast("ВХОД ВЫПОЛНЕН!"); })
+        .catch(err => { toast("НЕВЕРНЫЕ ДАННЫЕ"); });
 }
 
 function logout() {
     auth.signOut().then(() => location.reload());
 }
 
-/* SHOP & CART */
+/* МАГАЗИН */
 let cart = [];
 function addCart(n, p) {
     cart.push({n, p});
-    toast("ДОБАВЛЕНО В КОРЗИНУ");
+    toast("ДОБАВЛЕНО");
     renderCart();
 }
 
 function renderCart() {
     const box = document.getElementById("cartBox");
     const pBlock = document.getElementById("paymentBlock");
-    
     if (cart.length === 0) {
         box.innerHTML = "Корзина пуста";
         pBlock.style.display = "none";
         return;
     }
-    
     pBlock.style.display = "block";
-    box.innerHTML = cart.map((item, index) => `
+    box.innerHTML = cart.map((item, i) => `
         <div class="order">
             <b>${item.n}</b> — ${item.p}💎
-            <div style="margin-top:10px;">
-                <button onclick="confirmBuy('${item.n}', ${item.p}, ${index})" style="padding:5px 10px; font-size:12px;">ОФОРМИТЬ</button>
-                <button onclick="removeItem(${index})" style="padding:5px 10px; font-size:12px; background:red;">УДАЛИТЬ</button>
+            <div style="margin-top:8px;">
+                <button onclick="confirmBuy('${item.n}', ${item.p}, ${i})" style="padding:5px 10px; font-size:11px;">КУПИТЬ</button>
+                <button onclick="cart.splice(${i},1);renderCart();" style="padding:5px 10px; font-size:11px; background:red;">УДАЛИТЬ</button>
             </div>
         </div>
     `).join("");
 }
 
-function removeItem(i) {
-    cart.splice(i, 1);
-    renderCart();
-}
-
 function confirmBuy(n, p, index) {
-    if(!auth.currentUser) return toast("НУЖНО ВОЙТИ");
+    if(!auth.currentUser) return toast("СНАЧАЛА ВОЙДИТЕ!");
     
     db.collection("orders").add({
         uid: auth.currentUser.uid,
@@ -342,26 +340,26 @@ function confirmBuy(n, p, index) {
         status: "pending",
         time: Date.now()
     }).then(() => {
-        toast("ЗАКАЗ СОЗДАН! ЖДЕМ ОПЛАТЫ");
+        toast("ЗАКАЗ ОФОРМЛЕН!");
         cart.splice(index, 1);
         renderCart();
         show('history');
-    });
+    }).catch(e => toast("ОШИБКА БАЗЫ"));
 }
 
-/* AUTH STATE & HISTORY */
+/* СЛЕЖКА ЗА СОСТОЯНИЕМ */
 auth.onAuthStateChanged(user => {
     if (user) {
         document.getElementById("authContent").innerHTML = `
-            <h3>ПРОФИЛЬ</h3>
-            <p>Email: ${user.email}</p>
+            <h3>ВАШ АККАУНТ</h3>
+            <p style="color:#00ffe5">${user.email}</p>
             <button onclick="logout()" style="width:100%">ВЫЙТИ</button>
         `;
         
         db.collection("orders").where("uid", "==", user.uid).orderBy("time", "desc")
           .onSnapshot(snap => {
               const h = document.getElementById("hist");
-              if(snap.empty) return h.innerHTML = "Заказов пока нет";
+              if(snap.empty) { h.innerHTML = "У вас нет заказов"; return; }
               h.innerHTML = snap.docs.map(doc => {
                   const d = doc.data();
                   const color = d.status === 'paid' ? '#00ff00' : '#ff00ff';
@@ -374,40 +372,55 @@ auth.onAuthStateChanged(user => {
     }
 });
 
-/* ADMIN */
-function admin() {
-    if(document.getElementById("adm").value !== "rahim_45_pro") return toast("ДОСТУП ЗАПРЕЩЕН");
-    
+/* АДМИН ПАНЕЛЬ */
+function checkAdmin() {
+    const p = document.getElementById("admPass").value;
+    if(p === "rahim_45_pro") {
+        document.getElementById("adminAuth").style.display = "none";
+        document.getElementById("adminPanel").style.display = "block";
+        loadAdminOrders();
+    } else {
+        toast("НЕВЕРНЫЙ ПАРОЛЬ");
+    }
+}
+
+function loadAdminOrders() {
     db.collection("orders").orderBy("time", "desc").onSnapshot(snap => {
-        document.getElementById("ordersList").innerHTML = snap.docs.map(doc => `
+        const list = document.getElementById("ordersList");
+        if(snap.empty) { list.innerHTML = "Заказов нет"; return; }
+        list.innerHTML = snap.docs.map(doc => {
+            const d = doc.data();
+            return `
             <div class="order" style="font-size:12px;">
-                Юзер: ${doc.data().email}<br>
-                Товар: ${doc.data().product} (${doc.data().code})<br>
-                Статус: ${doc.data().status}<br>
-                <button onclick="updateStatus('${doc.id}', 'paid')">ОПЛАЧЕНО</button>
-                <button onclick="updateStatus('${doc.id}', 'del')" style="background:red">УДАЛИТЬ</button>
-            </div>
-        `).join("");
+                <b>${d.email}</b><br>
+                Товар: ${d.product} (${d.code})<br>
+                Статус: ${d.status}<br>
+                <div style="margin-top:5px;">
+                    <button onclick="updateStatus('${doc.id}', 'paid')" style="padding:3px 8px; font-size:10px;">ОПЛАЧЕНО</button>
+                    <button onclick="updateStatus('${doc.id}', 'del')" style="padding:3px 8px; font-size:10px; background:red;">УДАЛИТЬ</button>
+                </div>
+            </div>`;
+        }).join("");
     });
 }
 
 function updateStatus(id, type) {
     if(type === 'paid') db.collection("orders").doc(id).update({status: "paid"});
     else db.collection("orders").doc(id).delete();
-    toast("ОБНОВЛЕНО");
+    toast("ВЫПОЛНЕНО");
 }
 
-/* UTILS */
+/* ДОП */
 function copyWallet() {
-    navigator.clipboard.writeText(document.getElementById("wallet").value);
+    const w = document.getElementById("wallet");
+    w.select();
+    navigator.clipboard.writeText(w.value);
     toast("АДРЕС СКОПИРОВАН");
 }
 
-function openTon() {
-    window.location.href = "tonkeeper://";
-}
+function openTon() { window.location.href = "tonkeeper://"; }
 
-/* CYBER RAIN */
+/* ДОЖДЬ */
 setInterval(() => {
     const r = document.createElement("div");
     r.className = "cyberRain";
@@ -416,7 +429,7 @@ setInterval(() => {
     r.style.animationDuration = (2 + Math.random() * 3) + "s";
     document.body.appendChild(r);
     setTimeout(() => r.remove(), 5000);
-}, 150);
+}, 200);
 </script>
 
 </body>
