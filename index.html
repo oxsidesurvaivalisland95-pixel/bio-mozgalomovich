@@ -29,33 +29,23 @@
         .page.active { display:block; }
 
         .card { background: var(--card); border: 1px solid rgba(0,255,229,0.3); border-radius: 20px; padding: 20px; margin-bottom: 15px; backdrop-filter: blur(10px); position: relative; }
-        
         .price-tag { font-size: 28px; font-weight: 900; color: var(--n); font-family: 'Orbitron'; margin: 10px 0; }
-        
         .buy-btn { width:100%; padding:15px; border-radius:12px; border:none; background: linear-gradient(45deg, var(--n), var(--p)); color:#fff; font-weight:900; cursor:pointer; font-family:'Orbitron'; font-size: 14px; }
 
-        /* Кнопка Tonkeeper Dark Neon */
-        .ton-btn { 
-            display: block; width: 100%; padding: 12px; margin-top: 15px; 
-            background: rgba(0, 0, 0, 0.6); border: 2px solid var(--neon-g); 
-            border-radius: 12px; color: var(--neon-g); font-family: 'Orbitron'; 
-            font-weight: 900; text-decoration: none; text-align: center; 
-            box-shadow: 0 0 10px rgba(0, 255, 65, 0.4); text-transform: uppercase; font-size: 12px;
-        }
+        .ton-btn { display: block; width: 100%; padding: 12px; margin-top: 15px; background: rgba(0, 0, 0, 0.6); border: 2px solid var(--neon-g); border-radius: 12px; color: var(--neon-g); font-family: 'Orbitron'; font-weight: 900; text-decoration: none; text-align: center; box-shadow: 0 0 10px rgba(0, 255, 65, 0.4); text-transform: uppercase; font-size: 12px; }
 
         .order-item { border-left: 4px solid var(--n); margin-bottom: 10px; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 0 12px 12px 0; position: relative; }
         .status-pill { position: absolute; top: 8px; right: 8px; padding: 3px 8px; border-radius: 50px; font-size: 8px; font-weight: bold; text-transform: uppercase; }
+        .expire-tag { position: absolute; bottom: 8px; right: 8px; font-size: 8px; color: var(--p); font-weight: bold; }
         .status-pending { background: #444; }
         .status-paid { background: #0f8; color: #000; }
 
         input { width:100%; padding:14px; margin:8px 0; border-radius:12px; border:1px solid var(--n); background:rgba(0,0,0,0.5); color:#fff; }
-
         .footer { background:#000; padding:20px; text-align:center; border-top: 1px solid var(--p); }
         .f-links a { color:var(--n); text-decoration:none; margin:0 10px; font-size:12px; font-weight:bold; }
 
-        /* Админ-кнопки */
-        .adm-btn-ok { background: #0f8; color: #000; border: none; padding: 5px 10px; border-radius: 5px; font-size: 10px; cursor: pointer; }
-        .adm-btn-del { background: #f44; color: #fff; border: none; padding: 5px 10px; border-radius: 5px; font-size: 10px; cursor: pointer; margin-left: 5px; }
+        .adm-btn-ok { background: #0f8; color: #000; border: none; padding: 8px 15px; border-radius: 8px; font-size: 10px; cursor: pointer; font-weight:bold; }
+        .adm-btn-del { background: #f44; color: #fff; border: none; padding: 8px 15px; border-radius: 8px; font-size: 10px; cursor: pointer; font-weight:bold; margin-left: 5px; }
     </style>
 </head>
 <body>
@@ -75,28 +65,13 @@
 </div>
 
 <div id="shop" class="page active">
-    <div class="card">
-        <h3>1 НЕДЕЛЯ (PRO)</h3>
-        <div class="price-tag">300₽</div>
-        <button class="buy-btn" onclick="buy('1 НЕДЕЛЯ PRO', 300)">КУПИТЬ</button>
-    </div>
-    <div class="card">
-        <h3>1 МЕСЯЦ (ULTRA)</h3>
-        <div class="price-tag">1000₽</div>
-        <button class="buy-btn" onclick="buy('1 МЕСЯЦ ULTRA', 1000)">КУПИТЬ</button>
-    </div>
-    <div class="card">
-        <h3>FOREVER (LEGEND)</h3>
-        <div class="price-tag">4000₽</div>
-        <button class="buy-btn" onclick="buy('LEGEND', 4000)">КУПИТЬ</button>
-    </div>
+    <div class="card"><h3>1 НЕДЕЛЯ (PRO)</h3><div class="price-tag">300₽</div><button class="buy-btn" onclick="buy('1 НЕДЕЛЯ PRO', 300, 7)">КУПИТЬ</button></div>
+    <div class="card"><h3>1 МЕСЯЦ (ULTRA)</h3><div class="price-tag">1000₽</div><button class="buy-btn" onclick="buy('1 МЕСЯЦ ULTRA', 1000, 30)">КУПИТЬ</button></div>
+    <div class="card"><h3>FOREVER (LEGEND)</h3><div class="price-tag">4000₽</div><button class="buy-btn" onclick="buy('LEGEND', 4000, 99999)">КУПИТЬ</button></div>
 </div>
 
 <div id="cases" class="page">
-    <div class="card" style="text-align:center;">
-        <h2 style="color:var(--p); font-family:Orbitron;">LUCKY SLOT</h2>
-        <button class="buy-btn" onclick="buy('CASE SPIN', 100)">КУПИТЬ КРУТКУ (100₽)</button>
-    </div>
+    <div class="card" style="text-align:center;"><h2 style="color:var(--p); font-family:Orbitron;">LUCKY SLOT</h2><button class="buy-btn" onclick="buy('CASE SPIN', 100, 0)">КУПИТЬ КРУТКУ (100₽)</button></div>
 </div>
 
 <div id="history" class="page">
@@ -104,27 +79,20 @@
         <h4 style="margin:0; color:var(--n)">ОПЛАТА TON</h4>
         <code id="w-addr" onclick="copyW()" style="font-size:10px; word-break:break-all; display:block; margin:10px 0; color:#aaa;">UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv</code>
         <a href="https://tonkeeper.com/" class="ton-btn">ОТКРЫТЬ TONKEEPER</a>
-        <p style="font-size:9px; color:orange; margin-top:10px;">ID заказа в комментарий!</p>
     </div>
     <div id="h_list">Загрузка...</div>
 </div>
 
 <div id="auth" class="page">
     <div id="uProfile" style="display:none;">
-        <div class="card">
-            <h3 id="uEmail" style="font-family:Orbitron; color:var(--n)">...</h3>
-            <button onclick="auth.signOut().then(()=>location.reload())" style="background:red; color:#fff; border:none; width:100%; padding:10px; border-radius:10px;">ВЫЙТИ</button>
-        </div>
+        <div class="card"><h3 id="uEmail" style="font-family:Orbitron; color:var(--n)">...</h3><button onclick="auth.signOut().then(()=>location.reload())" style="background:red; color:#fff; border:none; width:100%; padding:10px; border-radius:10px;">ВЫЙТИ</button></div>
     </div>
-    <div id="loginCard" class="card">
-        <input id="u_nick" type="text" placeholder="Ваш Ник">
-        <input id="u_pass" type="password" placeholder="Пароль">
-        <button class="buy-btn" onclick="doLogin()">ВХОД / СОЗДАТЬ</button>
-    </div>
+    <div id="loginCard" class="card"><input id="u_nick" type="text" placeholder="Ваш Ник"><input id="u_pass" type="password" placeholder="Пароль"><button class="buy-btn" onclick="doLogin()">ВХОД / СОЗДАТЬ</button></div>
 </div>
 
 <div id="admin" class="page">
     <div class="card">
+        <h3>SYSTEM CONTROL</h3>
         <input id="a_pass" type="password" placeholder="Admin Key">
         <button class="buy-btn" onclick="goAdmin()">ACCESS</button>
         <div id="a_panel" style="display:none; margin-top:20px;"></div>
@@ -158,7 +126,6 @@ function show(id) {
 function doLogin() {
     const nick = document.getElementById('u_nick').value.trim();
     const pass = document.getElementById('u_pass').value;
-    if(nick.length < 3) return alert("Ник от 3 симв.");
     const fakeEmail = nick.toLowerCase() + "@moz.me";
     auth.signInWithEmailAndPassword(fakeEmail, pass).catch(() => {
         auth.createUserWithEmailAndPassword(fakeEmail, pass).catch(e => alert(e.message));
@@ -171,48 +138,72 @@ auth.onAuthStateChanged(u => {
         document.getElementById('uProfile').style.display = 'block';
         document.getElementById('uEmail').innerText = u.email.split('@')[0].toUpperCase();
         db.collection("orders").where("uid","==",u.uid).onSnapshot(s => {
-            document.getElementById("h_list").innerHTML = s.docs.map(d => `
-                <div class="order-item" style="border-color: ${d.data().status=='paid'?'#0f8':'#555'}">
-                    <span class="status-pill status-${d.data().status}">${d.data().status}</span>
-                    <b>${d.data().product}</b><br><small>ID: ${d.data().code}</small>
-                </div>
-            `).join("");
+            document.getElementById("h_list").innerHTML = s.docs.sort((a,b)=>b.data().timestamp - a.data().timestamp).map(d => {
+                const data = d.data();
+                return `
+                <div class="order-item" style="border-color: ${data.status=='paid'?'#0f8':'#555'}">
+                    <span class="status-pill status-${data.status}">${data.status}</span>
+                    <b>${data.product}</b><br><small>ID: ${data.code}</small>
+                    ${data.expire_str ? `<div class="expire-tag">ДО: ${data.expire_str}</div>` : ''}
+                </div>`;
+            }).join("");
         });
     }
 });
 
-function buy(name, price) {
+function buy(name, price, days) {
     if(!auth.currentUser) return show('auth');
     const orderId = "MZ" + Math.random().toString(36).substr(2,4).toUpperCase();
     db.collection("orders").add({
         uid: auth.currentUser.uid, email: auth.currentUser.email,
         product: name, price: price, code: orderId,
-        status: "pending", timestamp: Date.now()
+        status: "pending", timestamp: Date.now(), date_str: new Date().toLocaleString(),
+        duration_days: days
     }).then(() => {
         fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent("🛒 ЗАКАЗ: "+orderId+"\n"+name)}`, {mode:'no-cors'});
-        alert("ЗАКАЗ: " + orderId);
+        alert("ЗАКАЗ СОЗДАН: " + orderId);
         show('history');
     });
 }
 
-function copyW() { navigator.clipboard.writeText(MY_WALLET); alert("Копировано"); }
+function confirmOrder(docId, days) {
+    let expireStr = "БЕССРОЧНО";
+    if (days > 0 && days < 50000) {
+        let d = new Date();
+        d.setDate(d.getDate() + days);
+        expireStr = d.toLocaleDateString();
+    }
+    db.collection('orders').doc(docId).update({
+        status: 'paid',
+        expire_str: expireStr
+    });
+}
 
 function goAdmin() {
     if(document.getElementById("a_pass").value === "rahim_45_pro") {
         document.getElementById("a_panel").style.display = "block";
-        db.collection("orders").orderBy("timestamp", "desc").limit(20).onSnapshot(s => {
-            document.getElementById("a_panel").innerHTML = s.docs.map(d => `
-                <div style="background:#222; padding:10px; margin-bottom:5px; border-radius:10px; font-size:10px;">
-                    ${d.data().code} | ${d.data().product}
-                    <div style="margin-top:5px;">
-                        <button class="adm-btn-ok" onclick="db.collection('orders').doc('${d.id}').update({status:'paid'})">ОПЛАЧЕНО</button>
+        db.collection("orders").orderBy("timestamp", "desc").onSnapshot(s => {
+            document.getElementById("a_panel").innerHTML = s.docs.map(d => {
+                const data = d.data();
+                const isPaid = data.status === 'paid';
+                return `
+                <div style="background:#111; padding:12px; margin-bottom:10px; border-radius:12px; border: 1px solid ${isPaid ? '#0f8' : '#444'}">
+                    <div style="color:var(--n); font-weight:bold;">ID: ${data.code}</div>
+                    <div style="font-size:11px;">Юзер: ${data.email.split('@')[0]} | ${data.product}</div>
+                    <div style="font-size:10px; color:#aaa;">Создан: ${data.date_str}</div>
+                    ${data.expire_str ? `<div style="font-size:10px; color:var(--p);">ИСТЕКАЕТ: ${data.expire_str}</div>` : ''}
+                    <div style="margin: 5px 0; font-weight:bold; color:${isPaid ? '#0f8' : '#f44'}">СТАТУС: ${isPaid ? 'ОПЛАЧЕНО' : 'ОЖИДАНИЕ'}</div>
+                    <div>
+                        ${!isPaid ? `<button class="adm-btn-ok" onclick="confirmOrder('${d.id}', ${data.duration_days})">ОПЛАЧЕНО</button>` : ''}
                         <button class="adm-btn-del" onclick="db.collection('orders').doc('${d.id}').delete()">УДАЛИТЬ</button>
                     </div>
-                </div>
-            `).join("");
+                </div>`;
+            }).join("");
         });
     }
 }
+
+function copyW() { navigator.clipboard.writeText(MY_WALLET); alert("Адрес скопирован!"); }
 
 // Matrix BG
 const canvas = document.getElementById('bg-canvas');
