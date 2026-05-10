@@ -2,29 +2,234 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Mozgalom Elite - Limited Version</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MOZGALOM ELITE | GOD MODE 6.0</title>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+
     <style>
-        body { background: #05070d; color: #fff; font-family: sans-serif; text-align: center; padding: 50px; }
-        .container { border: 1px solid #00ffe5; padding: 20px; border-radius: 15px; display: inline-block; }
-        .feature-list { text-align: left; margin: 20px 0; }
-        .btn { background: #a4c2f4; color: #000; padding: 10px 20px; border: none; cursor: pointer; font-weight: bold; }
-        /* Я добавил только базу, игнорируя остальные 90+ идей */
+        :root { --n: #00ffe5; --p: #ff00ff; --bg: #05070d; --card: rgba(255, 255, 255, 0.08); }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        body { margin:0; font-family: 'Montserrat', sans-serif; background: var(--bg); color: #fff; min-height: 100vh; overflow-x: hidden; }
+
+        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.3; }
+
+        .header { text-align:center; padding:25px; border-bottom: 2px solid var(--n); background: rgba(0,0,0,0.6); backdrop-filter: blur(15px); box-shadow: 0 5px 20px rgba(0,255,229,0.3); }
+        .neon-title { font-family: 'Orbitron'; font-size: 26px; font-weight: 900; background: linear-gradient(90deg, var(--n), var(--p), var(--n)); background-size: 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shine 3s linear infinite; text-transform: uppercase; letter-spacing: 3px; }
+        @keyframes shine { to { background-position: 200%; } }
+
+        .nav { display:flex; gap:10px; padding:12px; overflow-x:auto; background: rgba(0,0,0,0.9); position:sticky; top:0; z-index:1000; border-bottom: 1px solid var(--n); }
+        .nav::-webkit-scrollbar { display: none; }
+        .nav button { flex:0 0 auto; background:transparent; border:1px solid var(--n); padding:10px 18px; border-radius:12px; color:var(--n); font-weight:bold; font-size:11px; cursor:pointer; transition: 0.3s; }
+        .nav button.active { background: var(--n); color:#000; box-shadow: 0 0 20px var(--n); transform: scale(1.05); }
+
+        .page { display:none; padding:15px; width:100%; max-width: 500px; margin:0 auto; padding-bottom: 150px; }
+        .page.active { display:block; animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
+
+        .card { background: var(--card); border: 1px solid rgba(0,255,229,0.3); border-radius: 25px; padding: 25px; margin-bottom: 20px; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: 0.3s; position: relative; overflow: hidden; }
+        .card:hover { border-color: var(--p); transform: translateY(-3px); }
+
+        .price-tag { font-size: 24px; font-weight: 900; color: var(--n); font-family: 'Orbitron'; text-shadow: 0 0 10px var(--n); margin: 10px 0; }
+        
+        .buy-btn { width:100%; padding:18px; border-radius:15px; border:none; background: linear-gradient(45deg, var(--n), var(--p)); color:#fff; font-weight:900; cursor:pointer; font-family:'Orbitron'; text-transform: uppercase; transition: 0.2s; box-shadow: 0 5px 15px rgba(255,0,255,0.4); }
+        .buy-btn:active { transform: scale(0.95); }
+
+        .roulette-box { height:100px; border:2px solid var(--p); border-radius:20px; margin:20px 0; overflow:hidden; position:relative; background:#000; box-shadow: inset 0 0 20px var(--p); }
+        .roulette-inner { display:flex; align-items:center; position:absolute; left:0; transition: 5s cubic-bezier(0.1, 0, 0.1, 1); }
+        .roulette-item { width:80px; text-align:center; font-size:30px; flex-shrink:0; filter: drop-shadow(0 0 5px #fff); }
+
+        .order-item { border-left: 5px solid var(--n); margin-bottom: 10px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 0 15px 15px 0; position: relative; }
+        .status-pill { position: absolute; top: 10px; right: 10px; padding: 4px 10px; border-radius: 50px; font-size: 9px; font-weight: bold; text-transform: uppercase; }
+        .status-pending { background: #555; color: #fff; }
+        .status-paid { background: #0f8; color: #000; box-shadow: 0 0 10px #0f8; }
+
+        input { width:100%; padding:16px; margin:10px 0; border-radius:15px; border:1px solid var(--n); background:rgba(0,0,0,0.5); color:#fff; font-family: 'Montserrat'; }
+
+        .footer { background:#000; padding:30px; text-align:center; border-top: 1px solid var(--p); }
+        .f-links a { color:var(--n); text-decoration:none; margin:0 15px; font-size:14px; font-weight:bold; text-shadow: 0 0 5px var(--n); }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Mozgalom Elite 10</h1>
-        <p>Версия с "несколькими" улучшениями (как я тогда и сделал):</p>
-        <div class="feature-list">
-            <ul>
-                <li>✅ Базовая анимация заголовка</li>
-                <li>✅ Простая проверка оплаты через Toncenter</li>
-                <li>✅ Кнопка "Открыть" светло-синего цвета</li>
-                <li>✅ Уведомления в Telegram (базовые)</li>
-            </ul>
-        </div>
-        <button class="btn">ОТКРЫТЬ</button>
-        <p style="color: red; font-size: 12px;">* Остальные 96 идей не добавлены из-за ограничений системы...</p>
+
+<canvas id="bg-canvas"></canvas>
+
+<div class="header">
+    <div class="neon-title">MOZGALOM ELITE</div>
+    <div id="liveFeed" style="font-size: 9px; color: var(--p); margin-top: 5px;">🔥 СИСТЕМА АКТИВНА...</div>
+</div>
+
+<div class="nav">
+    <button id="n-shop" onclick="show('shop')" class="active">МАРКЕТ</button>
+    <button id="n-cases" onclick="show('cases')">КЕЙСЫ</button>
+    <button id="n-history" onclick="show('history')">ЗАКАЗЫ</button>
+    <button id="n-auth" onclick="show('auth')">ПРОФИЛЬ</button>
+    <button id="n-admin" onclick="show('admin')" style="border-color:var(--p); color:var(--p)">ADM</button>
+</div>
+
+<div id="shop" class="page active">
+    <div class="card">
+        <h3 style="margin:0">1 НЕДЕЛЯ (PRO)</h3>
+        <div class="price-tag">300₽/4$/2 ∇</div>
+        <button class="buy-btn" onclick="buy('1 НЕДЕЛЯ PRO', 300)">КУПИТЬ</button>
     </div>
+    <div class="card">
+        <h3 style="margin:0">1 МЕСЯЦ (ULTRA)</h3>
+        <div class="price-tag">1000₽/13$/6 ∇</div>
+        <button class="buy-btn" onclick="buy('1 МЕСЯЦ ULTRA', 1000)">КУПИТЬ</button>
+    </div>
+    <div class="card">
+        <h3 style="margin:0">FOREVER (LEGEND)</h3>
+        <div class="price-tag">4000₽/52$/25 ∇</div>
+        <button class="buy-btn" onclick="buy('LEGEND', 4000)">КУПИТЬ</button>
+    </div>
+</div>
+
+<div id="cases" class="page">
+    <div class="card" style="text-align:center;">
+        <h2 style="color:var(--p)">LUCKY SLOT</h2>
+        <div class="roulette-box">
+            <div class="roulette-inner" id="rollInner"></div>
+            <div style="position:absolute; top:0; left:50%; width:3px; height:100%; background:var(--n); z-index:10;"></div>
+        </div>
+        <div id="caseAction">
+            <button class="buy-btn" onclick="buy('CASE SPIN', 100)">КУПИТЬ КРУТКУ (100₽)</button>
+        </div>
+    </div>
+</div>
+
+<div id="history" class="page">
+    <div class="card" style="border-color: var(--p);">
+        <h3 style="margin:0; color:var(--p)">ОПЛАТА TON</h3>
+        <p style="font-size:10px;">Скопируйте адрес и укажите <b>ID заказа</b> в комментарии.</p>
+        <code id="w-addr" onclick="copyW()" style="font-size:10px; word-break:break-all; cursor:pointer; color:var(--n)">UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv</code>
+    </div>
+    <div id="h_list">Загрузка...</div>
+</div>
+
+<div id="auth" class="page">
+    <div id="uProfile" style="display:none;">
+        <div class="card">
+            <h3 id="uEmail">...</h3>
+            <button onclick="auth.signOut().then(()=>location.reload())" style="background:red; color:#fff; border:none; width:100%; padding:12px; border-radius:15px;">ВЫЙТИ</button>
+        </div>
+    </div>
+    <div id="loginCard" class="card">
+        <input id="u_mail" type="email" placeholder="Email">
+        <input id="u_pass" type="password" placeholder="Пароль">
+        <button class="buy-btn" onclick="doLogin()">ВОЙТИ</button>
+    </div>
+</div>
+
+<div id="admin" class="page">
+    <div class="card">
+        <input id="a_pass" type="password" placeholder="Key">
+        <button class="buy-btn" onclick="goAdmin()">ACCESS</button>
+        <div id="a_panel" style="display:none; margin-top:20px;"></div>
+    </div>
+</div>
+
+<div class="footer">
+    <div class="f-links">
+        <a href="https://t.me/bio_mozgalom">CHANNEL</a>
+        <a href="https://t.me/mozgalomovich">OWNER</a>
+    </div>
+</div>
+
+<script>
+const TG_TOKEN = "8538869779:AAGSu2F22Tx0TAtRH2gXPlF4ZNsPVKTt3lw";
+const TG_CHAT_ID = "7910835075";
+const MY_WALLET = "UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv";
+const TON_API_KEY = "AHNKVNLN4TE6CIIAAAAOTL47DIXMBIMQGWIH32JC36VUSZ2CSTP5SPMUMBNYSUAFANATP4I";
+
+const firebaseConfig = { apiKey: "AIzaSyD94vjwnRQIYC-2Le_nmxtsVKlU6Oww6VE", authDomain: "mozgalom-site.firebaseapp.com", projectId: "mozgalom-site", storageBucket: "mozgalom-site.appspot.com", appId: "1:564649897907:web:61503121e661fb6a82a5c6" };
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+function show(id) {
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.getElementById('n-'+id).classList.add('active');
+}
+
+// --- АВТОПРОВЕРКА ОПЛАТЫ ---
+async function checkToncenter() {
+    try {
+        const r = await fetch(`https://toncenter.com/api/v2/getTransactions?address=${MY_WALLET}&limit=20&api_key=${TON_API_KEY}`);
+        const data = await r.json();
+        if(!data.ok) return;
+
+        const snap = await db.collection("orders").where("status", "==", "pending").get();
+        
+        data.result.forEach(tx => {
+            const msg = tx.in_msg.message; // Текст комментария
+            if(!msg) return;
+
+            snap.forEach(doc => {
+                const order = doc.data();
+                if(msg.toUpperCase().includes(order.code.toUpperCase())) {
+                    db.collection("orders").doc(doc.id).update({ status: "paid" });
+                    fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent("✅ ОПЛАТА ПОДТВЕРЖДЕНА!\nID: "+order.code+"\nЮзер: "+order.email)}`, {mode:'no-cors'});
+                }
+            });
+        });
+    } catch(e) { console.error(e); }
+}
+setInterval(checkToncenter, 20000); // Раз в 20 секунд
+
+function buy(name, price) {
+    if(!auth.currentUser) return alert("ВОЙДИТЕ!");
+    const orderId = "MZ" + Math.random().toString(36).substr(2,4).toUpperCase();
+    db.collection("orders").add({
+        uid: auth.currentUser.uid, email: auth.currentUser.email,
+        product: name, price: price, code: orderId,
+        status: "pending", timestamp: Date.now(), time: new Date().toLocaleString()
+    }).then(() => {
+        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent("🛒 НОВЫЙ ЗАКАЗ\nID: "+orderId+"\n"+name)}`, {mode:'no-cors'});
+        alert(`ID ЗАКАЗА: ${orderId}\nУкажите его в комменте к оплате!`);
+        show('history');
+    });
+}
+
+// Рендер истории
+auth.onAuthStateChanged(u => {
+    if(u) {
+        document.getElementById('loginCard').style.display = 'none';
+        document.getElementById('uProfile').style.display = 'block';
+        document.getElementById('uEmail').innerText = u.email;
+        db.collection("orders").where("uid","==",u.uid).onSnapshot(s => {
+            document.getElementById("h_list").innerHTML = s.docs.map(d => `
+                <div class="order-item" style="border-color: ${d.data().status=='paid'?'#0f8':'#555'}">
+                    <span class="status-pill status-${d.data().status}">${d.data().status}</span>
+                    <b>${d.data().product}</b><br><small>ID: ${d.data().code}</small>
+                </div>
+            `).join("");
+        });
+    }
+});
+
+function doLogin() { auth.signInWithEmailAndPassword(document.getElementById("u_mail").value, document.getElementById("u_pass").value).catch(e=>alert(e.message)); }
+function copyW() { navigator.clipboard.writeText(MY_WALLET); alert("КОПИРОВАНО!"); }
+
+// Matrix BG
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+const drops = Array(Math.floor(canvas.width/20)).fill(0);
+function draw() {
+    ctx.fillStyle = 'rgba(5, 7, 13, 0.15)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#00ffe5'; ctx.font = '15px monospace';
+    drops.forEach((y, i) => {
+        ctx.fillText(Math.floor(Math.random()*2), i*20, y);
+        if(y > canvas.height && Math.random() > 0.975) drops[i] = 0; else drops[i] += 20;
+    });
+}
+setInterval(draw, 60);
+</script>
 </body>
 </html>
