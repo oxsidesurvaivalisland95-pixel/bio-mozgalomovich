@@ -33,7 +33,7 @@
         .card { background: var(--card); border: 1px solid rgba(0,255,229,0.3); border-radius: 25px; padding: 25px; margin-bottom: 20px; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: 0.3s; position: relative; overflow: hidden; }
         .card:hover { border-color: var(--p); transform: translateY(-3px); }
 
-        .price-tag { font-size: 22px; font-weight: 900; color: var(--n); font-family: 'Orbitron'; text-shadow: 0 0 10px var(--n); margin: 10px 0; }
+        .price-tag { font-size: 34px; font-weight: 900; color: var(--n); font-family: 'Orbitron'; text-shadow: 0 0 10px var(--n); }
         
         .buy-btn { width:100%; padding:18px; border-radius:15px; border:none; background: linear-gradient(45deg, var(--n), var(--p)); color:#fff; font-weight:900; cursor:pointer; font-family:'Orbitron'; text-transform: uppercase; transition: 0.2s; box-shadow: 0 5px 15px rgba(255,0,255,0.4); }
         .buy-btn:active { transform: scale(0.95); }
@@ -48,6 +48,7 @@
         .status-paid { background: #0f8; color: #000; box-shadow: 0 0 10px #0f8; }
 
         input { width:100%; padding:16px; margin:10px 0; border-radius:15px; border:1px solid var(--n); background:rgba(0,0,0,0.5); color:#fff; font-family: 'Montserrat'; }
+
         .footer { background:#000; padding:30px; text-align:center; border-top: 1px solid var(--p); }
         .f-links a { color:var(--n); text-decoration:none; margin:0 15px; font-size:14px; font-weight:bold; text-shadow: 0 0 5px var(--n); }
     </style>
@@ -89,10 +90,10 @@
 
 <div id="cases" class="page">
     <div class="card" style="text-align:center;">
-        <h2 style="color:var(--p); font-family:Orbitron;">LUCKY SLOT</h2>
+        <h2 class="neon-text" style="color:var(--p)">LUCKY SLOT</h2>
         <div class="roulette-box">
             <div class="roulette-inner" id="rollInner"></div>
-            <div style="position:absolute; top:0; left:50%; width:2px; height:100%; background:var(--n); z-index:10; box-shadow: 0 0 10px var(--n);"></div>
+            <div style="position:absolute; top:0; left:50%; width:3px; height:100%; background:var(--n); z-index:10; box-shadow: 0 0 15px var(--n);"></div>
         </div>
         <div id="caseAction">
             <button class="buy-btn" onclick="buy('CASE SPIN', 100)">КУПИТЬ КРУТКУ (100₽)</button>
@@ -102,31 +103,35 @@
 
 <div id="history" class="page">
     <div class="card" style="border-color: var(--p);">
-        <h3 style="margin:0; color:var(--p)">ИНСТРУКЦИЯ</h3>
-        <p style="font-size:11px;">Переведите TON на адрес ниже. В комментарии укажите <b>ID ЗАКАЗА</b>.</p>
-        <div style="background:#000; padding:12px; border-radius:12px; border:1px solid var(--n); margin:10px 0;">
-            <code id="w-addr" onclick="copyW()" style="font-size:10px; word-break:break-all; cursor:pointer; color:var(--n)">UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv</code>
+        <h3 style="margin:0; color:var(--p)">ИНСТРУКЦИЯ ПО ОПЛАТЕ</h3>
+        <div style="background:#000; padding:15px; border-radius:15px; margin:10px 0; border:1px solid var(--n);">
+            <div style="font-size:10px; color:var(--n); margin-bottom:5px;">TON КОШЕЛЕК:</div>
+            <code id="w-addr" onclick="copyW()" style="font-size:10px; word-break:break-all; cursor:pointer;">UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv</code>
         </div>
+        <p style="font-size:10px; color: #ffaa00;">⚠️ ВАЖНО: В комментарии к платежу укажите <b>ID заказа</b> для авто-проверки!</p>
     </div>
-    <div id="h_list">Загрузка данных...</div>
+    <div id="h_list">Загрузка ваших данных...</div>
 </div>
 
 <div id="auth" class="page">
     <div id="uProfile" style="display:none;">
         <div class="card">
-            <h3 id="uEmail" style="font-size:14px; color:var(--n)">...</h3>
-            <button class="buy-btn" style="background:red; margin-top:20px;" onclick="auth.signOut().then(()=>location.reload())">ВЫЙТИ</button>
+            <div id="uStatus" style="float:right; color:var(--n); font-family:Orbitron; font-weight:900;">USER</div>
+            <h3 id="uEmail" style="margin:0; font-size:14px;">...</h3>
+            <button onclick="auth.signOut().then(()=>location.reload())" style="background:red; color:#fff; border:none; width:100%; padding:12px; border-radius:15px; font-weight:bold;">ВЫЙТИ</button>
         </div>
     </div>
     <div id="loginCard" class="card">
-        <input id="u_mail" type="email" placeholder="Email">
+        <h3 style="text-align:center">ВХОД ПО НИКУ</h3>
+        <input id="u_nick" type="text" placeholder="Введите Ник">
         <input id="u_pass" type="password" placeholder="Пароль">
-        <button class="buy-btn" onclick="doLogin()">ВОЙТИ / РЕГИСТРАЦИЯ</button>
+        <button class="buy-btn" onclick="doLogin()">ВОЙТИ / СОЗДАТЬ</button>
     </div>
 </div>
 
 <div id="admin" class="page">
     <div class="card">
+        <h3>SYSTEM OVERRIDE</h3>
         <input id="a_pass" type="password" placeholder="Master Key">
         <button class="buy-btn" onclick="goAdmin()">ACCESS</button>
         <div id="a_panel" style="display:none; margin-top:20px;"></div>
@@ -141,19 +146,10 @@
 </div>
 
 <script>
-// --- CONFIG ---
 const TG_TOKEN = "8538869779:AAGSu2F22Tx0TAtRH2gXPlF4ZNsPVKTt3lw";
 const TG_CHAT_ID = "7910835075";
 const MY_WALLET = "UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv";
-const TON_API_KEY = "AHNKVNLN4TE6CIIAAAAOTL47DIXMBIMQGWIH32JC36VUSZ2CSTP5SPMUMBNYSUAFANATP4I";
-
-const firebaseConfig = { 
-    apiKey: "AIzaSyD94vjwnRQIYC-2Le_nmxtsVKlU6Oww6VE", 
-    authDomain: "mozgalom-site.firebaseapp.com", 
-    projectId: "mozgalom-site", 
-    storageBucket: "mozgalom-site.appspot.com", 
-    appId: "1:564649897907:web:61503121e661fb6a82a5c6" 
-};
+const firebaseConfig = { apiKey: "AIzaSyD94vjwnRQIYC-2Le_nmxtsVKlU6Oww6VE", authDomain: "mozgalom-site.firebaseapp.com", projectId: "mozgalom-site", storageBucket: "mozgalom-site.appspot.com", appId: "1:564649897907:web:61503121e661fb6a82a5c6" };
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
@@ -166,101 +162,76 @@ function show(id) {
     document.getElementById('n-'+id).classList.add('active');
 }
 
-// --- АВТОМАТИЧЕСКАЯ ПРОВЕРКА ОПЛАТЫ ---
-async function checkPayments() {
-    try {
-        const r = await fetch(`https://toncenter.com/api/v2/getTransactions?address=${MY_WALLET}&limit=20&api_key=${TON_API_KEY}`);
-        const data = await r.json();
-        if(!data.ok) return;
+function buy(name, price) {
+    if(!auth.currentUser) return alert("ВОЙДИТЕ В АККАУНТ!");
+    const orderId = "MZ" + Math.random().toString(36).substr(2,4).toUpperCase();
+    db.collection("orders").add({
+        uid: auth.currentUser.uid, email: auth.currentUser.email,
+        product: name, price: price, code: orderId,
+        status: "pending", timestamp: Date.now(), time: new Date().toLocaleString()
+    }).then(() => {
+        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent("🛒 НОВЫЙ ЗАКАЗ\nID: "+orderId+"\nТовар: "+name+"\nЮзер: "+auth.currentUser.email)}`, {mode:'no-cors'});
+        alert(`ЗАКАЗ СОЗДАН!\nID: ${orderId}`);
+        show('history');
+    });
+}
 
+// Авто-проверка
+async function checkTonPayments() {
+    try {
+        const response = await fetch(`https://toncenter.com/api/v2/getTransactions?address=${MY_WALLET}&limit=20`);
+        const data = await response.json();
+        if(!data.ok) return;
         const pendingOrders = await db.collection("orders").where("status", "==", "pending").get();
-        
         data.result.forEach(tx => {
-            // Исправленный поиск комментария в разных полях API
             let comment = "";
             if(tx.in_msg && tx.in_msg.message) comment = tx.in_msg.message;
             else if(tx.in_msg && tx.in_msg.msg_data && tx.in_msg.msg_data.text) comment = tx.in_msg.msg_data.text;
-
             if(!comment) return;
-
             pendingOrders.forEach(doc => {
-                const order = doc.data();
-                if(comment.toUpperCase().includes(order.code.toUpperCase())) {
-                    db.collection("orders").doc(doc.id).update({ 
-                        status: "paid",
-                        finalized_at: Date.now()
-                    });
-                    // Уведомление в TG
-                    fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent("✅ ОПЛАТА НАЙДЕНА!\nID: "+order.code+"\nЮзер: "+order.email)}`, {mode:'no-cors'});
+                if(comment.toUpperCase().includes(doc.data().code.toUpperCase())) {
+                    db.collection("orders").doc(doc.id).update({ status: "paid" });
                 }
             });
         });
-    } catch(e) { console.log("Check error:", e); }
+    } catch (e) {}
 }
-setInterval(checkPayments, 30000);
+setInterval(checkTonPayments, 30000);
 
-// --- ФУНКЦИЯ ПОКУПКИ ---
-function buy(name, price) {
-    if(!auth.currentUser) { alert("ВОЙДИТЕ В АККАУНТ!"); show('auth'); return; }
-    
-    const orderId = "MZ" + Math.random().toString(36).substr(2,4).toUpperCase();
-    
-    db.collection("orders").add({
-        uid: auth.currentUser.uid,
-        email: auth.currentUser.email,
-        product: name,
-        price: price,
-        code: orderId,
-        status: "pending",
-        timestamp: Date.now(),
-        time: new Date().toLocaleString()
-    }).then(() => {
-        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent("🛒 НОВЫЙ ЗАКАЗ\nID: "+orderId+"\nТовар: "+name)}`, {mode:'no-cors'});
-        alert(`ЗАКАЗ СОЗДАН!\nID: ${orderId}\nУкажите этот ID в комментарии к переводу TON!`);
-        show('history');
-    }).catch(e => alert("Ошибка: " + e.message));
+function doLogin() {
+    const nick = document.getElementById('u_nick').value.trim();
+    const pass = document.getElementById('u_pass').value;
+    if(nick.length < 3) return alert("Ник короткий!");
+    const fakeEmail = nick.toLowerCase() + "@moz.me";
+    auth.signInWithEmailAndPassword(fakeEmail, pass).catch(() => {
+        auth.createUserWithEmailAndPassword(fakeEmail, pass).catch(e => alert(e.message));
+    });
 }
 
-// --- AUTH & DATA ---
 auth.onAuthStateChanged(u => {
     if(u) {
         document.getElementById('loginCard').style.display = 'none';
         document.getElementById('uProfile').style.display = 'block';
-        document.getElementById('uEmail').innerText = u.email;
-        
+        document.getElementById('uEmail').innerText = u.email.split('@')[0].toUpperCase();
         db.collection("orders").where("uid","==",u.uid).onSnapshot(s => {
-            const list = document.getElementById("h_list");
-            if(s.empty) { list.innerHTML = "У вас пока нет заказов."; return; }
-            
-            list.innerHTML = s.docs.sort((a,b)=>b.data().timestamp - a.data().timestamp).map(d => `
+            document.getElementById("h_list").innerHTML = s.docs.map(d => `
                 <div class="order-item" style="border-color: ${d.data().status=='paid'?'#0f8':'#555'}">
                     <span class="status-pill status-${d.data().status}">${d.data().status}</span>
                     <b style="color:var(--n)">${d.data().product}</b><br>
-                    <small>ID: ${d.data().code} | ${d.data().price}₽</small>
+                    <small>ID: ${d.data().code}</small>
                 </div>
             `).join("");
         });
     }
 });
 
-function doLogin() {
-    const m = document.getElementById('u_mail').value;
-    const p = document.getElementById('u_pass').value;
-    if(!m || !p) return alert("Заполни поля!");
-    
-    auth.signInWithEmailAndPassword(m, p).catch(() => {
-        auth.createUserWithEmailAndPassword(m, p).catch(e => alert(e.message));
-    });
-}
+function copyW() { navigator.clipboard.writeText(MY_WALLET); alert("КОПИРОВАН!"); }
 
-function copyW() { navigator.clipboard.writeText(MY_WALLET); alert("АДРЕС КОПИРОВАН!"); }
-
-// --- DESIGN STUFF ---
+// Matrix BG
 const canvas = document.getElementById('bg-canvas');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth; canvas.height = window.innerHeight;
 const drops = Array(Math.floor(canvas.width/20)).fill(0);
-
 function draw() {
     ctx.fillStyle = 'rgba(5, 7, 13, 0.15)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = '#00ffe5'; ctx.font = '15px monospace';
@@ -274,12 +245,10 @@ setInterval(draw, 60);
 function goAdmin() {
     if(document.getElementById("a_pass").value === "rahim_45_pro") {
         document.getElementById("a_panel").style.display = "block";
-        db.collection("orders").orderBy("timestamp", "desc").limit(20).onSnapshot(s => {
+        db.collection("orders").orderBy("timestamp", "desc").onSnapshot(s => {
             document.getElementById("a_panel").innerHTML = s.docs.map(d => `
-                <div style="background:#222; padding:10px; margin-bottom:5px; border-radius:10px; font-size:10px;">
-                    ${d.data().email} - ${d.data().code}<br>
-                    <button onclick="db.collection('orders').doc('${d.id}').update({status:'paid'})">ОПЛАЧЕНО</button>
-                    <button onclick="db.collection('orders').doc('${d.id}').delete()">УДАЛИТЬ</button>
+                <div style="background:#111; padding:10px; margin-bottom:5px;">
+                    ${d.data().code} | <button onclick="db.collection('orders').doc('${d.id}').update({status:'paid'})">OK</button>
                 </div>
             `).join("");
         });
