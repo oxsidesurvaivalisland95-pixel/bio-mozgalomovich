@@ -3,63 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MOZGALOM ELITE | CYBER-GOD-MODE</title>
+    <title>MOZGALOM ELITE | CYBER-GOD-MODE v2</title>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Montserrat:wght@400;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
 
     <style>
         :root { --n: #00ffe5; --p: #ff00ff; --bg: #05070d; --card: rgba(255, 255, 255, 0.08); --neon-g: #00ff41; --sakura: #ffb7c5; --gold: #ffcc00; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { margin:0; font-family: 'Montserrat', sans-serif; background: var(--bg); color: #fff; min-height: 100vh; overflow-x: hidden; }
 
+        /* BOOT SCREEN */
+        #boot-screen { position: fixed; inset: 0; background: #000; z-index: 10000; display: flex; flex-direction: column; justify-content: center; padding: 30px; font-family: 'JetBrains Mono', monospace; color: var(--neon-g); font-size: 14px; overflow: hidden; }
+
         #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.5; pointer-events: none; }
+
+        /* GLITCH EFFECT */
+        .glitch-flash { animation: glitch 0.3s steps(2) infinite; }
+        @keyframes glitch { 
+            0% { transform: translate(0); filter: hue-rotate(0deg); }
+            50% { transform: translate(5px, -5px); filter: hue-rotate(90deg) invert(1); }
+            100% { transform: translate(-5px, 5px); }
+        }
 
         .header { text-align:center; padding:20px; border-bottom: 2px solid var(--p); background: rgba(0,0,0,0.7); backdrop-filter: blur(15px); cursor: pointer; }
         .neon-title { font-family: 'Orbitron'; font-size: 24px; font-weight: 900; background: linear-gradient(90deg, var(--n), var(--p), var(--sakura)); background-size: 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shine 4s linear infinite; text-transform: uppercase; letter-spacing: 3px; }
         @keyframes shine { to { background-position: 200%; } }
 
         .nav { display:flex; gap:8px; padding:10px; overflow-x:auto; background: rgba(0,0,0,0.9); position:sticky; top:0; z-index:1000; border-bottom: 1px solid var(--n); }
-        .nav button { flex:0 0 auto; background:transparent; border:1px solid var(--n); padding:8px 15px; border-radius:10px; color:var(--n); font-weight:bold; font-size:10px; cursor:pointer; transition: 0.3s; }
+        .nav button { flex:0 0 auto; background:transparent; border:1px solid var(--n); padding:8px 15px; border-radius:10px; color:var(--n); font-weight:bold; font-size:10px; cursor:pointer; }
         .nav button.active { background: var(--p); color:#fff; border-color: var(--p); box-shadow: 0 0 15px var(--p); }
 
         .page { display:none; padding:15px; width:100%; max-width: 450px; margin:0 auto; padding-bottom: 100px; position: relative; z-index: 1; }
         .page.active { display:block; }
 
-        .card { background: var(--card); border: 1px solid rgba(255, 0, 255, 0.2); border-radius: 20px; padding: 20px; margin-bottom: 15px; backdrop-filter: blur(10px); position: relative; }
-        .price-tag { font-size: 26px; font-weight: 900; color: var(--n); font-family: 'Orbitron'; margin: 10px 0; }
-        .price-sub { font-size: 12px; color: var(--sakura); font-weight: bold; margin-bottom: 15px; }
+        /* ID-CARD */
+        .id-card { background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02)); border: 1px solid var(--n); border-radius: 20px; padding: 25px; position: relative; transition: transform 0.1s; transform-style: preserve-3d; }
+        .id-chip { width: 40px; height: 30px; background: var(--gold); border-radius: 5px; margin-bottom: 15px; opacity: 0.8; }
         
-        .buy-btn { width:100%; padding:15px; border-radius:12px; border:none; background: linear-gradient(45deg, var(--p), var(--n)); color:#fff; font-weight:900; cursor:pointer; font-family:'Orbitron'; font-size: 12px; text-transform: uppercase; }
-        .buy-btn:disabled { opacity: 0.4; filter: grayscale(1); }
+        .card { background: var(--card); border: 1px solid rgba(255, 0, 255, 0.2); border-radius: 20px; padding: 20px; margin-bottom: 15px; backdrop-filter: blur(10px); }
+        .buy-btn { width:100%; padding:15px; border-radius:12px; border:none; background: linear-gradient(45deg, var(--p), var(--n)); color:#fff; font-weight:900; cursor:pointer; font-family:'Orbitron'; font-size: 11px; text-transform: uppercase; }
 
-        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: bold; margin-top: 5px; }
-        .status-active { background: rgba(0,255,65,0.2); color: var(--neon-g); border: 1px solid var(--neon-g); }
-        .status-expired { background: rgba(255,0,0,0.2); color: #ff4444; border: 1px solid #ff4444; }
-
-        .rank-tag { font-size: 10px; font-family: 'Orbitron'; letter-spacing: 1px; }
-
-        .order-item { border-left: 4px solid var(--p); margin-bottom: 10px; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 0 12px 12px 0; }
+        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: bold; }
+        .status-active { background: rgba(0,255,65,0.2); color: var(--neon-g); border: 1px solid var(--neon-g); box-shadow: 0 0 10px var(--neon-g); }
         
         .roulette-wrapper { height: 80px; border: 2px solid var(--sakura); border-radius: 15px; margin: 15px 0; overflow: hidden; position: relative; background: #000; }
-        .roulette-line { position: absolute; left: 50%; top: 0; width: 2px; height: 100%; background: var(--n); z-index: 5; box-shadow: 0 0 10px var(--n); }
         .roulette-tape { display: flex; align-items: center; position: absolute; left: 0; height: 100%; transition: 5s cubic-bezier(0.1, 0, 0.1, 1); }
         .case-item { width: 80px; flex-shrink: 0; text-align: center; font-size: 24px; }
 
-        input { width:100%; padding:14px; margin:8px 0; border-radius:12px; border:1px solid var(--p); background:rgba(0,0,0,0.5); color:#fff; }
+        #hacker-game { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .hack-point { position: absolute; padding: 10px; background: var(--n); color: #000; font-family: monospace; font-weight: bold; border-radius: 5px; cursor: pointer; }
 
+        .order-item { border-left: 4px solid var(--p); margin-bottom: 10px; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 0 12px 12px 0; }
         .adm-card { background: rgba(0,0,0,0.8); border: 1px solid #444; padding: 15px; border-radius: 15px; margin-bottom: 10px; font-size: 11px; }
-        .adm-btn-ok { background: var(--neon-g); border:none; padding: 6px 12px; border-radius: 8px; font-weight: bold; }
-        .adm-btn-del { background: #ff4444; color: #fff; border:none; padding: 6px 12px; border-radius: 8px; font-weight: bold; margin-left: 5px; }
-
-        .hidden-console { display: none; margin-bottom: 15px; }
-        .footer { background:#000; padding:20px; text-align:center; border-top: 1px solid var(--p); position: relative; z-index: 1; }
-        .f-links a { color: var(--sakura); text-decoration:none; margin:0 10px; font-size:12px; font-weight:bold; }
     </style>
 </head>
-<body>
+<body class="">
+
+<div id="boot-screen"></div>
 
 <canvas id="bg-canvas"></canvas>
 
@@ -76,27 +79,27 @@
 </div>
 
 <div id="shop" class="page active">
-    <div id="promo-box" class="hidden-console card">
+    <div id="promo-box" style="display:none" class="card">
         <h4 style="margin:0; color:var(--n)">HACKER CONSOLE</h4>
-        <input id="promo_input" type="text" placeholder="Введите промокод...">
+        <input id="promo_input" type="text" placeholder="CODE..." style="width:100%; padding:10px; margin:10px 0; background:#000; border:1px solid var(--n); color:#fff;">
         <button class="buy-btn" onclick="applyPromo()">ACTIVATE</button>
     </div>
     <div class="card">
         <h3 style="color: var(--sakura);">1 НЕДЕЛЯ (PRO)</h3>
-        <div class="price-tag">300₽</div>
-        <div class="price-sub">4$ | 2 💎</div>
+        <div style="font-size:26px; font-weight:900; color:var(--n); font-family:Orbitron;">300₽</div>
+        <div style="font-size:12px; color:var(--sakura); margin-bottom:15px;">4$ | 2 💎</div>
         <button class="buy-btn" onclick="buy('1 НЕДЕЛЯ PRO', 300, 7)">КУПИТЬ ТАРИФ</button>
     </div>
     <div class="card">
         <h3 style="color: var(--sakura);">1 МЕСЯЦ (ULTRA)</h3>
-        <div class="price-tag">1000₽</div>
-        <div class="price-sub">13$ | 6 💎</div>
+        <div style="font-size:26px; font-weight:900; color:var(--n); font-family:Orbitron;">1000₽</div>
+        <div style="font-size:12px; color:var(--sakura); margin-bottom:15px;">13$ | 6 💎</div>
         <button class="buy-btn" onclick="buy('1 МЕСЯЦ ULTRA', 1000, 30)">КУПИТЬ ТАРИФ</button>
     </div>
     <div class="card">
         <h3 style="color: var(--sakura);">FOREVER (LEGEND)</h3>
-        <div class="price-tag">4000₽</div>
-        <div class="price-sub">52$ | 25 💎</div>
+        <div style="font-size:26px; font-weight:900; color:var(--n); font-family:Orbitron;">4000₽</div>
+        <div style="font-size:12px; color:var(--sakura); margin-bottom:15px;">52$ | 25 💎</div>
         <button class="buy-btn" onclick="buy('LEGEND', 4000, 99999)">СТАТЬ ЛЕГЕНДОЙ</button>
     </div>
 </div>
@@ -105,14 +108,17 @@
     <div class="card" style="text-align:center;">
         <h2 style="color:var(--sakura); font-family:Orbitron; margin:0;">LUCKY SLOT</h2>
         <div id="spins_display" style="font-family:Orbitron; color:var(--n); font-size:18px; margin:10px 0;">КРУТОК: 0</div>
-        <div class="roulette-wrapper">
-            <div class="roulette-line"></div>
-            <div id="tape" class="roulette-tape"></div>
-        </div>
-        <button id="spin_trigger" class="buy-btn" style="display:none; margin-bottom:10px;" onclick="startSpin()">ЗАПУСТИТЬ</button>
-        <button id="daily_btn" class="buy-btn" style="background:transparent; border:1px solid var(--sakura); color:var(--sakura); margin-bottom:10px;" onclick="claimDaily()">ЕЖЕДНЕВНЫЙ БОНУС</button>
+        <div class="roulette-wrapper"><div id="tape" class="roulette-tape"></div><div style="position:absolute; left:50%; top:0; width:2px; height:100%; background:var(--n); z-index:5;"></div></div>
+        <button id="spin_trigger" class="buy-btn" style="display:none; margin-bottom:10px;" onclick="startSpin()">ЗАПУСТИТЬ ВЗЛОМ</button>
+        <button id="hack_btn" class="buy-btn" style="background:transparent; border:1px solid #ff4444; color:#ff4444; margin-bottom:10px;" onclick="startHackerGame()">HACK FREE SPIN</button>
         <button class="buy-btn" style="background:transparent; border:1px solid var(--n); color:var(--n);" onclick="buy('CASE SPIN', 100, 0)">КУПИТЬ КЕЙС (100₽)</button>
     </div>
+</div>
+
+<div id="hacker-game">
+    <h2 style="font-family:Orbitron; color:var(--n)">OVERRIDE SYSTEM</h2>
+    <p>КЛИКАЙ ПО КОДАМ, ПОКА ТЕБЯ НЕ ЗАСЕКЛИ!</p>
+    <div id="hack-area" style="position:relative; width:100%; height:300px;"></div>
 </div>
 
 <div id="history" class="page">
@@ -125,23 +131,29 @@
 
 <div id="auth" class="page">
     <div id="uProfile" style="display:none;">
-        <div class="card" style="text-align:center;">
-            <div id="uRank" class="rank-tag">...</div>
-            <h3 id="uEmail" style="font-family:Orbitron; margin:5px 0;">...</h3>
+        <div class="id-card" id="main-id-card">
+            <div class="id-chip"></div>
+            <div id="uRank" style="font-family:Orbitron; font-size:10px; letter-spacing:2px;">ROOKIE</div>
+            <h2 id="uEmail" style="font-family:Orbitron; margin:10px 0; text-shadow: 0 0 10px var(--n);">...</h2>
             <div id="uGlobalStatus"></div>
-            <button onclick="auth.signOut().then(()=>location.reload())" style="background:red; color:#fff; border:none; width:100%; padding:10px; border-radius:10px; margin-top:15px; font-weight:bold;">ВЫЙТИ</button>
+            <div style="margin-top:20px; font-size:9px; opacity:0.5; font-family:monospace;">ID: <span id="uID">---</span></div>
         </div>
+        <button onclick="auth.signOut().then(()=>location.reload())" style="background:rgba(255,0,0,0.2); color:#ff4444; border:1px solid #ff4444; width:100%; padding:12px; border-radius:12px; margin-top:20px; font-weight:bold; cursor:pointer;">DISCONNECT</button>
     </div>
-    <div id="loginCard" class="card"><input id="u_nick" type="text" placeholder="Ник"><input id="u_pass" type="password" placeholder="Пароль"><button class="buy-btn" onclick="doLogin()">ВХОД / РЕГИСТРАЦИЯ</button></div>
+    <div id="loginCard" class="card">
+        <input id="u_nick" type="text" placeholder="LOGIN" style="width:100%; padding:14px; margin-bottom:10px; background:rgba(0,0,0,0.5); border:1px solid var(--p); color:#fff; border-radius:10px;">
+        <input id="u_pass" type="password" placeholder="PASSWORD" style="width:100%; padding:14px; margin-bottom:15px; background:rgba(0,0,0,0.5); border:1px solid var(--p); color:#fff; border-radius:10px;">
+        <button class="buy-btn" onclick="doLogin()">AUTHORIZE</button>
+    </div>
 </div>
 
 <div id="admin" class="page">
     <div id="adm_login_box" class="card">
-        <input id="a_pass" type="password" placeholder="Admin Key">
-        <button class="buy-btn" onclick="goAdmin()">ВХОД В СИСТЕМУ</button>
+        <input id="a_pass" type="password" placeholder="Admin Key" style="width:100%; padding:14px; background:rgba(0,0,0,0.5); border:1px solid var(--p); color:#fff; border-radius:10px;">
+        <button class="buy-btn" style="margin-top:10px;" onclick="goAdmin()">ACCESS TERMINAL</button>
     </div>
     <div id="a_panel" style="display:none;">
-        <button class="buy-btn" style="background: #ff4444; margin-bottom:15px;" onclick="wipeExpired()">WIPE EXPIRED (ОЧИСТИТЬ ПРОСРОЧЕННЫХ)</button>
+        <button class="buy-btn" style="background: #ff4444; margin-bottom:15px;" onclick="wipeExpired()">WIPE EXPIRED</button>
         <div id="a_orders"></div>
     </div>
 </div>
@@ -149,10 +161,30 @@
 <div class="footer"><div class="f-links"><a href="https://t.me/bio_mozgalom">CHANNEL</a><a href="https://t.me/mozgalomovich">OWNER</a></div></div>
 
 <script>
-const TG_TOKEN = "8538869779:AAGSu2F22Tx0TAtRH2gXPlF4ZNsPVKTt3lw";
-const TG_CHAT_ID = "7910835075";
-const MY_WALLET = "UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv";
+// BOOT SCRIPT
+const bootLines = [
+    "> INITIALIZING MOZGALOM ELITE...",
+    "> LOADING SAKURA_OS v4.5...",
+    "> CONNECTING TO FIREBASE NODES...",
+    "> ENCRYPTING TUNNEL...",
+    "> STABILIZING NEON GRID...",
+    "> ACCESS GRANTED. WELCOME, USER."
+];
+let lineIdx = 0;
+function typeBoot() {
+    if(lineIdx < bootLines.length) {
+        const div = document.createElement('div');
+        div.innerText = bootLines[lineIdx];
+        document.getElementById('boot-screen').appendChild(div);
+        lineIdx++;
+        setTimeout(typeBoot, 300);
+    } else {
+        setTimeout(() => document.getElementById('boot-screen').style.display = 'none', 500);
+    }
+}
+typeBoot();
 
+// FIREBASE
 const firebaseConfig = { apiKey: "AIzaSyD94vjwnRQIYC-2Le_nmxtsVKlU6Oww6VE", authDomain: "mozgalom-site.firebaseapp.com", projectId: "mozgalom-site", storageBucket: "mozgalom-site.appspot.com", appId: "1:564649897907:web:61503121e661fb6a82a5c6" };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
@@ -161,14 +193,49 @@ const db = firebase.firestore();
 let userSpins = 0;
 let headerTaps = 0;
 
-// --- CORE FUNCTIONS ---
+// HACKER GAME
+let hackClicks = 0;
+function startHackerGame() {
+    if(!auth.currentUser) return show('auth');
+    db.collection('users').doc(auth.currentUser.uid).get().then(doc => {
+        const lastHack = doc.data()?.lastHack || 0;
+        if(Date.now() - lastHack < 259200000) return alert("Система защиты слишком сильна. Жди 3 дня.");
+        document.getElementById('hacker-game').style.display = 'flex';
+        hackClicks = 0;
+        spawnPoint();
+    });
+}
+function spawnPoint() {
+    const area = document.getElementById('hack-area');
+    area.innerHTML = "";
+    if(hackClicks >= 6) {
+        finishHack();
+        return;
+    }
+    const p = document.createElement('div');
+    p.className = 'hack-point';
+    p.innerText = "0x" + Math.random().toString(16).substr(2,4).toUpperCase();
+    p.style.left = Math.random()*80 + "%";
+    p.style.top = Math.random()*80 + "%";
+    p.onclick = () => { hackClicks++; spawnPoint(); };
+    area.appendChild(p);
+}
+function finishHack() {
+    document.getElementById('hacker-game').style.display = 'none';
+    db.collection('users').doc(auth.currentUser.uid).update({ 
+        spins: firebase.firestore.FieldValue.increment(1),
+        lastHack: Date.now()
+    });
+    alert("SYSTEM COMPROMISED: +1 Spin Granted.");
+}
+
+// CORE LOGIC
 function confirmOrder(docId, days, uid) {
     let exp = "БЕССРОЧНО";
     let expTimestamp = 9999999999999;
     if(days > 0 && days < 50000) {
         let d = new Date(); d.setDate(d.getDate() + days); 
-        exp = d.toLocaleDateString();
-        expTimestamp = d.getTime();
+        exp = d.toLocaleDateString(); expTimestamp = d.getTime();
     }
     db.collection('orders').doc(docId).update({ status: 'paid', expire_str: exp, expire_at: expTimestamp }).then(() => {
         if(days === 0) db.collection('users').doc(uid).set({ spins: firebase.firestore.FieldValue.increment(1) }, {merge:true});
@@ -183,127 +250,53 @@ function buy(name, price, days) {
         product: name, price: price, code: orderId,
         status: "pending", timestamp: Date.now(), date_str: new Date().toLocaleString(),
         duration_days: days, expire_str: "", expire_at: 0
-    }).then(() => {
-        fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent("🛒 ЗАКАЗ: "+orderId+"\n"+name)}`, {mode:'no-cors'});
-        alert("ЗАКАЗ: " + orderId + "\nОплатите по кошельку в 'ЗАКАЗЫ'");
-        show('history');
-    });
+    }).then(() => { show('history'); alert("ORDER CREATED: " + orderId); });
 }
 
-// --- USER PROFILE & RANKS ---
 auth.onAuthStateChanged(u => {
     if(u) {
         document.getElementById('loginCard').style.display = 'none';
         document.getElementById('uProfile').style.display = 'block';
         document.getElementById('uEmail').innerText = u.email.split('@')[0].toUpperCase();
+        document.getElementById('uID').innerText = u.uid.substr(0,8).toUpperCase();
         
         db.collection('users').doc(u.uid).onSnapshot(doc => {
-            const data = doc.data() || {};
-            userSpins = data.spins || 0;
+            userSpins = doc.data()?.spins || 0;
             document.getElementById('spins_display').innerText = `КРУТОК: ${userSpins}`;
             document.getElementById('spin_trigger').style.display = userSpins > 0 ? 'inline-block' : 'none';
-            
-            // Daily check
-            const lastDaily = data.lastDaily || 0;
-            if(Date.now() - lastDaily < 86400000) {
-                document.getElementById('daily_btn').disabled = true;
-                document.getElementById('daily_btn').innerText = "БОНУС ЗАБРАН";
-            }
         });
 
         db.collection("orders").where("uid","==",u.uid).onSnapshot(s => {
             let active = false;
             let highestRank = "ROOKIE";
-            let rankColor = "#aaa";
-
-            const listHtml = s.docs.sort((a,b)=>b.data().timestamp-a.data().timestamp).map(d => {
+            s.docs.forEach(d => {
                 const data = d.data();
-                const now = Date.now();
-                const isPaid = data.status === 'paid';
-                const notExpired = data.expire_at > now || data.expire_str === "БЕССРОЧНО";
-
-                if(isPaid && notExpired) {
+                if(data.status === 'paid' && (data.expire_at > Date.now() || data.expire_str === "БЕССРОЧНО")) {
                     active = true;
-                    if(data.product.includes("LEGEND")) { highestRank = "ELITE ENTITY"; rankColor = "var(--gold)"; }
-                    else if(data.product.includes("ULTRA") && highestRank !== "ELITE ENTITY") { highestRank = "OPERATOR"; rankColor = "var(--p)"; }
+                    if(data.product.includes("LEGEND")) highestRank = "ELITE ENTITY";
+                    else if(data.product.includes("ULTRA") && highestRank !== "ELITE ENTITY") highestRank = "OPERATOR";
                 }
-
-                return `<div class="order-item" style="border-color: ${isPaid?'#0f8':'var(--p)'}">
-                    <b>${data.product}</b> <small style="float:right">${data.status}</small><br>
-                    <small>ID: ${data.code || '---'}</small>
-                    ${data.expire_str ? `<div style="font-size:9px; color:var(--sakura); margin-top:5px;">ДО: ${data.expire_str}</div>` : ''}
-                </div>`;
-            }).join("");
-
-            document.getElementById("h_list").innerHTML = listHtml || "Нет заказов";
-            document.getElementById("uRank").innerText = `[${highestRank}]`;
-            document.getElementById("uRank").style.color = rankColor;
-            document.getElementById("uEmail").style.color = rankColor;
-            document.getElementById("uGlobalStatus").innerHTML = active ? 
-                `<div class="status-badge status-active">SYSTEM: ACTIVE</div>` : 
-                `<div class="status-badge status-expired">SYSTEM: EXPIRED</div>`;
+            });
+            document.getElementById("uRank").innerText = highestRank;
+            document.getElementById("uGlobalStatus").innerHTML = active ? `<div class="status-badge status-active">SYSTEM: ACTIVE</div>` : `<div class="status-badge" style="color:#ff4444; border:1px solid #ff4444">SYSTEM: EXPIRED</div>`;
+            document.getElementById("h_list").innerHTML = s.docs.map(d => `<div class="order-item" style="border-color:${d.data().status=='paid'?'#0f8':'var(--p)'}">${d.data().product} <small>${d.data().status}</small><br><small>ID: ${d.data().code}</small></div>`).join("");
         });
     }
 });
 
-// --- ADMIN ---
-function goAdmin() {
-    if(document.getElementById("a_pass").value === "rahim_45_pro") {
-        document.getElementById("adm_login_box").style.display = "none";
-        document.getElementById("a_panel").style.display = "block";
-        db.collection("orders").orderBy("timestamp", "desc").limit(30).onSnapshot(s => {
-            document.getElementById("a_orders").innerHTML = s.docs.map(d => {
-                const data = d.data();
-                return `<div class="adm-card" style="border-left: 3px solid ${data.status=='paid'?'#0f8':'#f44'}">
-                    <b>${data.product}</b> | ${data.email.split('@')[0]}<br>
-                    <small>ID: ${data.code} | Exp: ${data.expire_str || 'PENDING'}</small>
-                    <div style="margin-top:8px">
-                        ${data.status !== 'paid' ? `<button class="adm-btn-ok" onclick="confirmOrder('${d.id}', ${data.duration_days}, '${data.uid}')">OK</button>` : ''}
-                        <button class="adm-btn-del" onclick="db.collection('orders').doc('${d.id}').delete()">DEL</button>
-                    </div>
-                </div>`;
-            }).join("");
-        });
-    }
-}
-
-async function wipeExpired() {
-    if(!confirm("Удалить всех, у кого кончилась подписка?")) return;
-    const now = Date.now();
-    const q = await db.collection("orders").where("expire_at", "<", now).where("expire_at", ">", 0).get();
-    q.forEach(doc => doc.ref.delete());
-    alert("Система очищена!");
-}
-
-// --- EXTRAS ---
-function handleConsoleTap() {
-    headerTaps++;
-    if(headerTaps >= 5) {
-        document.getElementById('promo-box').style.display = 'block';
-        headerTaps = 0;
-    }
-}
-
-function applyPromo() {
-    const code = document.getElementById('promo_input').value.toUpperCase();
-    if(code === "SAKURA2026") {
-        db.collection('users').doc(auth.currentUser.uid).update({ spins: firebase.firestore.FieldValue.increment(1) });
-        alert("HACK SUCCESS: +1 Spin!");
-        document.getElementById('promo-box').style.display = 'none';
-    } else { alert("ACCESS DENIED"); }
-}
-
-function claimDaily() {
-    if(!auth.currentUser) return show('auth');
-    db.collection('users').doc(auth.currentUser.uid).set({ 
-        spins: firebase.firestore.FieldValue.increment(1),
-        lastDaily: Date.now()
-    }, {merge:true});
-    alert("DAILY REWARD: +1 Spin!");
+// ID-CARD 3D EFFECT
+const card = document.getElementById('main-id-card');
+if(card) {
+    card.addEventListener('mousemove', (e) => {
+        let ax = -(window.innerWidth / 2 - e.pageX) / 20;
+        let ay = (window.innerHeight / 2 - e.pageY) / 20;
+        card.style.transform = `rotateY(${ax}deg) rotateX(${ay}deg)`;
+    });
 }
 
 function startSpin() {
     if(userSpins <= 0) return;
+    document.body.classList.add('glitch-flash');
     userSpins--;
     db.collection('users').doc(auth.currentUser.uid).update({ spins: userSpins });
     const tape = document.getElementById('tape');
@@ -321,44 +314,30 @@ function startSpin() {
         tape.style.left = `-${(50 * 80) - 180}px`;
     }, 100);
     setTimeout(() => {
-        const prizes = ["Скидка 30%", "PRO +3 дня", "ULTRA +1 день", "Скидка 15%"];
-        const win = prizes[Math.floor(Math.random()*prizes.length)];
-        alert("ВЫИГРЫШ: " + win);
-        db.collection("orders").add({ uid: auth.currentUser.uid, email: auth.currentUser.email, product: "WIN: " + win, status: "paid", timestamp: Date.now(), date_str: new Date().toLocaleString(), expire_str: "INSTANT", expire_at: 0 });
+        document.body.classList.remove('glitch-flash');
+        alert("CRITICAL WIN: +3 DAYS PRO ACCESS");
+        db.collection("orders").add({ uid: auth.currentUser.uid, email: auth.currentUser.email, product: "WIN: 3 DAYS PRO", status: "paid", timestamp: Date.now(), expire_at: Date.now()+(3*86400000), expire_str: "EXTRA" });
     }, 5500);
 }
 
-function show(id) {
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-    document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    document.getElementById('n-'+id).classList.add('active');
-}
+function handleConsoleTap() { headerTaps++; if(headerTaps >= 5) { document.getElementById('promo-box').style.display = 'block'; headerTaps=0; } }
+function applyPromo() { if(document.getElementById('promo_input').value.toUpperCase()==="SAKURA2026") { db.collection('users').doc(auth.currentUser.uid).update({ spins: firebase.firestore.FieldValue.increment(1) }); alert("HACKED"); } }
+function goAdmin() { if(document.getElementById("a_pass").value === "rahim_45_pro") { document.getElementById("adm_login_box").style.display = "none"; document.getElementById("a_panel").style.display = "block"; db.collection("orders").orderBy("timestamp", "desc").onSnapshot(s => { document.getElementById("a_orders").innerHTML = s.docs.map(d => `<div class="adm-card"><b>${d.data().product}</b><br>${d.data().email}<br>${d.data().status !== 'paid' ? `<button onclick="confirmOrder('${d.id}', ${d.data().duration_days}, '${d.data().uid}')">OK</button>` : ''} <button onclick="db.collection('orders').doc('${d.id}').delete()">DEL</button></div>`).join(""); }); } }
+async function wipeExpired() { const q = await db.collection("orders").where("expire_at", "<", Date.now()).where("expire_at", ">", 0).get(); q.forEach(doc => doc.ref.delete()); alert("WIPED"); }
+function show(id) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active')); document.getElementById(id).classList.add('active'); document.getElementById('n-'+id).classList.add('active'); }
+function doLogin() { const nick = document.getElementById('u_nick').value.trim().toLowerCase(), pass = document.getElementById('u_pass').value; auth.signInWithEmailAndPassword(nick+"@moz.me", pass).catch(() => auth.createUserWithEmailAndPassword(nick+"@moz.me", pass)); }
+function copyW() { navigator.clipboard.writeText(MY_WALLET); alert("Copied"); }
 
-function doLogin() {
-    const nick = document.getElementById('u_nick').value.trim().toLowerCase();
-    const pass = document.getElementById('u_pass').value;
-    if(!nick || !pass) return;
-    auth.signInWithEmailAndPassword(nick+"@moz.me", pass).catch(() => {
-        auth.createUserWithEmailAndPassword(nick+"@moz.me", pass).catch(e => alert(e.message));
-    });
-}
-
-function copyW() { navigator.clipboard.writeText(MY_WALLET); alert("Copy!"); }
-
-// --- BACKGROUND ---
-const canvas = document.getElementById('bg-canvas');
-const ctx = canvas.getContext('2d');
+// BACKGROUND
+const canvas = document.getElementById('bg-canvas'), ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-const drops = Array(Math.floor(canvas.width / 20)).fill(0);
-const petals = [];
+const drops = Array(Math.floor(canvas.width / 20)).fill(0), petals = [];
 for(let i=0; i<35; i++) petals.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*4+2, s: Math.random()*1.5+0.5, a: Math.random()*2 });
 function draw() {
     ctx.fillStyle = 'rgba(5, 7, 13, 0.15)'; ctx.fillRect(0,0,canvas.width,canvas.height);
     ctx.fillStyle = '#00ffe5'; ctx.font = '15px monospace';
     drops.forEach((y, i) => { ctx.fillText(Math.floor(Math.random()*2), i*20, y); if(y > canvas.height && Math.random()>0.975) drops[i]=0; else drops[i]+=20; });
-    ctx.fillStyle = '#ffb7c5';
-    petals.forEach(p => { ctx.beginPath(); ctx.ellipse(p.x, p.y, p.r, p.r/1.5, p.a, 0, Math.PI*2); ctx.fill(); p.y+=p.s; p.x+=Math.sin(p.y/50); if(p.y>canvas.height){ p.y=-10; p.x=Math.random()*canvas.width; } });
+    ctx.fillStyle = '#ffb7c5'; petals.forEach(p => { ctx.beginPath(); ctx.ellipse(p.x, p.y, p.r, p.r/1.5, p.a, 0, Math.PI*2); ctx.fill(); p.y+=p.s; p.x+=Math.sin(p.y/50); if(p.y>canvas.height){ p.y=-10; p.x=Math.random()*canvas.width; } });
 }
 setInterval(draw, 60);
 </script>
