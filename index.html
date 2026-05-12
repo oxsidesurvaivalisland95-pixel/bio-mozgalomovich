@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MOZGALOM ELITE | SAKURA CYBERPUNK</title>
+    <title>MOZGALOM ELITE | CYBER-GOD-MODE</title>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -11,13 +11,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
-        :root { --n: #00ffe5; --p: #ff00ff; --bg: #05070d; --card: rgba(255, 255, 255, 0.08); --neon-g: #00ff41; --sakura: #ffb7c5; }
+        :root { --n: #00ffe5; --p: #ff00ff; --bg: #05070d; --card: rgba(255, 255, 255, 0.08); --neon-g: #00ff41; --sakura: #ffb7c5; --gold: #ffcc00; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { margin:0; font-family: 'Montserrat', sans-serif; background: var(--bg); color: #fff; min-height: 100vh; overflow-x: hidden; }
 
         #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.5; pointer-events: none; }
 
-        .header { text-align:center; padding:20px; border-bottom: 2px solid var(--p); background: rgba(0,0,0,0.7); backdrop-filter: blur(15px); }
+        .header { text-align:center; padding:20px; border-bottom: 2px solid var(--p); background: rgba(0,0,0,0.7); backdrop-filter: blur(15px); cursor: pointer; }
         .neon-title { font-family: 'Orbitron'; font-size: 24px; font-weight: 900; background: linear-gradient(90deg, var(--n), var(--p), var(--sakura)); background-size: 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shine 4s linear infinite; text-transform: uppercase; letter-spacing: 3px; }
         @keyframes shine { to { background-position: 200%; } }
 
@@ -28,13 +28,18 @@
         .page { display:none; padding:15px; width:100%; max-width: 450px; margin:0 auto; padding-bottom: 100px; position: relative; z-index: 1; }
         .page.active { display:block; }
 
-        .card { background: var(--card); border: 1px solid rgba(255, 0, 255, 0.2); border-radius: 20px; padding: 20px; margin-bottom: 15px; backdrop-filter: blur(10px); position: relative; overflow: hidden; }
-        .price-tag { font-size: 26px; font-weight: 900; color: var(--n); font-family: 'Orbitron'; margin: 10px 0; text-shadow: 0 0 10px var(--n); }
-        .price-sub { font-size: 12px; color: var(--sakura); font-weight: bold; margin-top: -5px; margin-bottom: 15px; opacity: 0.9; }
+        .card { background: var(--card); border: 1px solid rgba(255, 0, 255, 0.2); border-radius: 20px; padding: 20px; margin-bottom: 15px; backdrop-filter: blur(10px); position: relative; }
+        .price-tag { font-size: 26px; font-weight: 900; color: var(--n); font-family: 'Orbitron'; margin: 10px 0; }
+        .price-sub { font-size: 12px; color: var(--sakura); font-weight: bold; margin-bottom: 15px; }
         
-        .buy-btn { width:100%; padding:15px; border-radius:12px; border:none; background: linear-gradient(45deg, var(--p), var(--n)); color:#fff; font-weight:900; cursor:pointer; font-family:'Orbitron'; font-size: 14px; box-shadow: 0 4px 15px rgba(255,0,255,0.3); }
+        .buy-btn { width:100%; padding:15px; border-radius:12px; border:none; background: linear-gradient(45deg, var(--p), var(--n)); color:#fff; font-weight:900; cursor:pointer; font-family:'Orbitron'; font-size: 12px; text-transform: uppercase; }
+        .buy-btn:disabled { opacity: 0.4; filter: grayscale(1); }
 
-        .ton-btn { display: block; width: 100%; padding: 12px; margin-top: 15px; background: rgba(0, 0, 0, 0.6); border: 2px solid var(--n); border-radius: 12px; color: var(--n); font-family: 'Orbitron'; font-weight: 900; text-decoration: none; text-align: center; font-size: 12px; }
+        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: bold; margin-top: 5px; }
+        .status-active { background: rgba(0,255,65,0.2); color: var(--neon-g); border: 1px solid var(--neon-g); }
+        .status-expired { background: rgba(255,0,0,0.2); color: #ff4444; border: 1px solid #ff4444; }
+
+        .rank-tag { font-size: 10px; font-family: 'Orbitron'; letter-spacing: 1px; }
 
         .order-item { border-left: 4px solid var(--p); margin-bottom: 10px; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 0 12px 12px 0; }
         
@@ -42,14 +47,14 @@
         .roulette-line { position: absolute; left: 50%; top: 0; width: 2px; height: 100%; background: var(--n); z-index: 5; box-shadow: 0 0 10px var(--n); }
         .roulette-tape { display: flex; align-items: center; position: absolute; left: 0; height: 100%; transition: 5s cubic-bezier(0.1, 0, 0.1, 1); }
         .case-item { width: 80px; flex-shrink: 0; text-align: center; font-size: 24px; }
-        .spins-counter { font-family: 'Orbitron'; color: var(--sakura); font-size: 18px; text-shadow: 0 0 10px var(--sakura); margin: 10px 0; }
 
         input { width:100%; padding:14px; margin:8px 0; border-radius:12px; border:1px solid var(--p); background:rgba(0,0,0,0.5); color:#fff; }
 
-        .adm-card { background: rgba(0,0,0,0.8); border: 1px solid #444; padding: 15px; border-radius: 15px; margin-bottom: 10px; font-size: 11px; border-left: 4px solid var(--p); }
-        .adm-btn-ok { background: var(--neon-g); color: #000; border: none; padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-        .adm-btn-del { background: #ff4444; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-left: 5px; }
+        .adm-card { background: rgba(0,0,0,0.8); border: 1px solid #444; padding: 15px; border-radius: 15px; margin-bottom: 10px; font-size: 11px; }
+        .adm-btn-ok { background: var(--neon-g); border:none; padding: 6px 12px; border-radius: 8px; font-weight: bold; }
+        .adm-btn-del { background: #ff4444; color: #fff; border:none; padding: 6px 12px; border-radius: 8px; font-weight: bold; margin-left: 5px; }
 
+        .hidden-console { display: none; margin-bottom: 15px; }
         .footer { background:#000; padding:20px; text-align:center; border-top: 1px solid var(--p); position: relative; z-index: 1; }
         .f-links a { color: var(--sakura); text-decoration:none; margin:0 10px; font-size:12px; font-weight:bold; }
     </style>
@@ -58,7 +63,7 @@
 
 <canvas id="bg-canvas"></canvas>
 
-<div class="header">
+<div class="header" onclick="handleConsoleTap()">
     <div class="neon-title">MOZGALOM ELITE</div>
 </div>
 
@@ -71,6 +76,11 @@
 </div>
 
 <div id="shop" class="page active">
+    <div id="promo-box" class="hidden-console card">
+        <h4 style="margin:0; color:var(--n)">HACKER CONSOLE</h4>
+        <input id="promo_input" type="text" placeholder="Введите промокод...">
+        <button class="buy-btn" onclick="applyPromo()">ACTIVATE</button>
+    </div>
     <div class="card">
         <h3 style="color: var(--sakura);">1 НЕДЕЛЯ (PRO)</h3>
         <div class="price-tag">300₽</div>
@@ -94,12 +104,13 @@
 <div id="cases" class="page">
     <div class="card" style="text-align:center;">
         <h2 style="color:var(--sakura); font-family:Orbitron; margin:0;">LUCKY SLOT</h2>
-        <div id="spins_display" class="spins-counter">КРУТОК: 0</div>
+        <div id="spins_display" style="font-family:Orbitron; color:var(--n); font-size:18px; margin:10px 0;">КРУТОК: 0</div>
         <div class="roulette-wrapper">
             <div class="roulette-line"></div>
             <div id="tape" class="roulette-tape"></div>
         </div>
         <button id="spin_trigger" class="buy-btn" style="display:none; margin-bottom:10px;" onclick="startSpin()">ЗАПУСТИТЬ</button>
+        <button id="daily_btn" class="buy-btn" style="background:transparent; border:1px solid var(--sakura); color:var(--sakura); margin-bottom:10px;" onclick="claimDaily()">ЕЖЕДНЕВНЫЙ БОНУС</button>
         <button class="buy-btn" style="background:transparent; border:1px solid var(--n); color:var(--n);" onclick="buy('CASE SPIN', 100, 0)">КУПИТЬ КЕЙС (100₽)</button>
     </div>
 </div>
@@ -108,16 +119,20 @@
     <div class="card">
         <h4 style="margin:0; color:var(--n)">ОПЛАТА TON / КАРТА</h4>
         <code id="w-addr" onclick="copyW()" style="font-size:10px; word-break:break-all; display:block; margin:10px 0; color:#aaa;">UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv</code>
-        <a href="https://tonkeeper.com/" class="ton-btn">ОТКРЫТЬ TONKEEPER</a>
     </div>
     <div id="h_list">Загрузка...</div>
 </div>
 
 <div id="auth" class="page">
     <div id="uProfile" style="display:none;">
-        <div class="card"><h3 id="uEmail" style="font-family:Orbitron; color:var(--sakura)">...</h3><button onclick="auth.signOut().then(()=>location.reload())" style="background:red; color:#fff; border:none; width:100%; padding:10px; border-radius:10px;">ВЫЙТИ</button></div>
+        <div class="card" style="text-align:center;">
+            <div id="uRank" class="rank-tag">...</div>
+            <h3 id="uEmail" style="font-family:Orbitron; margin:5px 0;">...</h3>
+            <div id="uGlobalStatus"></div>
+            <button onclick="auth.signOut().then(()=>location.reload())" style="background:red; color:#fff; border:none; width:100%; padding:10px; border-radius:10px; margin-top:15px; font-weight:bold;">ВЫЙТИ</button>
+        </div>
     </div>
-    <div id="loginCard" class="card"><input id="u_nick" type="text" placeholder="Ваш Ник"><input id="u_pass" type="password" placeholder="Пароль"><button class="buy-btn" onclick="doLogin()">ВХОД / РЕГИСТРАЦИЯ</button></div>
+    <div id="loginCard" class="card"><input id="u_nick" type="text" placeholder="Ник"><input id="u_pass" type="password" placeholder="Пароль"><button class="buy-btn" onclick="doLogin()">ВХОД / РЕГИСТРАЦИЯ</button></div>
 </div>
 
 <div id="admin" class="page">
@@ -125,7 +140,10 @@
         <input id="a_pass" type="password" placeholder="Admin Key">
         <button class="buy-btn" onclick="goAdmin()">ВХОД В СИСТЕМУ</button>
     </div>
-    <div id="a_panel" style="display:none;"></div>
+    <div id="a_panel" style="display:none;">
+        <button class="buy-btn" style="background: #ff4444; margin-bottom:15px;" onclick="wipeExpired()">WIPE EXPIRED (ОЧИСТИТЬ ПРОСРОЧЕННЫХ)</button>
+        <div id="a_orders"></div>
+    </div>
 </div>
 
 <div class="footer"><div class="f-links"><a href="https://t.me/bio_mozgalom">CHANNEL</a><a href="https://t.me/mozgalomovich">OWNER</a></div></div>
@@ -141,13 +159,18 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 let userSpins = 0;
+let headerTaps = 0;
 
+// --- CORE FUNCTIONS ---
 function confirmOrder(docId, days, uid) {
     let exp = "БЕССРОЧНО";
+    let expTimestamp = 9999999999999;
     if(days > 0 && days < 50000) {
-        let d = new Date(); d.setDate(d.getDate() + days); exp = d.toLocaleDateString();
+        let d = new Date(); d.setDate(d.getDate() + days); 
+        exp = d.toLocaleDateString();
+        expTimestamp = d.getTime();
     }
-    db.collection('orders').doc(docId).update({ status: 'paid', expire_str: exp }).then(() => {
+    db.collection('orders').doc(docId).update({ status: 'paid', expire_str: exp, expire_at: expTimestamp }).then(() => {
         if(days === 0) db.collection('users').doc(uid).set({ spins: firebase.firestore.FieldValue.increment(1) }, {merge:true});
     });
 }
@@ -159,54 +182,84 @@ function buy(name, price, days) {
         uid: auth.currentUser.uid, email: auth.currentUser.email,
         product: name, price: price, code: orderId,
         status: "pending", timestamp: Date.now(), date_str: new Date().toLocaleString(),
-        duration_days: days, expire_str: ""
+        duration_days: days, expire_str: "", expire_at: 0
     }).then(() => {
         fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent("🛒 ЗАКАЗ: "+orderId+"\n"+name)}`, {mode:'no-cors'});
-        alert("ЗАКАЗ СОЗДАН: " + orderId);
+        alert("ЗАКАЗ: " + orderId + "\nОплатите по кошельку в 'ЗАКАЗЫ'");
         show('history');
     });
 }
 
+// --- USER PROFILE & RANKS ---
 auth.onAuthStateChanged(u => {
     if(u) {
         document.getElementById('loginCard').style.display = 'none';
         document.getElementById('uProfile').style.display = 'block';
         document.getElementById('uEmail').innerText = u.email.split('@')[0].toUpperCase();
+        
         db.collection('users').doc(u.uid).onSnapshot(doc => {
-            userSpins = (doc.data() && doc.data().spins) ? doc.data().spins : 0;
+            const data = doc.data() || {};
+            userSpins = data.spins || 0;
             document.getElementById('spins_display').innerText = `КРУТОК: ${userSpins}`;
             document.getElementById('spin_trigger').style.display = userSpins > 0 ? 'inline-block' : 'none';
+            
+            // Daily check
+            const lastDaily = data.lastDaily || 0;
+            if(Date.now() - lastDaily < 86400000) {
+                document.getElementById('daily_btn').disabled = true;
+                document.getElementById('daily_btn').innerText = "БОНУС ЗАБРАН";
+            }
         });
+
         db.collection("orders").where("uid","==",u.uid).onSnapshot(s => {
-            document.getElementById("h_list").innerHTML = s.docs.sort((a,b)=>b.data().timestamp-a.data().timestamp).map(d => {
+            let active = false;
+            let highestRank = "ROOKIE";
+            let rankColor = "#aaa";
+
+            const listHtml = s.docs.sort((a,b)=>b.data().timestamp-a.data().timestamp).map(d => {
                 const data = d.data();
-                return `<div class="order-item" style="border-color: ${data.status=='paid'?'#0f8':'var(--p)'}">
+                const now = Date.now();
+                const isPaid = data.status === 'paid';
+                const notExpired = data.expire_at > now || data.expire_str === "БЕССРОЧНО";
+
+                if(isPaid && notExpired) {
+                    active = true;
+                    if(data.product.includes("LEGEND")) { highestRank = "ELITE ENTITY"; rankColor = "var(--gold)"; }
+                    else if(data.product.includes("ULTRA") && highestRank !== "ELITE ENTITY") { highestRank = "OPERATOR"; rankColor = "var(--p)"; }
+                }
+
+                return `<div class="order-item" style="border-color: ${isPaid?'#0f8':'var(--p)'}">
                     <b>${data.product}</b> <small style="float:right">${data.status}</small><br>
                     <small>ID: ${data.code || '---'}</small>
-                    ${data.expire_str ? `<div style="font-size:9px; color:var(--sakura); margin-top:5px;">ДОСТУП ДО: ${data.expire_str}</div>` : ''}
+                    ${data.expire_str ? `<div style="font-size:9px; color:var(--sakura); margin-top:5px;">ДО: ${data.expire_str}</div>` : ''}
                 </div>`;
             }).join("");
+
+            document.getElementById("h_list").innerHTML = listHtml || "Нет заказов";
+            document.getElementById("uRank").innerText = `[${highestRank}]`;
+            document.getElementById("uRank").style.color = rankColor;
+            document.getElementById("uEmail").style.color = rankColor;
+            document.getElementById("uGlobalStatus").innerHTML = active ? 
+                `<div class="status-badge status-active">SYSTEM: ACTIVE</div>` : 
+                `<div class="status-badge status-expired">SYSTEM: EXPIRED</div>`;
         });
     }
 });
 
+// --- ADMIN ---
 function goAdmin() {
     if(document.getElementById("a_pass").value === "rahim_45_pro") {
         document.getElementById("adm_login_box").style.display = "none";
         document.getElementById("a_panel").style.display = "block";
-        db.collection("orders").orderBy("timestamp", "desc").limit(25).onSnapshot(s => {
-            document.getElementById("a_panel").innerHTML = s.docs.map(d => {
+        db.collection("orders").orderBy("timestamp", "desc").limit(30).onSnapshot(s => {
+            document.getElementById("a_orders").innerHTML = s.docs.map(d => {
                 const data = d.data();
-                const isPaid = data.status === 'paid';
-                return `
-                <div class="adm-card">
-                    <div style="font-family:Orbitron; color:var(--n)">${data.product}</div>
-                    <div><b>USER:</b> ${data.email.split('@')[0]} | <b>ID:</b> ${data.code || 'BOX'}</div>
-                    <div style="color:#aaa">${data.date_str}</div>
-                    ${data.expire_str ? `<div style="color:var(--p); font-weight:bold;">${data.expire_str}</div>` : ''}
+                return `<div class="adm-card" style="border-left: 3px solid ${data.status=='paid'?'#0f8':'#f44'}">
+                    <b>${data.product}</b> | ${data.email.split('@')[0]}<br>
+                    <small>ID: ${data.code} | Exp: ${data.expire_str || 'PENDING'}</small>
                     <div style="margin-top:8px">
-                        ${!isPaid ? `<button class="adm-btn-ok" onclick="confirmOrder('${d.id}', ${data.duration_days}, '${data.uid}')">ОК</button>` : ''}
-                        <button class="adm-btn-del" onclick="db.collection('orders').doc('${d.id}').delete()">УДАЛИТЬ</button>
+                        ${data.status !== 'paid' ? `<button class="adm-btn-ok" onclick="confirmOrder('${d.id}', ${data.duration_days}, '${data.uid}')">OK</button>` : ''}
+                        <button class="adm-btn-del" onclick="db.collection('orders').doc('${d.id}').delete()">DEL</button>
                     </div>
                 </div>`;
             }).join("");
@@ -214,31 +267,48 @@ function goAdmin() {
     }
 }
 
-function show(id) {
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-    document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    document.getElementById('n-'+id).classList.add('active');
+async function wipeExpired() {
+    if(!confirm("Удалить всех, у кого кончилась подписка?")) return;
+    const now = Date.now();
+    const q = await db.collection("orders").where("expire_at", "<", now).where("expire_at", ">", 0).get();
+    q.forEach(doc => doc.ref.delete());
+    alert("Система очищена!");
 }
 
-function doLogin() {
-    const nick = document.getElementById('u_nick').value.trim().toLowerCase();
-    const pass = document.getElementById('u_pass').value;
-    auth.signInWithEmailAndPassword(nick+"@moz.me", pass).catch(() => {
-        auth.createUserWithEmailAndPassword(nick+"@moz.me", pass).catch(e => alert(e.message));
-    });
+// --- EXTRAS ---
+function handleConsoleTap() {
+    headerTaps++;
+    if(headerTaps >= 5) {
+        document.getElementById('promo-box').style.display = 'block';
+        headerTaps = 0;
+    }
 }
 
-function copyW() { navigator.clipboard.writeText(MY_WALLET); alert("Скопировано!"); }
+function applyPromo() {
+    const code = document.getElementById('promo_input').value.toUpperCase();
+    if(code === "SAKURA2026") {
+        db.collection('users').doc(auth.currentUser.uid).update({ spins: firebase.firestore.FieldValue.increment(1) });
+        alert("HACK SUCCESS: +1 Spin!");
+        document.getElementById('promo-box').style.display = 'none';
+    } else { alert("ACCESS DENIED"); }
+}
 
-// --- ROULETTE ---
-const items = ["🎁", "🎟️", "💎", "🔥", "💰", "⚡", "🌟"];
+function claimDaily() {
+    if(!auth.currentUser) return show('auth');
+    db.collection('users').doc(auth.currentUser.uid).set({ 
+        spins: firebase.firestore.FieldValue.increment(1),
+        lastDaily: Date.now()
+    }, {merge:true});
+    alert("DAILY REWARD: +1 Spin!");
+}
+
 function startSpin() {
     if(userSpins <= 0) return;
     userSpins--;
     db.collection('users').doc(auth.currentUser.uid).update({ spins: userSpins });
     const tape = document.getElementById('tape');
     tape.innerHTML = "";
+    const items = ["🎁", "🎟️", "💎", "🔥", "💰", "⚡", "🌟"];
     for(let i=0; i<60; i++) {
         const div = document.createElement('div');
         div.className = 'case-item';
@@ -251,27 +321,44 @@ function startSpin() {
         tape.style.left = `-${(50 * 80) - 180}px`;
     }, 100);
     setTimeout(() => {
-        const prizes = ["Скидка 30%", "PRO +3 дня", "ULTRA +1 день", "Скидка 15%", "VIP Доступ"];
+        const prizes = ["Скидка 30%", "PRO +3 дня", "ULTRA +1 день", "Скидка 15%"];
         const win = prizes[Math.floor(Math.random()*prizes.length)];
         alert("ВЫИГРЫШ: " + win);
-        db.collection("orders").add({ uid: auth.currentUser.uid, email: auth.currentUser.email, product: "ВЫИГРЫШ: " + win, status: "paid", timestamp: Date.now(), date_str: new Date().toLocaleString(), expire_str: "АКТИВИРОВАНО" });
+        db.collection("orders").add({ uid: auth.currentUser.uid, email: auth.currentUser.email, product: "WIN: " + win, status: "paid", timestamp: Date.now(), date_str: new Date().toLocaleString(), expire_str: "INSTANT", expire_at: 0 });
     }, 5500);
 }
 
-// --- BACKGROUND: MATRIX + SAKURA ---
+function show(id) {
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.getElementById('n-'+id).classList.add('active');
+}
+
+function doLogin() {
+    const nick = document.getElementById('u_nick').value.trim().toLowerCase();
+    const pass = document.getElementById('u_pass').value;
+    if(!nick || !pass) return;
+    auth.signInWithEmailAndPassword(nick+"@moz.me", pass).catch(() => {
+        auth.createUserWithEmailAndPassword(nick+"@moz.me", pass).catch(e => alert(e.message));
+    });
+}
+
+function copyW() { navigator.clipboard.writeText(MY_WALLET); alert("Copy!"); }
+
+// --- BACKGROUND ---
 const canvas = document.getElementById('bg-canvas');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-const columns = Math.floor(canvas.width / 20);
-const drops = Array(columns).fill(0);
+const drops = Array(Math.floor(canvas.width / 20)).fill(0);
 const petals = [];
-for(let i=0; i<35; i++) { petals.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, r: Math.random() * 4 + 2, s: Math.random() * 1.5 + 0.5, a: Math.random() * 2 }); }
+for(let i=0; i<35; i++) petals.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*4+2, s: Math.random()*1.5+0.5, a: Math.random()*2 });
 function draw() {
-    ctx.fillStyle = 'rgba(5, 7, 13, 0.15)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'rgba(5, 7, 13, 0.15)'; ctx.fillRect(0,0,canvas.width,canvas.height);
     ctx.fillStyle = '#00ffe5'; ctx.font = '15px monospace';
-    drops.forEach((y, i) => { ctx.fillText(Math.floor(Math.random()*2), i*20, y); if(y > canvas.height && Math.random() > 0.975) drops[i] = 0; else drops[i] += 20; });
+    drops.forEach((y, i) => { ctx.fillText(Math.floor(Math.random()*2), i*20, y); if(y > canvas.height && Math.random()>0.975) drops[i]=0; else drops[i]+=20; });
     ctx.fillStyle = '#ffb7c5';
-    petals.forEach(p => { ctx.beginPath(); ctx.ellipse(p.x, p.y, p.r, p.r/1.5, p.a, 0, Math.PI * 2); ctx.fill(); p.y += p.s; p.x += Math.sin(p.y / 50); if(p.y > canvas.height) { p.y = -10; p.x = Math.random() * canvas.width; } });
+    petals.forEach(p => { ctx.beginPath(); ctx.ellipse(p.x, p.y, p.r, p.r/1.5, p.a, 0, Math.PI*2); ctx.fill(); p.y+=p.s; p.x+=Math.sin(p.y/50); if(p.y>canvas.height){ p.y=-10; p.x=Math.random()*canvas.width; } });
 }
 setInterval(draw, 60);
 </script>
