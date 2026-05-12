@@ -131,7 +131,6 @@
 <div class="footer"><div class="f-links"><a href="https://t.me/bio_mozgalom">CHANNEL</a><a href="https://t.me/mozgalomovich">OWNER</a></div></div>
 
 <script>
-// --- CONFIG & FIREBASE ---
 const TG_TOKEN = "8538869779:AAGSu2F22Tx0TAtRH2gXPlF4ZNsPVKTt3lw";
 const TG_CHAT_ID = "7910835075";
 const MY_WALLET = "UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv";
@@ -142,23 +141,6 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 let userSpins = 0;
-
-// --- AUTO-CHECKER ---
-async function checkTon() {
-    try {
-        const r = await fetch(`https://toncenter.com/api/v2/getTransactions?address=${MY_WALLET}&limit=10`);
-        const res = await r.json();
-        if(!res.ok) return;
-        const pendings = await db.collection("orders").where("status", "==", "pending").get();
-        res.result.forEach(tx => {
-            const comm = (tx.in_msg.message || tx.in_msg.msg_data?.text || "").toUpperCase();
-            pendings.forEach(doc => {
-                if(comm.includes(doc.data().code)) confirmOrder(doc.id, doc.data().duration_days, doc.data().uid);
-            });
-        });
-    } catch(e){}
-}
-setInterval(checkTon, 30000);
 
 function confirmOrder(docId, days, uid) {
     let exp = "БЕССРОЧНО";
@@ -177,42 +159,14 @@ function buy(name, price, days) {
         uid: auth.currentUser.uid, email: auth.currentUser.email,
         product: name, price: price, code: orderId,
         status: "pending", timestamp: Date.now(), date_str: new Date().toLocaleString(),
-        duration_days: days
+        duration_days: days, expire_str: ""
     }).then(() => {
         fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent("🛒 ЗАКАЗ: "+orderId+"\n"+name)}`, {mode:'no-cors'});
-        alert("ЗАКАЗ: " + orderId + "\nОплатите и ожидайте!");
+        alert("ЗАКАЗ СОЗДАН: " + orderId);
         show('history');
     });
 }
 
-// --- ROULETTE ---
-const items = ["🎁", "🎟️", "💎", "🔥", "💰", "⚡", "🌟"];
-function startSpin() {
-    if(userSpins <= 0) return;
-    userSpins--;
-    db.collection('users').doc(auth.currentUser.uid).update({ spins: userSpins });
-    const tape = document.getElementById('tape');
-    tape.innerHTML = "";
-    for(let i=0; i<60; i++) {
-        const div = document.createElement('div');
-        div.className = 'case-item';
-        div.innerText = items[Math.floor(Math.random()*items.length)];
-        tape.appendChild(div);
-    }
-    tape.style.transition = "none"; tape.style.left = "0";
-    setTimeout(() => {
-        tape.style.transition = "5s cubic-bezier(0.1, 0, 0.1, 1)";
-        tape.style.left = `-${(50 * 80) - 180}px`;
-    }, 100);
-    setTimeout(() => {
-        const prizes = ["Скидка 30%", "PRO +3 дня", "ULTRA +1 день", "Скидка 15%", "VIP Доступ"];
-        const win = prizes[Math.floor(Math.random()*prizes.length)];
-        alert("ВЫИГРЫШ: " + win);
-        db.collection("orders").add({ uid: auth.currentUser.uid, email: auth.currentUser.email, product: "ВЫИГРЫШ: " + win, status: "paid", timestamp: Date.now(), date_str: new Date().toLocaleString() });
-    }, 5500);
-}
-
-// --- AUTH OBSERVER ---
 auth.onAuthStateChanged(u => {
     if(u) {
         document.getElementById('loginCard').style.display = 'none';
@@ -224,17 +178,18 @@ auth.onAuthStateChanged(u => {
             document.getElementById('spin_trigger').style.display = userSpins > 0 ? 'inline-block' : 'none';
         });
         db.collection("orders").where("uid","==",u.uid).onSnapshot(s => {
-            document.getElementById("h_list").innerHTML = s.docs.sort((a,b)=>b.data().timestamp-a.data().timestamp).map(d => `
-                <div class="order-item" style="border-color: ${d.data().status=='paid'?'#0f8':'var(--p)'}">
-                    <b>${d.data().product}</b> <small style="float:right">${d.data().status}</small><br>
-                    <small>ID: ${d.data().code || '---'}</small>
-                    ${d.data().expire_str ? `<div style="font-size:9px; color:var(--sakura)">ДО: ${d.data().expire_str}</div>` : ''}
-                </div>`).join("");
+            document.getElementById("h_list").innerHTML = s.docs.sort((a,b)=>b.data().timestamp-a.data().timestamp).map(d => {
+                const data = d.data();
+                return `<div class="order-item" style="border-color: ${data.status=='paid'?'#0f8':'var(--p)'}">
+                    <b>${data.product}</b> <small style="float:right">${data.status}</small><br>
+                    <small>ID: ${data.code || '---'}</small>
+                    ${data.expire_str ? `<div style="font-size:9px; color:var(--sakura); margin-top:5px;">ДОСТУП ДО: ${data.expire_str}</div>` : ''}
+                </div>`;
+            }).join("");
         });
     }
 });
 
-// --- ADMIN SYSTEM ---
 function goAdmin() {
     if(document.getElementById("a_pass").value === "rahim_45_pro") {
         document.getElementById("adm_login_box").style.display = "none";
@@ -248,6 +203,7 @@ function goAdmin() {
                     <div style="font-family:Orbitron; color:var(--n)">${data.product}</div>
                     <div><b>USER:</b> ${data.email.split('@')[0]} | <b>ID:</b> ${data.code || 'BOX'}</div>
                     <div style="color:#aaa">${data.date_str}</div>
+                    ${data.expire_str ? `<div style="color:var(--p); font-weight:bold;">${data.expire_str}</div>` : ''}
                     <div style="margin-top:8px">
                         ${!isPaid ? `<button class="adm-btn-ok" onclick="confirmOrder('${d.id}', ${data.duration_days}, '${data.uid}')">ОК</button>` : ''}
                         <button class="adm-btn-del" onclick="db.collection('orders').doc('${d.id}').delete()">УДАЛИТЬ</button>
@@ -275,47 +231,47 @@ function doLogin() {
 
 function copyW() { navigator.clipboard.writeText(MY_WALLET); alert("Скопировано!"); }
 
+// --- ROULETTE ---
+const items = ["🎁", "🎟️", "💎", "🔥", "💰", "⚡", "🌟"];
+function startSpin() {
+    if(userSpins <= 0) return;
+    userSpins--;
+    db.collection('users').doc(auth.currentUser.uid).update({ spins: userSpins });
+    const tape = document.getElementById('tape');
+    tape.innerHTML = "";
+    for(let i=0; i<60; i++) {
+        const div = document.createElement('div');
+        div.className = 'case-item';
+        div.innerText = items[Math.floor(Math.random()*items.length)];
+        tape.appendChild(div);
+    }
+    tape.style.transition = "none"; tape.style.left = "0";
+    setTimeout(() => {
+        tape.style.transition = "5s cubic-bezier(0.1, 0, 0.1, 1)";
+        tape.style.left = `-${(50 * 80) - 180}px`;
+    }, 100);
+    setTimeout(() => {
+        const prizes = ["Скидка 30%", "PRO +3 дня", "ULTRA +1 день", "Скидка 15%", "VIP Доступ"];
+        const win = prizes[Math.floor(Math.random()*prizes.length)];
+        alert("ВЫИГРЫШ: " + win);
+        db.collection("orders").add({ uid: auth.currentUser.uid, email: auth.currentUser.email, product: "ВЫИГРЫШ: " + win, status: "paid", timestamp: Date.now(), date_str: new Date().toLocaleString(), expire_str: "АКТИВИРОВАНО" });
+    }, 5500);
+}
+
 // --- BACKGROUND: MATRIX + SAKURA ---
 const canvas = document.getElementById('bg-canvas');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-
 const columns = Math.floor(canvas.width / 20);
 const drops = Array(columns).fill(0);
 const petals = [];
-
-for(let i=0; i<35; i++) {
-    petals.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        r: Math.random() * 4 + 2,
-        s: Math.random() * 1.5 + 0.5,
-        a: Math.random() * 2
-    });
-}
-
+for(let i=0; i<35; i++) { petals.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, r: Math.random() * 4 + 2, s: Math.random() * 1.5 + 0.5, a: Math.random() * 2 }); }
 function draw() {
-    ctx.fillStyle = 'rgba(5, 7, 13, 0.15)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Matrix
-    ctx.fillStyle = '#00ffe5';
-    ctx.font = '15px monospace';
-    drops.forEach((y, i) => {
-        ctx.fillText(Math.floor(Math.random()*2), i*20, y);
-        if(y > canvas.height && Math.random() > 0.975) drops[i] = 0; else drops[i] += 20;
-    });
-
-    // Sakura
+    ctx.fillStyle = 'rgba(5, 7, 13, 0.15)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#00ffe5'; ctx.font = '15px monospace';
+    drops.forEach((y, i) => { ctx.fillText(Math.floor(Math.random()*2), i*20, y); if(y > canvas.height && Math.random() > 0.975) drops[i] = 0; else drops[i] += 20; });
     ctx.fillStyle = '#ffb7c5';
-    petals.forEach(p => {
-        ctx.beginPath();
-        ctx.ellipse(p.x, p.y, p.r, p.r/1.5, p.a, 0, Math.PI * 2);
-        ctx.fill();
-        p.y += p.s;
-        p.x += Math.sin(p.y / 50);
-        if(p.y > canvas.height) { p.y = -10; p.x = Math.random() * canvas.width; }
-    });
+    petals.forEach(p => { ctx.beginPath(); ctx.ellipse(p.x, p.y, p.r, p.r/1.5, p.a, 0, Math.PI * 2); ctx.fill(); p.y += p.s; p.x += Math.sin(p.y / 50); if(p.y > canvas.height) { p.y = -10; p.x = Math.random() * canvas.width; } });
 }
 setInterval(draw, 60);
 </script>
