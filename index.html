@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MOZGALOM ELITE | CYBER-BUNKER v3</title>
+    <title>MOZGALOM ELITE | ULTIMATE EDITION</title>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -15,61 +15,61 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { margin:0; font-family: 'Montserrat', sans-serif; background: var(--bg); color: #fff; min-height: 100vh; overflow-x: hidden; }
 
-        /* ЭКРАН ЗАГРУЗКИ */
+        /* ЭФФЕКТ ГЛИТЧА ПРИ ПЕРЕХОДЕ */
+        .glitch-flash { position: fixed; inset: 0; background: white; z-index: 9999; mix-blend-mode: difference; opacity: 0; pointer-events: none; }
+        @keyframes flash { 0% { opacity: 0.3; } 100% { opacity: 0; } }
+
+        /* ЗАГРУЗКА */
         #boot-screen { position: fixed; inset: 0; background: #000; z-index: 10000; display: flex; flex-direction: column; justify-content: center; padding: 30px; font-family: 'JetBrains Mono', monospace; color: var(--neon-g); font-size: 14px; }
         #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.4; pointer-events: none; }
 
-        /* КАРТА АТАК (BRIDGE MAP) */
-        #bridge-map { position: absolute; inset: 0; opacity: 0.2; pointer-events: none; z-index: -1; overflow: hidden; background: url('https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_blank_without_borders.svg') center/cover no-repeat; filter: invert(1); }
-        .attack-ping { position: absolute; width: 4px; height: 4px; background: var(--p); border-radius: 50%; box-shadow: 0 0 10px var(--p); animation: ping 2s infinite; }
+        /* КАРТА АТАК */
+        #bridge-map { position: absolute; inset: 0; opacity: 0.25; pointer-events: none; z-index: -1; background: url('https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_blank_without_borders.svg') center/contain no-repeat; filter: invert(1) hue-rotate(180deg); }
+        .attack-ping { position: absolute; width: 6px; height: 6px; background: var(--p); border-radius: 50%; box-shadow: 0 0 15px var(--p); animation: ping 1.5s infinite; }
         @keyframes ping { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(10); opacity: 0; } }
 
-        .header { text-align:center; padding:20px; border-bottom: 2px solid var(--p); background: rgba(0,0,0,0.7); backdrop-filter: blur(15px); position: relative; z-index: 1001; }
-        .neon-title { font-family: 'Orbitron'; font-size: 24px; font-weight: 900; background: linear-gradient(90deg, var(--n), var(--p), var(--sakura)); background-size: 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shine 4s linear infinite; text-transform: uppercase; letter-spacing: 3px; cursor: pointer; display: inline-block; }
+        .header { text-align:center; padding:20px; border-bottom: 2px solid var(--p); background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); position: sticky; top: 0; z-index: 2000; }
+        .neon-title { font-family: 'Orbitron'; font-size: 22px; font-weight: 900; background: linear-gradient(90deg, var(--n), var(--p), var(--n)); background-size: 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shine 4s linear infinite; text-transform: uppercase; letter-spacing: 4px; cursor: pointer; }
         @keyframes shine { to { background-position: 200%; } }
 
-        .nav { display:flex; gap:8px; padding:10px; overflow-x:auto; background: rgba(0,0,0,0.9); position:sticky; top:0; z-index:1000; border-bottom: 1px solid var(--n); scrollbar-width: none; }
-        .nav::-webkit-scrollbar { display: none; }
-        .nav button { flex:0 0 auto; background:transparent; border:1px solid var(--n); padding:8px 15px; border-radius:10px; color:var(--n); font-weight:bold; font-size:10px; cursor:pointer; font-family: 'Orbitron'; transition: 0.3s; }
+        .nav { display:flex; gap:8px; padding:12px; overflow-x:auto; background: rgba(0,0,0,0.9); z-index:1000; border-bottom: 1px solid var(--n); }
+        .nav button { flex:0 0 auto; background:transparent; border:1px solid rgba(0,255,229,0.3); padding:10px 18px; border-radius:8px; color:var(--n); font-weight:bold; font-size:10px; cursor:pointer; font-family: 'Orbitron'; transition: 0.3s; }
         .nav button.active { background: var(--p); color:#fff; border-color: var(--p); box-shadow: 0 0 15px var(--p); }
 
-        .page { display:none; padding:15px; width:100%; max-width: 450px; margin:0 auto; padding-bottom: 100px; position: relative; z-index: 1; }
+        .page { display:none; padding:15px; width:100%; max-width: 450px; margin:0 auto; padding-bottom: 100px; animation: slideIn 0.3s ease-out; }
         .page.active { display:block; }
+        @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* КАРТОЧКИ С ГЛАСС-ЭФФЕКТОМ */
-        .card { background: rgba(255,255,255,0.05); border: 1px solid rgba(0,255,229,0.2); border-radius: 20px; padding: 20px; margin-bottom: 15px; backdrop-filter: blur(12px); position: relative; overflow: hidden; transition: 0.3s; }
-        .card:hover { border-color: var(--n); box-shadow: 0 0 20px rgba(0,255,229,0.1); }
+        /* КАРТОЧКИ */
+        .card { background: rgba(255,255,255,0.03); border: 1px solid rgba(0,255,229,0.15); border-radius: 20px; padding: 20px; margin-bottom: 15px; backdrop-filter: blur(15px); position: relative; overflow: hidden; }
+        .card::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); transition: 0.5s; }
+        .card:hover::before { left: 100%; }
 
-        .buy-btn { width:100%; padding:15px; border-radius:12px; border:none; background: linear-gradient(45deg, var(--p), var(--n)); color:#fff; font-weight:900; cursor:pointer; font-family:'Orbitron'; font-size: 11px; text-transform: uppercase; box-shadow: 0 4px 15px rgba(255,0,255,0.3); transition: transform 0.1s; }
-        .buy-btn:active { transform: scale(0.96); }
+        .buy-btn { width:100%; padding:16px; border-radius:12px; border:none; background: linear-gradient(45deg, var(--p), var(--n)); color:#fff; font-weight:900; cursor:pointer; font-family:'Orbitron'; font-size: 11px; text-transform: uppercase; box-shadow: 0 5px 15px rgba(255,0,255,0.2); }
+        
+        /* ПРОФИЛЬ 3D */
+        .id-card { background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(0,0,0,0.6)); border: 1px solid var(--n); border-radius: 20px; padding: 25px; perspective: 1000px; transition: 0.1s; }
+        .xp-bar { width: 100%; height: 6px; background: #111; border-radius: 3px; margin: 15px 0; position: relative; overflow: hidden; }
+        .xp-fill { height: 100%; background: var(--n); width: 0%; transition: 2s width ease-in-out; box-shadow: 0 0 10px var(--n); }
+        
+        .scanner-log { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--neon-g); margin-top: 15px; height: 80px; overflow: hidden; line-height: 1.5; opacity: 0.8; }
 
-        /* ID-CARD 3D */
-        .id-card { background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(0,0,0,0.5)); border: 1px solid var(--n); border-radius: 20px; padding: 25px; position: relative; transform-style: preserve-3d; transition: transform 0.1s; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .level-bar { width: 100%; height: 4px; background: #222; border-radius: 2px; margin: 10px 0; overflow: hidden; }
-        .level-progress { height: 100%; background: var(--n); width: 35%; box-shadow: 0 0 10px var(--n); }
+        .keeper-btn { background: #ff0000; color: white; padding: 16px; border-radius: 12px; border: 2px solid #fff; font-family: 'Orbitron'; font-weight: 900; cursor: pointer; width: 100%; margin-top: 15px; box-shadow: 0 0 20px rgba(255,0,0,0.4); animation: blink 1.5s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
 
-        .scanner-log { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--neon-g); margin-top: 15px; height: 50px; overflow: hidden; opacity: 0.7; }
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--n); color: #000; padding: 12px 25px; border-radius: 50px; font-family: 'Orbitron'; font-weight: 900; font-size: 11px; z-index: 10000; display: none; box-shadow: 0 0 20px var(--n); }
 
-        /* PANIC BUTTON / KEEPER */
-        .keeper-btn { background: #ff0000; color: white; padding: 15px; border-radius: 12px; border: 2px solid white; font-family: 'Orbitron'; font-weight: 900; cursor: pointer; width: 100%; margin-top: 10px; animation: pulse-red 2s infinite; }
-        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(255,0,0,0.7); } 70% { box-shadow: 0 0 0 15px rgba(255,0,0,0); } 100% { box-shadow: 0 0 0 0 rgba(255,0,0,0); } }
-
-        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: bold; margin-top: 5px; }
-        .status-active { background: rgba(0,255,65,0.2); color: var(--neon-g); border: 1px solid var(--neon-g); box-shadow: 0 0 10px var(--neon-g); }
-
-        .adm-card { background: rgba(0,0,0,0.8); border: 1px solid #444; padding: 15px; border-radius: 15px; margin-bottom: 10px; font-size: 11px; border-left: 4px solid var(--p); }
-        .adm-btn-ok { background: var(--neon-g); color: #000; border:none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-
-        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,255,229,0.9); color: #000; padding: 12px 25px; border-radius: 50px; font-family: 'Orbitron'; font-weight: 900; font-size: 12px; z-index: 10000; display: none; box-shadow: 0 0 20px var(--n); }
+        .adm-card { background: rgba(0,0,0,0.8); border: 1px solid #333; padding: 15px; border-radius: 15px; margin-bottom: 10px; border-left: 4px solid var(--p); }
     </style>
 </head>
 <body>
 
+<div class="glitch-flash" id="flash"></div>
 <div id="boot-screen"></div>
 <canvas id="bg-canvas"></canvas>
 
 <div class="header">
-    <div class="neon-title" id="main-title" onclick="handleConsoleTap()">MOZGALOM ELITE</div>
+    <div class="neon-title" onclick="handleConsoleTap()">MOZGALOM ELITE</div>
 </div>
 
 <div class="nav">
@@ -83,247 +83,257 @@
 <div id="shop" class="page active">
     <div id="bridge-map"></div>
     <div id="promo-box" style="display:none" class="card">
-        <h4 style="margin:0; color:var(--n)">HACKER CONSOLE</h4>
-        <input id="promo_input" type="text" placeholder="CODE..." style="width:100%; padding:10px; margin:10px 0; background:#000; border:1px solid var(--n); color:#fff;">
-        <button class="buy-btn" onclick="applyPromo()">ACTIVATE</button>
+        <h4 style="margin:0; color:var(--n)">ENCRYPTION KEY</h4>
+        <input id="promo_input" type="text" placeholder="CODE..." style="width:100%; padding:12px; margin:10px 0; background:#000; border:1px solid var(--n); color:#fff; border-radius:8px;">
+        <button class="buy-btn" onclick="applyPromo()">DECRYPT</button>
     </div>
     
     <div class="card">
-        <h3 style="color: var(--sakura); margin-top:0;">1 НЕДЕЛЯ (PRO)</h3>
-        <div style="font-size:26px; font-weight:900; color:var(--n); font-family:Orbitron;">300₽</div>
-        <div style="font-size:12px; color:var(--sakura); margin-bottom:15px;">4$ | 2 💎</div>
-        <button class="buy-btn" onclick="buy('1 НЕДЕЛЯ PRO', 300, 7)">КУПИТЬ ТАРИФ</button>
+        <h3 style="margin:0; color:var(--sakura); font-family: Orbitron;">PRO PROTECTION</h3>
+        <div style="font-size:24px; font-weight:900; color:var(--n); font-family:Orbitron; margin:5px 0;">300₽ / 4$ / 2💎</div>
+        <p style="font-size:10px; color:#aaa;">Срок: 7 дней. Полный деф от докса.</p>
+        <button class="buy-btn" onclick="buy('1 НЕДЕЛЯ PRO', 300, 7)">КУПИТЬ ЗАЩИТУ</button>
     </div>
 
     <div class="card">
-        <h3 style="color: var(--sakura); margin-top:0;">1 МЕСЯЦ (ULTRA)</h3>
-        <div style="font-size:26px; font-weight:900; color:var(--n); font-family:Orbitron;">1000₽</div>
-        <div style="font-size:12px; color:var(--sakura); margin-bottom:15px;">13$ | 6 💎</div>
-        <button class="buy-btn" onclick="buy('1 МЕСЯЦ ULTRA', 1000, 30)">КУПИТЬ ТАРИФ</button>
+        <h3 style="margin:0; color:var(--sakura); font-family: Orbitron;">ULTRA DEFENSE</h3>
+        <div style="font-size:24px; font-weight:900; color:var(--n); font-family:Orbitron; margin:5px 0;">1000₽ / 13$ / 6💎</div>
+        <p style="font-size:10px; color:#aaa;">Срок: 30 дней. Приоритетный деф.</p>
+        <button class="buy-btn" onclick="buy('1 МЕСЯЦ ULTRA', 1000, 30)">КУПИТЬ ЗАЩИТУ</button>
     </div>
 
-    <div class="card">
-        <h3 style="color: var(--sakura); margin-top:0;">FOREVER (LEGEND)</h3>
-        <div style="font-size:26px; font-weight:900; color:var(--n); font-family:Orbitron;">4000₽</div>
-        <div style="font-size:12px; color:var(--sakura); margin-bottom:15px;">52$ | 25 💎</div>
-        <button class="buy-btn" onclick="buy('LEGEND', 4000, 99999)">СТАТЬ ЛЕГЕНДОЙ</button>
+    <div class="card" style="border-color: var(--gold);">
+        <h3 style="margin:0; color:var(--gold); font-family: Orbitron;">3X LUCK SPINS</h3>
+        <div style="font-size:24px; font-weight:900; color:var(--n); font-family:Orbitron; margin:5px 0;">100₽ / 1.5$ / 1💎</div>
+        <button class="buy-btn" style="background:var(--gold); color:#000;" onclick="buy('3 КРУТКИ', 100, 0)">КУПИТЬ ПОПЫТКИ</button>
     </div>
 </div>
 
 <div id="cases" class="page">
     <div class="card" style="text-align:center;">
         <h2 style="font-family:Orbitron; margin:0;">LUCKY SLOT</h2>
-        <div id="spins_display" style="color:var(--n); font-size:18px; margin:10px 0;">КРУТОК: 0</div>
-        <div style="height:80px; border:2px solid var(--sakura); position:relative; overflow:hidden; background:#000; border-radius:15px; margin:15px 0;">
-            <div id="tape" style="display:flex; align-items:center; position:absolute; left:0; height:100%; transition: 5s cubic-bezier(0.1, 0, 0.1, 1);"></div>
-            <div style="position:absolute; left:50%; top:0; width:2px; height:100%; background:var(--n); z-index:5;"></div>
+        <div id="spins_val" style="color:var(--n); font-size:22px; margin:10px 0; font-weight:900;">SPINS: 0</div>
+        <div style="height:90px; border:2px solid var(--sakura); position:relative; overflow:hidden; background:#000; border-radius:15px; margin:15px 0; display:flex; align-items:center; justify-content:center;">
+            <div id="tape" style="display:flex; position:absolute; left:0; transition: 5s cubic-bezier(0.1, 0, 0.1, 1);"></div>
+            <div style="position:absolute; width:4px; height:100%; background:var(--n); z-index:10; box-shadow: 0 0 15px var(--n);"></div>
         </div>
-        <button id="spin_trigger" class="buy-btn" style="display:none; margin-bottom:10px;" onclick="startSpin()">ЗАПУСТИТЬ ВЗЛОМ</button>
-        <button id="hack_btn" class="buy-btn" style="background:transparent; border:1px solid #ff4444; color:#ff4444;" onclick="startHackerGame()">HACK FREE SPIN</button>
+        <button id="spin_trigger" class="buy-btn" style="display:none;" onclick="runSlot()">START HACKING</button>
+        <button id="hack_trigger" class="buy-btn" style="background:transparent; border:1px solid #ff4444; color:#ff4444; margin-top:10px;" onclick="startHackMiniGame()">HACK FREE SPIN</button>
     </div>
 </div>
 
-<div id="hacker-game" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:2000; flex-direction:column; align-items:center; justify-content:center;">
-    <h2 style="color:var(--n); font-family:Orbitron;">OVERRIDE SYSTEM</h2>
-    <div id="hack-area" style="position:relative; width:100%; height:300px;"></div>
+<div id="hack-window" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.98); z-index:9000; flex-direction:column; align-items:center; justify-content:center;">
+    <h2 style="color:var(--n); font-family:Orbitron;">BREAK THE NODES: <span id="h-count">0</span>/5</h2>
+    <div id="h-area" style="position:relative; width:300px; height:400px; border:1px solid var(--p);"></div>
 </div>
 
 <div id="history" class="page">
     <div class="card">
-        <h4 style="color:var(--n)">ОПЛАТА TON / КАРТА</h4>
-        <code id="w-addr" onclick="copyW()" style="font-size:10px; color:#aaa; word-break:break-all;">UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv</code>
+        <h4 style="color:var(--n); margin:0;">PAYMENT ADDRESS (TON)</h4>
+        <code onclick="copyW()" style="font-size:10px; color:#666; word-break:break-all; display:block; margin-top:10px;">UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv</code>
     </div>
-    <div id="h_list">Загрузка...</div>
+    <div id="h_list">Поиск транзакций...</div>
 </div>
 
 <div id="auth" class="page">
     <div id="uProfile" style="display:none;">
-        <div class="id-card" id="main-id-card">
-            <div id="uRank" style="font-size:10px; color:var(--gold); font-family:Orbitron;">ROOKIE</div>
-            <h2 id="uEmail" style="font-family:Orbitron; margin:10px 0;">...</h2>
-            <div class="level-bar"><div class="level-progress"></div></div>
-            <div id="uGlobalStatus"></div>
-            <div class="scanner-log" id="scanner-log"></div>
+        <div class="id-card" id="id-card-3d">
+            <div id="uRank" style="font-size:10px; color:var(--gold); font-family:Orbitron; letter-spacing:2px;">STATION: ACTIVE</div>
+            <h2 id="uEmail" style="font-family:Orbitron; margin:10px 0; font-size:24px;">...</h2>
+            <div class="xp-bar"><div id="xp-fill" class="xp-fill"></div></div>
+            <div id="uStatus"><div style="color:orange; font-size:11px; font-weight:bold;">GUARD: STANDBY</div></div>
+            <div class="scanner-log" id="s-log"></div>
         </div>
-        <button class="keeper-btn" onclick="activateKeeper()">ACTIVATE KEEPER</button>
-        <button onclick="auth.signOut().then(()=>location.reload())" style="background:none; border:1px solid red; color:red; width:100%; padding:10px; margin-top:20px; border-radius:10px; font-weight:bold;">DISCONNECT</button>
+        <button class="keeper-btn" onclick="triggerKeeper()">ACTIVATE KEEPER</button>
+        <button onclick="auth.signOut().then(()=>location.reload())" style="background:none; border:none; color:#555; width:100%; margin-top:20px; font-size:10px; cursor:pointer;">DISCONNECT_SESSION</button>
     </div>
     <div id="loginCard" class="card">
-        <input id="u_nick" type="text" placeholder="LOGIN" style="width:100%; padding:14px; margin-bottom:10px; background:#000; border:1px solid var(--p); color:#fff; border-radius:10px;">
-        <input id="u_pass" type="password" placeholder="PASSWORD" style="width:100%; padding:14px; margin-bottom:10px; background:#000; border:1px solid var(--p); color:#fff; border-radius:10px;">
-        <button class="buy-btn" onclick="doLogin()">AUTHORIZE</button>
+        <input id="u_nick" type="text" placeholder="USERNAME" style="width:100%; padding:15px; margin-bottom:10px; background:#000; border:1px solid var(--p); color:#fff; border-radius:12px;">
+        <input id="u_pass" type="password" placeholder="PASS_KEY" style="width:100%; padding:15px; margin-bottom:10px; background:#000; border:1px solid var(--p); color:#fff; border-radius:12px;">
+        <button class="buy-btn" onclick="doLogin()">INITIALIZE</button>
     </div>
 </div>
 
 <div id="admin" class="page">
-    <div id="adm_login_box" class="card">
-        <input id="a_pass" type="password" placeholder="Admin Key" style="width:100%; padding:14px; background:#000; border:1px solid var(--p); color:#fff; border-radius:10px;">
-        <button class="buy-btn" style="margin-top:10px;" onclick="goAdmin()">ACCESS TERMINAL</button>
+    <div class="card">
+        <input id="a_pass" type="password" placeholder="Admin Access" style="width:100%; padding:15px; background:#000; border:1px solid var(--p); color:#fff;">
+        <button class="buy-btn" style="margin-top:10px;" onclick="loginAdmin()">LOG_ADM</button>
     </div>
     <div id="a_panel" style="display:none;">
-        <button class="buy-btn" style="background: #ff4444; margin-bottom:15px;" onclick="wipeExpired()">WIPE EXPIRED</button>
         <div id="a_orders"></div>
     </div>
 </div>
 
-<div class="toast" id="toast">SYSTEM PROTECTED</div>
+<div class="toast" id="toast">SYSTEM_MSG: OK</div>
 
 <script>
-// CONFIG
+// FIREBASE
 const firebaseConfig = { apiKey: "AIzaSyD94vjwnRQIYC-2Le_nmxtsVKlU6Oww6VE", authDomain: "mozgalom-site.firebaseapp.com", projectId: "mozgalom-site", storageBucket: "mozgalom-site.appspot.com", appId: "1:564649897907:web:61503121e661fb6a82a5c6" };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// BOOT SCREEN & AUDIO
-const bootLines = ["> INITIALIZING MOZGALOM...", "> LOADING NEON_OS v3.0...", "> STABILIZING BRIDGE MAP...", "> ACCESS GRANTED."];
-let bL = 0;
-function typeB() {
-    if(bL < bootLines.length) {
-        let d = document.createElement('div'); d.innerText = bootLines[bL++];
+const snd = (f) => { try { new Audio(`https://www.soundjay.com/buttons/sounds/button-${f}.mp3`).play(); } catch(e){} };
+
+// BOOT
+const lines = ["> MOZGALOM_OS V3.9", "> PROTOCOLS: SECURE", "> BRIDGE_MAP: ONLINE", "> ENJOY THE ELITE"];
+let currL = 0;
+function type() {
+    if(currL < lines.length) {
+        let d = document.createElement('div'); d.innerText = lines[currL++];
         document.getElementById('boot-screen').appendChild(d);
-        setTimeout(typeB, 400);
-    } else { 
-        setTimeout(() => { 
-            document.getElementById('boot-screen').style.display='none';
-            new Audio('https://www.soundjay.com/buttons/sounds/button-20.mp3').play().catch(()=>{}); 
-        }, 600); 
-    }
+        setTimeout(type, 400);
+    } else { setTimeout(() => document.getElementById('boot-screen').style.display='none', 800); }
 }
-typeB();
+type();
 
-// BRIDGE MAP PINGS
-function spawnPing() {
-    const map = document.getElementById('bridge-map');
-    if(!map) return;
-    const ping = document.createElement('div');
-    ping.className = 'attack-ping';
-    ping.style.left = Math.random()*100 + "%";
-    ping.style.top = Math.random()*100 + "%";
-    map.appendChild(ping);
-    setTimeout(() => ping.remove(), 2000);
+// КАРТА
+function pings() {
+    const m = document.getElementById('bridge-map'); if(!m) return;
+    const p = document.createElement('div'); p.className='attack-ping';
+    p.style.left = Math.random()*100+"%"; p.style.top = Math.random()*100+"%";
+    m.appendChild(p); setTimeout(()=>p.remove(), 1500);
 }
-setInterval(spawnPing, 800);
+setInterval(pings, 600);
 
-// SCANNER LOG
-const logEntries = ["SCANNING IP...", "DB LEAK CHECK...", "ENCRYPTING...", "PROXY: ACTIVE", "PORT 443: SECURE"];
-function updateLog() {
-    const log = document.getElementById('scanner-log');
-    if(!log) return;
-    const line = document.createElement('div');
-    line.innerText = `> ${logEntries[Math.floor(Math.random()*logEntries.length)]}`;
-    log.prepend(line);
-    if(log.childNodes.length > 5) log.lastChild.remove();
-}
-setInterval(updateLog, 1500);
+// ЛОГ
+const msgs = ["D-PACKET TRACED", "SSL_ENCRYPT_ACTIVE", "IP_MASKED", "DATABASE_CLEAN", "PORT_SCAN_BLOCKED"];
+setInterval(() => {
+    const l = document.getElementById('s-log'); if(!l) return;
+    const d = document.createElement('div'); d.innerText = `[${new Date().toLocaleTimeString()}] ${msgs[Math.floor(Math.random()*msgs.length)]}`;
+    l.prepend(d); if(l.childNodes.length > 5) l.lastChild.remove();
+}, 2500);
 
-// CORE FUNCTIONS
-function showToast(m) { let t = document.getElementById('toast'); t.innerText = m; t.style.display='block'; setTimeout(()=>t.style.display='none', 3000); }
+// UI LOGIC
+function showToast(txt) { const t = document.getElementById('toast'); t.innerText = txt; t.style.display='block'; setTimeout(()=>t.style.display='none', 3000); }
 
-function activateKeeper() {
-    showToast("KEEPER ACTIVATED");
-    document.getElementById('uGlobalStatus').innerHTML = `<div class="status-badge status-active">KEEPER: PROTECTING</div>`;
-    new Audio('https://www.soundjay.com/communication/sounds/digital-beeping-2.mp3').play().catch(()=>{});
+function show(id) {
+    snd(16);
+    document.getElementById('flash').style.animation = 'flash 0.2s forwards';
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.getElementById('n-'+id).classList.add('active');
+    if(id === 'auth' && auth.currentUser) setTimeout(()=>document.getElementById('xp-fill').style.width='65%', 500);
 }
 
-function buy(name, price, days) {
+function buy(prod, price, days) {
     if(!auth.currentUser) return show('auth');
-    const orderId = "MZ" + Math.random().toString(36).substr(2,4).toUpperCase();
     db.collection("orders").add({
         uid: auth.currentUser.uid, email: auth.currentUser.email,
-        product: name, price: price, code: orderId,
-        status: "pending", timestamp: Date.now(),
-        duration_days: days, expire_str: "", expire_at: 0
-    }).then(() => { show('history'); showToast("ORDER CREATED"); });
+        product: prod, price: price, status: "pending", duration_days: days, timestamp: Date.now()
+    }).then(() => { show('history'); showToast("ORDER_PENDING"); });
 }
 
-function confirmOrder(docId, days, uid) {
-    let exp = "БЕССРОЧНО", expT = 9999999999999;
-    if(days > 0 && days < 50000) {
-        let d = new Date(); d.setDate(d.getDate() + days); 
-        exp = d.toLocaleDateString(); expT = d.getTime();
-    }
-    db.collection('orders').doc(docId).update({ status: 'paid', expire_str: exp, expire_at: expT }).then(() => {
-        if(days === 0) db.collection('users').doc(uid).set({ spins: firebase.firestore.FieldValue.increment(1) }, {merge:true});
+// SLOT
+const icons = ['🔥','💎','🔱','💀','🌸','🍀'];
+function runSlot() {
+    const u = auth.currentUser; if(!u) return;
+    db.collection('users').doc(u.uid).get().then(doc => {
+        if(doc.data().spins > 0) {
+            snd(3);
+            db.collection('users').doc(u.uid).update({ spins: firebase.firestore.FieldValue.increment(-1) });
+            const tape = document.getElementById('tape'); tape.innerHTML = '';
+            for(let i=0; i<50; i++) {
+                let d = document.createElement('div'); d.style.minWidth = "70px"; d.style.fontSize = "35px";
+                d.innerText = icons[Math.floor(Math.random()*icons.length)]; tape.appendChild(d);
+            }
+            tape.style.transition = 'none'; tape.style.left = '0px';
+            setTimeout(() => { tape.style.transition = '5s cubic-bezier(0.1, 0, 0.1, 1)'; tape.style.left = '-2800px'; }, 50);
+            setTimeout(() => { showToast("JACKPOT: DATA PROTECTED"); snd(20); }, 5500);
+        }
     });
 }
 
-// ADMIN
-function goAdmin() {
-    if(document.getElementById("a_pass").value === "rahim_45_pro") {
-        document.getElementById("adm_login_box").style.display = "none";
-        document.getElementById("a_panel").style.display = "block";
-        db.collection("orders").orderBy("timestamp", "desc").onSnapshot(s => {
-            document.getElementById("a_orders").innerHTML = s.docs.map(d => {
-                const data = d.data();
-                return `<div class="adm-card">
-                    <b>${data.product}</b> | ${data.email.split('@')[0]}<br>
-                    <span>ID: ${data.code} | EXP: ${data.expire_str || 'WAIT'}</span><br>
-                    ${data.status !== 'paid' ? `<button class="adm-btn-ok" onclick="confirmOrder('${d.id}', ${data.duration_days}, '${data.uid}')">OK</button>` : ''}
-                    <button style="background:red; color:white; border:none; padding:5px; margin-left:5px;" onclick="db.collection('orders').doc('${d.id}').delete()">DEL</button>
-                </div>`;
-            }).join("");
-        });
-    }
+// MINI GAME
+let hPts = 0;
+function startHackMiniGame() { document.getElementById('hack-window').style.display='flex'; nextNode(); }
+function nextNode() {
+    const a = document.getElementById('h-area'); a.innerHTML = '';
+    const n = document.createElement('div'); n.style.position = 'absolute';
+    n.style.padding = '12px'; n.style.background = 'var(--n)'; n.style.color = '#000'; n.style.fontWeight='900';
+    n.style.left = Math.random()*240+'px'; n.style.top = Math.random()*340+'px';
+    n.innerText = 'NODE'; n.onclick = () => {
+        hPts++; snd(37); document.getElementById('h-count').innerText = hPts;
+        if(hPts >= 5) {
+            db.collection('users').doc(auth.currentUser.uid).set({ spins: firebase.firestore.FieldValue.increment(1) }, {merge:true});
+            document.getElementById('hack-window').style.display='none'; hPts = 0; showToast("NODE_CRACKED: +1 SPIN");
+        } else nextNode();
+    };
+    a.appendChild(n);
 }
 
-async function wipeExpired() {
-    const q = await db.collection("orders").where("expire_at", "<", Date.now()).where("expire_at", ">", 0).get();
-    q.forEach(doc => doc.ref.delete());
-    alert("WIPED");
-}
-
-// AUTH & UI
+// AUTH
 auth.onAuthStateChanged(u => {
     if(u) {
         document.getElementById('loginCard').style.display = 'none';
         document.getElementById('uProfile').style.display = 'block';
         document.getElementById('uEmail').innerText = u.email.split('@')[0].toUpperCase();
-        
-        let card = document.getElementById('main-id-card');
-        card.addEventListener('mousemove', e => {
-            let {x, y, width, height} = card.getBoundingClientRect();
-            let rx = (e.clientX - x - width / 2) / 10, ry = -(e.clientY - y - height / 2) / 10;
-            card.style.transform = `rotateY(${rx}deg) rotateX(${ry}deg)`;
-        });
-
-        db.collection('users').doc(u.uid).onSnapshot(doc => {
-            let s = doc.data()?.spins || 0;
-            document.getElementById('spins_display').innerText = `КРУТОК: ${s}`;
+        db.collection('users').doc(u.uid).onSnapshot(d => {
+            const s = d.data()?.spins || 0;
+            document.getElementById('spins_val').innerText = `SPINS: ${s}`;
             document.getElementById('spin_trigger').style.display = s > 0 ? 'inline-block' : 'none';
         });
-
         db.collection("orders").where("uid","==",u.uid).onSnapshot(s => {
-            document.getElementById("h_list").innerHTML = s.docs.map(d => `<div class="card" style="border-left:4px solid var(--p)">${d.data().product}<br><small>ДО: ${d.data().expire_str || 'ОЖИДАНИЕ'}</small></div>`).join("");
+            document.getElementById("h_list").innerHTML = s.docs.map(d => `<div class="card" style="font-size:11px;">${d.data().product} <span style="float:right; color:var(--n)">${d.data().expire_str || 'WAITING'}</span></div>`).join("");
         });
+        
+        // 3D EFFECT
+        const card = document.getElementById('id-card-3d');
+        card.onmousemove = (e) => {
+            let rect = card.getBoundingClientRect();
+            let x = (e.clientX - rect.left) / rect.width - 0.5;
+            let y = (e.clientY - rect.top) / rect.height - 0.5;
+            card.style.transform = `perspective(1000px) rotateX(${y * -20}deg) rotateY(${x * 20}deg)`;
+        };
+        card.onmouseleave = () => card.style.transform = `perspective(1000px) rotateX(0) rotateY(0)`;
     }
 });
 
-function show(id) {
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-    document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    document.getElementById('n-'+id).classList.add('active');
-}
-
 function doLogin() {
-    let n = document.getElementById('u_nick').value.trim().toLowerCase(), p = document.getElementById('u_pass').value;
-    auth.signInWithEmailAndPassword(n+"@moz.me", p).catch(() => auth.createUserWithEmailAndPassword(n+"@moz.me", p));
+    const n = document.getElementById('u_nick').value.trim().toLowerCase(), p = document.getElementById('u_pass').value;
+    if(!n || !p) return;
+    auth.signInWithEmailAndPassword(n+"@moz.me", p).then(()=>snd(20)).catch(() => auth.createUserWithEmailAndPassword(n+"@moz.me", p));
 }
 
-// BACKGROUND SAKURA/MATRIX
-const canvas = document.getElementById('bg-canvas'), ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-const drops = Array(Math.floor(canvas.width / 20)).fill(0);
-function draw() {
-    ctx.fillStyle = 'rgba(5, 7, 13, 0.15)'; ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle = '#00ffe5'; ctx.font = "15px monospace";
-    drops.forEach((y, i) => { ctx.fillText(Math.floor(Math.random()*2), i*20, y); if(y > canvas.height && Math.random()>0.975) drops[i]=0; else drops[i]+=20; });
+function loginAdmin() {
+    if(document.getElementById('a_pass').value === "rahim_45_pro") {
+        document.getElementById('a_panel').style.display = 'block';
+        db.collection('orders').orderBy('timestamp','desc').onSnapshot(s => {
+            document.getElementById('a_orders').innerHTML = s.docs.map(d => `
+                <div class="adm-card" style="font-size:10px;">
+                    ${d.data().product} | ${d.data().email}<br><br>
+                    <button style="background:var(--neon-g); border:none; padding:5px 10px;" onclick="admApprove('${d.id}', ${d.data().duration_days}, '${d.data().uid}')">OK</button>
+                    <button style="background:red; color:white; border:none; padding:5px 10px;" onclick="db.collection('orders').doc('${d.id}').delete()">DEL</button>
+                </div>
+            `).join("");
+        });
+    }
 }
-setInterval(draw, 60);
 
-function copyW() { navigator.clipboard.writeText("UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv"); showToast("COPIED"); }
-let tCount = 0; function handleConsoleTap() { tCount++; if(tCount>=5) { document.getElementById('promo-box').style.display='block'; tCount=0; } }
+function admApprove(id, days, uid) {
+    let exp = "FOREVER", expT = 9999999999999;
+    if(days > 0) { let d = new Date(); d.setDate(d.getDate()+days); exp = d.toLocaleDateString(); expT = d.getTime(); }
+    db.collection('orders').doc(id).update({ status: 'paid', expire_str: exp, expire_at: expT }).then(() => {
+        if(days === 0) db.collection('users').doc(uid).set({ spins: firebase.firestore.FieldValue.increment(3) }, {merge:true});
+    });
+}
+
+function triggerKeeper() { snd(45); showToast("KEEPER_ACTIVE"); document.getElementById('uStatus').innerHTML = '<div style="color:var(--neon-g); font-size:11px; font-weight:bold;">GUARD: PROTECTING</div>'; }
+
+// BG MATRIX
+const cvs = document.getElementById('bg-canvas'), ctx = cvs.getContext('2d');
+cvs.width = window.innerWidth; cvs.height = window.innerHeight;
+const drops = Array(Math.floor(cvs.width/20)).fill(0);
+function matrix() {
+    ctx.fillStyle = 'rgba(5,7,13,0.15)'; ctx.fillRect(0,0,cvs.width,cvs.height);
+    ctx.fillStyle = '#00ffe5'; ctx.font = "14px monospace";
+    drops.forEach((y,i) => { ctx.fillText(Math.floor(Math.random()*2), i*20, y); drops[i] = y > cvs.height ? 0 : y+20; });
+}
+setInterval(matrix, 60);
+
+function copyW() { navigator.clipboard.writeText("UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv"); showToast("ADDR_COPIED"); snd(16); }
+let tC = 0; function handleConsoleTap() { tC++; if(tC>=5) { document.getElementById('promo-box').style.display='block'; tC=0; snd(45); } }
 </script>
 </body>
 </html>
