@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MOZGALOM ELITE | CYBER-GOD-MODE v2</title>
+    <title>MOZGALOM ELITE | CYBER-BUBKER</title>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -15,18 +15,8 @@
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body { margin:0; font-family: 'Montserrat', sans-serif; background: var(--bg); color: #fff; min-height: 100vh; overflow-x: hidden; }
 
-        /* BOOT SCREEN */
-        #boot-screen { position: fixed; inset: 0; background: #000; z-index: 10000; display: flex; flex-direction: column; justify-content: center; padding: 30px; font-family: 'JetBrains Mono', monospace; color: var(--neon-g); font-size: 14px; overflow: hidden; }
-
+        #boot-screen { position: fixed; inset: 0; background: #000; z-index: 10000; display: flex; flex-direction: column; justify-content: center; padding: 30px; font-family: 'JetBrains Mono', monospace; color: var(--neon-g); font-size: 14px; }
         #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.5; pointer-events: none; }
-
-        /* GLITCH EFFECT */
-        .glitch-flash { animation: glitch 0.3s steps(2) infinite; }
-        @keyframes glitch { 
-            0% { transform: translate(0); filter: hue-rotate(0deg); }
-            50% { transform: translate(5px, -5px); filter: hue-rotate(90deg) invert(1); }
-            100% { transform: translate(-5px, 5px); }
-        }
 
         .header { text-align:center; padding:20px; border-bottom: 2px solid var(--p); background: rgba(0,0,0,0.7); backdrop-filter: blur(15px); cursor: pointer; }
         .neon-title { font-family: 'Orbitron'; font-size: 24px; font-weight: 900; background: linear-gradient(90deg, var(--n), var(--p), var(--sakura)); background-size: 200%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: shine 4s linear infinite; text-transform: uppercase; letter-spacing: 3px; }
@@ -39,35 +29,47 @@
         .page { display:none; padding:15px; width:100%; max-width: 450px; margin:0 auto; padding-bottom: 100px; position: relative; z-index: 1; }
         .page.active { display:block; }
 
-        /* ID-CARD */
-        .id-card { background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02)); border: 1px solid var(--n); border-radius: 20px; padding: 25px; position: relative; transition: transform 0.1s; transform-style: preserve-3d; }
-        .id-chip { width: 40px; height: 30px; background: var(--gold); border-radius: 5px; margin-bottom: 15px; opacity: 0.8; }
-        
-        .card { background: var(--card); border: 1px solid rgba(255, 0, 255, 0.2); border-radius: 20px; padding: 20px; margin-bottom: 15px; backdrop-filter: blur(10px); }
-        .buy-btn { width:100%; padding:15px; border-radius:12px; border:none; background: linear-gradient(45deg, var(--p), var(--n)); color:#fff; font-weight:900; cursor:pointer; font-family:'Orbitron'; font-size: 11px; text-transform: uppercase; }
+        .card { background: var(--card); border: 1px solid rgba(255, 0, 255, 0.2); border-radius: 20px; padding: 20px; margin-bottom: 15px; backdrop-filter: blur(10px); position: relative; overflow: hidden; }
+        .card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent); transform: translateX(-100%); transition: 0.5s; }
+        .card:hover::after { transform: translateX(100%); }
+
+        .buy-btn { width:100%; padding:15px; border-radius:12px; border:none; background: linear-gradient(45deg, var(--p), var(--n)); color:#fff; font-weight:900; cursor:pointer; font-family:'Orbitron'; font-size: 11px; text-transform: uppercase; transition: transform 0.1s; }
+        .buy-btn:active { transform: scale(0.95); }
+
+        .id-card { background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02)); border: 1px solid var(--n); border-radius: 20px; padding: 25px; position: relative; transition: transform 0.1s; transform-style: preserve-3d; overflow: hidden; }
+        .id-card::before { content: ''; position: absolute; inset: -1px; background: linear-gradient(90deg, var(--n), var(--p), var(--n)); background-size: 200%; z-index: -1; animation: border-beam 4s linear infinite; filter: blur(5px); }
+        @keyframes border-beam { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
 
         .status-badge { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: bold; }
-        .status-active { background: rgba(0,255,65,0.2); color: var(--neon-g); border: 1px solid var(--neon-g); box-shadow: 0 0 10px var(--neon-g); }
-        
-        .roulette-wrapper { height: 80px; border: 2px solid var(--sakura); border-radius: 15px; margin: 15px 0; overflow: hidden; position: relative; background: #000; }
-        .roulette-tape { display: flex; align-items: center; position: absolute; left: 0; height: 100%; transition: 5s cubic-bezier(0.1, 0, 0.1, 1); }
-        .case-item { width: 80px; flex-shrink: 0; text-align: center; font-size: 24px; }
+        .status-active { background: rgba(0,255,65,0.2); color: var(--neon-g); border: 1px solid var(--neon-g); }
 
-        #hacker-game { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-        .hack-point { position: absolute; padding: 10px; background: var(--n); color: #000; font-family: monospace; font-weight: bold; border-radius: 5px; cursor: pointer; }
+        .adm-card { background: rgba(0,0,0,0.8); border: 1px solid #444; padding: 15px; border-radius: 15px; margin-bottom: 10px; font-size: 11px; border-left: 4px solid var(--p); }
+        .adm-btn-ok { background: var(--neon-g); color: #000; border:none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .adm-btn-del { background: #ff4444; color: #fff; border:none; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-left: 10px; }
 
         .order-item { border-left: 4px solid var(--p); margin-bottom: 10px; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 0 12px 12px 0; }
-        .adm-card { background: rgba(0,0,0,0.8); border: 1px solid #444; padding: 15px; border-radius: 15px; margin-bottom: 10px; font-size: 11px; }
+        
+        #hacker-game { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; flex-direction: column; align-items: center; justify-content: center; }
+        .hack-point { position: absolute; padding: 10px; background: var(--n); color: #000; font-family: monospace; font-weight: bold; border-radius: 5px; cursor: pointer; }
+
+        /* NEW ELEMENTS */
+        .magnetic { transition: transform 0.2s cubic-bezier(0.33, 1, 0.68, 1); }
+        .magnetic-hover { transform: scale(1.05) translate(var(--mx, 0), var(--my, 0)); }
+        
+        .panic-btn { background: red; color: white; padding: 15px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; display: none; }
+        
+        .toast { position: fixed; bottom: 20px; right: 20px; background: rgba(0,0,0,0.8); color: var(--n); padding: 15px; border-radius: 10px; border: 1px solid var(--n); display: none; }
+        .ghost-rank { color: black; background: white; padding: 4px; font-size: 10px; }
+        .scanner { font-family: monospace; font-size: 10px; white-space: pre-wrap; display: none; }
     </style>
 </head>
-<body class="">
+<body>
 
 <div id="boot-screen"></div>
-
 <canvas id="bg-canvas"></canvas>
 
 <div class="header" onclick="handleConsoleTap()">
-    <div class="neon-title">MOZGALOM ELITE</div>
+    <div class="neon-title magnetic">MOZGALOM ELITE</div>
 </div>
 
 <div class="nav">
@@ -85,46 +87,44 @@
         <button class="buy-btn" onclick="applyPromo()">ACTIVATE</button>
     </div>
     <div class="card">
-        <h3 style="color: var(--sakura);">1 НЕДЕЛЯ (PRO)</h3>
-        <div style="font-size:26px; font-weight:900; color:var(--n); font-family:Orbitron;">300₽</div>
-        <div style="font-size:12px; color:var(--sakura); margin-bottom:15px;">4$ | 2 💎</div>
-        <button class="buy-btn" onclick="buy('1 НЕДЕЛЯ PRO', 300, 7)">КУПИТЬ ТАРИФ</button>
+        <h3>1 НЕДЕЛЯ (PRO)</h3>
+        <div style="font-size:26px; font-weight:900; color:var(--n);">300₽</div>
+        <button class="buy-btn" onclick="buy('1 НЕДЕЛЯ PRO', 300, 7)">КУПИТЬ ЗАЩИТУ</button>
     </div>
     <div class="card">
-        <h3 style="color: var(--sakura);">1 МЕСЯЦ (ULTRA)</h3>
-        <div style="font-size:26px; font-weight:900; color:var(--n); font-family:Orbitron;">1000₽</div>
-        <div style="font-size:12px; color:var(--sakura); margin-bottom:15px;">13$ | 6 💎</div>
-        <button class="buy-btn" onclick="buy('1 МЕСЯЦ ULTRA', 1000, 30)">КУПИТЬ ТАРИФ</button>
+        <h3>1 МЕСЯЦ (ULTRA)</h3>
+        <div style="font-size:26px; font-weight:900; color:var(--n);">1000₽</div>
+        <button class="buy-btn" onclick="buy('1 МЕСЯЦ ULTRA', 1000, 30)">КУПИТЬ ЗАЩИТУ</button>
     </div>
     <div class="card">
-        <h3 style="color: var(--sakura);">FOREVER (LEGEND)</h3>
-        <div style="font-size:26px; font-weight:900; color:var(--n); font-family:Orbitron;">4000₽</div>
-        <div style="font-size:12px; color:var(--sakura); margin-bottom:15px;">52$ | 25 💎</div>
-        <button class="buy-btn" onclick="buy('LEGEND', 4000, 99999)">СТАТЬ ЛЕГЕНДОЙ</button>
+        <h3>FOREVER (LEGEND)</h3>
+        <div style="font-size:26px; font-weight:900; color:var(--n);">4000₽</div>
+        <button class="buy-btn" onclick="buy('LEGEND', 4000, 99999)">СТАТЬ ЭЛИТОЙ</button>
     </div>
 </div>
 
 <div id="cases" class="page">
     <div class="card" style="text-align:center;">
-        <h2 style="color:var(--sakura); font-family:Orbitron; margin:0;">LUCKY SLOT</h2>
-        <div id="spins_display" style="font-family:Orbitron; color:var(--n); font-size:18px; margin:10px 0;">КРУТОК: 0</div>
-        <div class="roulette-wrapper"><div id="tape" class="roulette-tape"></div><div style="position:absolute; left:50%; top:0; width:2px; height:100%; background:var(--n); z-index:5;"></div></div>
-        <button id="spin_trigger" class="buy-btn" style="display:none; margin-bottom:10px;" onclick="startSpin()">ЗАПУСТИТЬ ВЗЛОМ</button>
-        <button id="hack_btn" class="buy-btn" style="background:transparent; border:1px solid #ff4444; color:#ff4444; margin-bottom:10px;" onclick="startHackerGame()">HACK FREE SPIN</button>
-        <button class="buy-btn" style="background:transparent; border:1px solid var(--n); color:var(--n);" onclick="buy('CASE SPIN', 100, 0)">КУПИТЬ КЕЙС (100₽)</button>
+        <h2 style="font-family:Orbitron;">LUCKY SLOT</h2>
+        <div id="spins_display" style="color:var(--n); font-size:18px; margin:10px 0;">КРУТОК: 0</div>
+        <div style="height:80px; border:2px solid var(--sakura); position:relative; overflow:hidden; background:#000; border-radius:15px; margin:15px 0;">
+            <div id="tape" style="display:flex; align-items:center; position:absolute; left:0; height:100%; transition: 5s cubic-bezier(0.1, 0, 0.1, 1);"></div>
+            <div style="position:absolute; left:50%; top:0; width:2px; height:100%; background:var(--n); z-index:5;"></div>
+        </div>
+        <button id="spin_trigger" class="buy-btn magnetic" style="display:none; margin-bottom:10px;" onclick="startSpin()">ЗАПУСТИТЬ</button>
+        <button id="hack_btn" class="buy-btn" style="background:transparent; border:1px solid #ff4444; color:#ff4444;" onclick="startHackerGame()">HACK FREE SPIN</button>
     </div>
 </div>
 
 <div id="hacker-game">
-    <h2 style="font-family:Orbitron; color:var(--n)">OVERRIDE SYSTEM</h2>
-    <p>КЛИКАЙ ПО КОДАМ, ПОКА ТЕБЯ НЕ ЗАСЕКЛИ!</p>
+    <h2 style="color:var(--n)">SYSTEM OVERRIDE</h2>
     <div id="hack-area" style="position:relative; width:100%; height:300px;"></div>
 </div>
 
 <div id="history" class="page">
     <div class="card">
-        <h4 style="margin:0; color:var(--n)">ОПЛАТА TON / КАРТА</h4>
-        <code id="w-addr" onclick="copyW()" style="font-size:10px; word-break:break-all; display:block; margin:10px 0; color:#aaa;">UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv</code>
+        <h4 style="color:var(--n)">ОПЛАТА TON / КАРТА</h4>
+        <code id="w-addr" onclick="copyW()" style="font-size:10px; color:#aaa; word-break:break-all;">UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv</code>
     </div>
     <div id="h_list">Загрузка...</div>
 </div>
@@ -132,24 +132,22 @@
 <div id="auth" class="page">
     <div id="uProfile" style="display:none;">
         <div class="id-card" id="main-id-card">
-            <div class="id-chip"></div>
-            <div id="uRank" style="font-family:Orbitron; font-size:10px; letter-spacing:2px;">ROOKIE</div>
-            <h2 id="uEmail" style="font-family:Orbitron; margin:10px 0; text-shadow: 0 0 10px var(--n);">...</h2>
+            <div id="uRank" style="font-size:10px; color:var(--gold);">ROOKIE</div>
+            <h2 id="uEmail" style="font-family:Orbitron;">...</h2>
             <div id="uGlobalStatus"></div>
-            <div style="margin-top:20px; font-size:9px; opacity:0.5; font-family:monospace;">ID: <span id="uID">---</span></div>
         </div>
-        <button onclick="auth.signOut().then(()=>location.reload())" style="background:rgba(255,0,0,0.2); color:#ff4444; border:1px solid #ff4444; width:100%; padding:12px; border-radius:12px; margin-top:20px; font-weight:bold; cursor:pointer;">DISCONNECT</button>
+        <button onclick="auth.signOut().then(()=>location.reload())" style="background:none; border:1px solid red; color:red; width:100%; padding:10px; margin-top:15px; border-radius:10px;">ВЫЙТИ</button>
     </div>
     <div id="loginCard" class="card">
-        <input id="u_nick" type="text" placeholder="LOGIN" style="width:100%; padding:14px; margin-bottom:10px; background:rgba(0,0,0,0.5); border:1px solid var(--p); color:#fff; border-radius:10px;">
-        <input id="u_pass" type="password" placeholder="PASSWORD" style="width:100%; padding:14px; margin-bottom:15px; background:rgba(0,0,0,0.5); border:1px solid var(--p); color:#fff; border-radius:10px;">
-        <button class="buy-btn" onclick="doLogin()">AUTHORIZE</button>
+        <input id="u_nick" type="text" placeholder="LOGIN" style="width:100%; padding:12px; margin-bottom:10px; background:#000; border:1px solid var(--p); color:#fff;">
+        <input id="u_pass" type="password" placeholder="PASSWORD" style="width:100%; padding:12px; margin-bottom:10px; background:#000; border:1px solid var(--p); color:#fff;">
+        <button class="buy-btn magnetic" onclick="doLogin()">AUTHORIZE</button>
     </div>
 </div>
 
 <div id="admin" class="page">
     <div id="adm_login_box" class="card">
-        <input id="a_pass" type="password" placeholder="Admin Key" style="width:100%; padding:14px; background:rgba(0,0,0,0.5); border:1px solid var(--p); color:#fff; border-radius:10px;">
+        <input id="a_pass" type="password" placeholder="Admin Key" style="width:100%; padding:12px; background:#000; border:1px solid var(--p); color:#fff;">
         <button class="buy-btn" style="margin-top:10px;" onclick="goAdmin()">ACCESS TERMINAL</button>
     </div>
     <div id="a_panel" style="display:none;">
@@ -158,186 +156,159 @@
     </div>
 </div>
 
-<div class="footer"><div class="f-links"><a href="https://t.me/bio_mozgalom">CHANNEL</a><a href="https://t.me/mozgalomovich">OWNER</a></div></div>
+<div class="toast" id="toast">SYSTEM: ACCESS GRANTED</div>
 
 <script>
-// BOOT SCRIPT
-const bootLines = [
-    "> INITIALIZING MOZGALOM ELITE...",
-    "> LOADING SAKURA_OS v4.5...",
-    "> CONNECTING TO FIREBASE NODES...",
-    "> ENCRYPTING TUNNEL...",
-    "> STABILIZING NEON GRID...",
-    "> ACCESS GRANTED. WELCOME, USER."
-];
-let lineIdx = 0;
-function typeBoot() {
-    if(lineIdx < bootLines.length) {
-        const div = document.createElement('div');
-        div.innerText = bootLines[lineIdx];
-        document.getElementById('boot-screen').appendChild(div);
-        lineIdx++;
-        setTimeout(typeBoot, 300);
-    } else {
-        setTimeout(() => document.getElementById('boot-screen').style.display = 'none', 500);
-    }
-}
-typeBoot();
-
-// FIREBASE
+// CONFIG & APP
 const firebaseConfig = { apiKey: "AIzaSyD94vjwnRQIYC-2Le_nmxtsVKlU6Oww6VE", authDomain: "mozgalom-site.firebaseapp.com", projectId: "mozgalom-site", storageBucket: "mozgalom-site.appspot.com", appId: "1:564649897907:web:61503121e661fb6a82a5c6" };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-let userSpins = 0;
-let headerTaps = 0;
-
-// HACKER GAME
-let hackClicks = 0;
-function startHackerGame() {
-    if(!auth.currentUser) return show('auth');
-    db.collection('users').doc(auth.currentUser.uid).get().then(doc => {
-        const lastHack = doc.data()?.lastHack || 0;
-        if(Date.now() - lastHack < 259200000) return alert("Система защиты слишком сильна. Жди 3 дня.");
-        document.getElementById('hacker-game').style.display = 'flex';
-        hackClicks = 0;
-        spawnPoint();
-    });
-}
-function spawnPoint() {
-    const area = document.getElementById('hack-area');
-    area.innerHTML = "";
-    if(hackClicks >= 6) {
-        finishHack();
-        return;
+// AUDIO ATMOSPHERE
+let audio;
+try { audio = new Audio(); } catch(e) {}
+function playAtmosphere() {
+    if(audio) {
+        audio.loop = true;
+        audio.src = 'https://mozgalom-site.firebaseapp.com/ambience.mp3';
+        audio.play();
     }
-    const p = document.createElement('div');
-    p.className = 'hack-point';
-    p.innerText = "0x" + Math.random().toString(16).substr(2,4).toUpperCase();
-    p.style.left = Math.random()*80 + "%";
-    p.style.top = Math.random()*80 + "%";
-    p.onclick = () => { hackClicks++; spawnPoint(); };
-    area.appendChild(p);
 }
-function finishHack() {
-    document.getElementById('hacker-game').style.display = 'none';
-    db.collection('users').doc(auth.currentUser.uid).update({ 
-        spins: firebase.firestore.FieldValue.increment(1),
-        lastHack: Date.now()
+
+// BOOT SCREEN
+const bootLines = ["> INIT...", "> LOADING SAKURA_OS...", "> ACCESS GRANTED."];
+let bL = 0;
+function typeB() {
+    if(bL < bootLines.length) {
+        let d = document.createElement('div'); d.innerText = bootLines[bL++];
+        document.getElementById('boot-screen').appendChild(d);
+        setTimeout(typeB, 400);
+    } else { setTimeout(() => { document.getElementById('boot-screen').style.display='none'; playAtmosphere(); }, 600); }
+}
+typeB();
+
+// MAGNETIC ELEMENTS
+document.querySelectorAll('.magnetic').forEach(m => {
+    m.addEventListener('mousemove', e => {
+        let {x, y, width, height} = m.getBoundingClientRect();
+        let mx = (e.clientX - x - width / 2) * 0.15;
+        let my = (e.clientY - y - height / 2) * 0.15;
+        m.style.setProperty('--mx', mx + 'px');
+        m.style.setProperty('--my', my + 'px');
+        m.classList.add('magnetic-hover');
     });
-    alert("SYSTEM COMPROMISED: +1 Spin Granted.");
-}
+    m.addEventListener('mouseleave', () => { m.classList.remove('magnetic-hover'); });
+});
 
 // CORE LOGIC
-function confirmOrder(docId, days, uid) {
-    let exp = "БЕССРОЧНО";
-    let expTimestamp = 9999999999999;
-    if(days > 0 && days < 50000) {
-        let d = new Date(); d.setDate(d.getDate() + days); 
-        exp = d.toLocaleDateString(); expTimestamp = d.getTime();
-    }
-    db.collection('orders').doc(docId).update({ status: 'paid', expire_str: exp, expire_at: expTimestamp }).then(() => {
-        if(days === 0) db.collection('users').doc(uid).set({ spins: firebase.firestore.FieldValue.increment(1) }, {merge:true});
-    });
-}
-
 function buy(name, price, days) {
     if(!auth.currentUser) return show('auth');
     const orderId = "MZ" + Math.random().toString(36).substr(2,4).toUpperCase();
     db.collection("orders").add({
         uid: auth.currentUser.uid, email: auth.currentUser.email,
         product: name, price: price, code: orderId,
-        status: "pending", timestamp: Date.now(), date_str: new Date().toLocaleString(),
+        status: "pending", timestamp: Date.now(),
         duration_days: days, expire_str: "", expire_at: 0
-    }).then(() => { show('history'); alert("ORDER CREATED: " + orderId); });
+    }).then(() => { show('history'); });
 }
 
+function confirmOrder(docId, days, uid) {
+    let exp = "БЕССРОЧНО";
+    let expT = 9999999999999;
+    if(days > 0 && days < 50000) {
+        let d = new Date(); d.setDate(d.getDate() + days); 
+        exp = d.toLocaleDateString(); expT = d.getTime();
+    }
+    db.collection('orders').doc(docId).update({ status: 'paid', expire_str: exp, expire_at: expT }).then(() => {
+        if(days === 0) db.collection('users').doc(uid).set({ spins: firebase.firestore.FieldValue.increment(1) }, {merge:true});
+    });
+}
+
+// ADMIN PANEL LOGIC (FIXED)
+function goAdmin() {
+    if(document.getElementById("a_pass").value === "rahim_45_pro") {
+        document.getElementById("adm_login_box").style.display = "none";
+        document.getElementById("a_panel").style.display = "block";
+        db.collection("orders").orderBy("timestamp", "desc").onSnapshot(s => {
+            document.getElementById("a_orders").innerHTML = s.docs.map(d => {
+                const data = d.data();
+                return `
+                <div class="adm-card">
+                    <b style="color:var(--n)">${data.product}</b><br>
+                    <span>User: ${data.email.split('@')[0]}</span><br>
+                    <span>Status: ${data.status} | ID: ${data.code}</span><br>
+                    <div style="color:var(--p); margin: 5px 0;">EXP: ${data.expire_str || 'WAITING...'}</div>
+                    <div style="margin-top:10px">
+                        ${data.status !== 'paid' ? `<button class="adm-btn-ok" onclick="confirmOrder('${d.id}', ${data.duration_days}, '${data.uid}')">OK</button>` : ''}
+                        <button class="adm-btn-del" onclick="db.collection('orders').doc('${d.id}').delete()">DEL</button>
+                    </div>
+                </div>`;
+            }).join("");
+        });
+    }
+}
+
+async function wipeExpired() {
+    if(!confirm("Удалить просроченных?")) return;
+    const q = await db.collection("orders").where("expire_at", "<", Date.now()).where("expire_at", ">", 0).get();
+    q.forEach(doc => doc.ref.delete());
+    alert("WIPED");
+}
+
+// TOAST
+function showToast(m) { let t = document.getElementById('toast'); t.innerText = m; t.style.display='block'; setTimeout(()=>t.style.display='none', 3000); }
+
+// USER & UI
 auth.onAuthStateChanged(u => {
     if(u) {
         document.getElementById('loginCard').style.display = 'none';
         document.getElementById('uProfile').style.display = 'block';
         document.getElementById('uEmail').innerText = u.email.split('@')[0].toUpperCase();
-        document.getElementById('uID').innerText = u.uid.substr(0,8).toUpperCase();
         
+        let card = document.getElementById('main-id-card'), r = document.getElementById('uRank');
+        card.addEventListener('mousemove', e => {
+            let {x, y, width, height} = card.getBoundingClientRect();
+            let rx = (e.clientX - x - width / 2) / 10;
+            let ry = -(e.clientY - y - height / 2) / 10;
+            card.style.transform = `rotateY(${rx}deg) rotateX(${ry}deg)`;
+        });
+        card.addEventListener('mouseleave', () => card.style.transform='none');
+
         db.collection('users').doc(u.uid).onSnapshot(doc => {
-            userSpins = doc.data()?.spins || 0;
-            document.getElementById('spins_display').innerText = `КРУТОК: ${userSpins}`;
-            document.getElementById('spin_trigger').style.display = userSpins > 0 ? 'inline-block' : 'none';
+            let s = doc.data()?.spins || 0;
+            document.getElementById('spins_display').innerText = `КРУТОК: ${s}`;
+            document.getElementById('spin_trigger').style.display = s > 0 ? 'inline-block' : 'none';
         });
 
         db.collection("orders").where("uid","==",u.uid).onSnapshot(s => {
-            let active = false;
-            let highestRank = "ROOKIE";
-            s.docs.forEach(d => {
-                const data = d.data();
-                if(data.status === 'paid' && (data.expire_at > Date.now() || data.expire_str === "БЕССРОЧНО")) {
-                    active = true;
-                    if(data.product.includes("LEGEND")) highestRank = "ELITE ENTITY";
-                    else if(data.product.includes("ULTRA") && highestRank !== "ELITE ENTITY") highestRank = "OPERATOR";
-                }
-            });
-            document.getElementById("uRank").innerText = highestRank;
-            document.getElementById("uGlobalStatus").innerHTML = active ? `<div class="status-badge status-active">SYSTEM: ACTIVE</div>` : `<div class="status-badge" style="color:#ff4444; border:1px solid #ff4444">SYSTEM: EXPIRED</div>`;
-            document.getElementById("h_list").innerHTML = s.docs.map(d => `<div class="order-item" style="border-color:${d.data().status=='paid'?'#0f8':'var(--p)'}">${d.data().product} <small>${d.data().status}</small><br><small>ID: ${d.data().code}</small></div>`).join("");
+            document.getElementById("h_list").innerHTML = s.docs.map(d => {
+                let data = d.data();
+                if(data.expire_str === "БЕССРОЧНО") { card.classList.add('glitch'); r.classList.add('ghost-rank'); }
+                return `<div class="order-item">${data.product}<br><small>ДО: ${data.expire_str || 'ОЖИДАНИЕ'}</small></div>`
+            }).join("");
         });
     }
 });
 
-// ID-CARD 3D EFFECT
-const card = document.getElementById('main-id-card');
-if(card) {
-    card.addEventListener('mousemove', (e) => {
-        let ax = -(window.innerWidth / 2 - e.pageX) / 20;
-        let ay = (window.innerHeight / 2 - e.pageY) / 20;
-        card.style.transform = `rotateY(${ax}deg) rotateX(${ay}deg)`;
-    });
+function show(id) {
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
 }
-
-function startSpin() {
-    if(userSpins <= 0) return;
-    document.body.classList.add('glitch-flash');
-    userSpins--;
-    db.collection('users').doc(auth.currentUser.uid).update({ spins: userSpins });
-    const tape = document.getElementById('tape');
-    tape.innerHTML = "";
-    const items = ["🎁", "🎟️", "💎", "🔥", "💰", "⚡", "🌟"];
-    for(let i=0; i<60; i++) {
-        const div = document.createElement('div');
-        div.className = 'case-item';
-        div.innerText = items[Math.floor(Math.random()*items.length)];
-        tape.appendChild(div);
-    }
-    tape.style.transition = "none"; tape.style.left = "0";
-    setTimeout(() => {
-        tape.style.transition = "5s cubic-bezier(0.1, 0, 0.1, 1)";
-        tape.style.left = `-${(50 * 80) - 180}px`;
-    }, 100);
-    setTimeout(() => {
-        document.body.classList.remove('glitch-flash');
-        alert("CRITICAL WIN: +3 DAYS PRO ACCESS");
-        db.collection("orders").add({ uid: auth.currentUser.uid, email: auth.currentUser.email, product: "WIN: 3 DAYS PRO", status: "paid", timestamp: Date.now(), expire_at: Date.now()+(3*86400000), expire_str: "EXTRA" });
-    }, 5500);
+function doLogin() {
+    let n = document.getElementById('u_nick').value.trim().toLowerCase();
+    let p = document.getElementById('u_pass').value;
+    auth.signInWithEmailAndPassword(n+"@moz.me", p).then(() => showToast("SYSTEM: LOGIN SUCCESS")).catch(() => auth.createUserWithEmailAndPassword(n+"@moz.me", p).then(() => showToast("SYSTEM: REGISTRATION SUCCESS")));
 }
-
-function handleConsoleTap() { headerTaps++; if(headerTaps >= 5) { document.getElementById('promo-box').style.display = 'block'; headerTaps=0; } }
-function applyPromo() { if(document.getElementById('promo_input').value.toUpperCase()==="SAKURA2026") { db.collection('users').doc(auth.currentUser.uid).update({ spins: firebase.firestore.FieldValue.increment(1) }); alert("HACKED"); } }
-function goAdmin() { if(document.getElementById("a_pass").value === "rahim_45_pro") { document.getElementById("adm_login_box").style.display = "none"; document.getElementById("a_panel").style.display = "block"; db.collection("orders").orderBy("timestamp", "desc").onSnapshot(s => { document.getElementById("a_orders").innerHTML = s.docs.map(d => `<div class="adm-card"><b>${d.data().product}</b><br>${d.data().email}<br>${d.data().status !== 'paid' ? `<button onclick="confirmOrder('${d.id}', ${d.data().duration_days}, '${d.data().uid}')">OK</button>` : ''} <button onclick="db.collection('orders').doc('${d.id}').delete()">DEL</button></div>`).join(""); }); } }
-async function wipeExpired() { const q = await db.collection("orders").where("expire_at", "<", Date.now()).where("expire_at", ">", 0).get(); q.forEach(doc => doc.ref.delete()); alert("WIPED"); }
-function show(id) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active')); document.getElementById(id).classList.add('active'); document.getElementById('n-'+id).classList.add('active'); }
-function doLogin() { const nick = document.getElementById('u_nick').value.trim().toLowerCase(), pass = document.getElementById('u_pass').value; auth.signInWithEmailAndPassword(nick+"@moz.me", pass).catch(() => auth.createUserWithEmailAndPassword(nick+"@moz.me", pass)); }
-function copyW() { navigator.clipboard.writeText(MY_WALLET); alert("Copied"); }
+function copyW() { navigator.clipboard.writeText("UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv"); alert("Copied"); }
 
 // BACKGROUND
 const canvas = document.getElementById('bg-canvas'), ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-const drops = Array(Math.floor(canvas.width / 20)).fill(0), petals = [];
-for(let i=0; i<35; i++) petals.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*4+2, s: Math.random()*1.5+0.5, a: Math.random()*2 });
+const drops = Array(Math.floor(canvas.width / 20)).fill(0);
 function draw() {
     ctx.fillStyle = 'rgba(5, 7, 13, 0.15)'; ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle = '#00ffe5'; ctx.font = '15px monospace';
-    drops.forEach((y, i) => { ctx.fillText(Math.floor(Math.random()*2), i*20, y); if(y > canvas.height && Math.random()>0.975) drops[i]=0; else drops[i]+=20; });
-    ctx.fillStyle = '#ffb7c5'; petals.forEach(p => { ctx.beginPath(); ctx.ellipse(p.x, p.y, p.r, p.r/1.5, p.a, 0, Math.PI*2); ctx.fill(); p.y+=p.s; p.x+=Math.sin(p.y/50); if(p.y>canvas.height){ p.y=-10; p.x=Math.random()*canvas.width; } });
+    ctx.fillStyle = '#00ffe5'; drops.forEach((y, i) => { ctx.fillText(Math.floor(Math.random()*2), i*20, y); if(y > canvas.height && Math.random()>0.975) drops[i]=0; else drops[i]+=20; });
 }
 setInterval(draw, 60);
 </script>
