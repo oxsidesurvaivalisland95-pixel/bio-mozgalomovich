@@ -38,16 +38,21 @@
 
         .order-item { border-left: 4px solid var(--n); margin-bottom: 10px; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 0 12px 12px 0; position: relative; }
         .status-pill { position: absolute; top: 8px; right: 8px; padding: 3px 8px; border-radius: 50px; font-size: 8px; font-weight: bold; text-transform: uppercase; }
-        .expire-tag { position: absolute; bottom: 8px; right: 8px; font-size: 8px; color: var(--p); font-weight: bold; }
         
-        /* CASE STYLES */
         .roulette-wrapper { height: 80px; border: 2px solid var(--p); border-radius: 15px; margin: 15px 0; overflow: hidden; position: relative; background: #000; }
         .roulette-line { position: absolute; left: 50%; top: 0; width: 2px; height: 100%; background: var(--n); z-index: 5; box-shadow: 0 0 10px var(--n); }
         .roulette-tape { display: flex; align-items: center; position: absolute; left: 0; height: 100%; transition: 5s cubic-bezier(0.1, 0, 0.1, 1); }
         .case-item { width: 80px; flex-shrink: 0; text-align: center; font-size: 24px; }
-        .spins-counter { font-family: 'Orbitron'; color: var(--n); font-size: 18px; text-shadow: 0 0 10px var(--n); margin: 10px 0; }
+        .spins-counter { font-family: 'Orbitron'; color: var(--n); font-size: 18px; margin: 10px 0; }
 
         input { width:100%; padding:14px; margin:8px 0; border-radius:12px; border:1px solid var(--n); background:rgba(0,0,0,0.5); color:#fff; }
+        
+        /* ADMIN UI IMPROVEMENTS */
+        .adm-card { background: #111; border: 1px solid #333; padding: 15px; border-radius: 15px; margin-bottom: 10px; font-size: 11px; line-height: 1.4; }
+        .adm-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-bottom: 5px; }
+        .adm-btn-ok { background: var(--neon-g); color: #000; border: none; padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .adm-btn-del { background: #ff4444; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-left: 5px; }
+
         .footer { background:#000; padding:20px; text-align:center; border-top: 1px solid var(--p); }
         .f-links a { color:var(--n); text-decoration:none; margin:0 10px; font-size:12px; font-weight:bold; }
     </style>
@@ -91,17 +96,14 @@
 
 <div id="cases" class="page">
     <div class="card" style="text-align:center;">
-        <h2 style="color:var(--p); font-family:Orbitron; margin:0;">LUCKY SLOT</h2>
-        <div id="spins_display" class="spins-counter">ДОСТУПНО КРУТОК: 0</div>
-        
+        <h2 style="color:var(--p); font-family:Orbitron;">LUCKY SLOT</h2>
+        <div id="spins_display" class="spins-counter">КРУТОК: 0</div>
         <div class="roulette-wrapper">
             <div class="roulette-line"></div>
             <div id="tape" class="roulette-tape"></div>
         </div>
-        
-        <button id="spin_trigger" class="buy-btn" style="display:none; margin-bottom:10px;" onclick="startSpin()">КРУТИТЬ КЕЙС</button>
-        
-        <button class="buy-btn" style="background:transparent; border:1px solid var(--n); color:var(--n);" onclick="buy('CASE SPIN', 100, 0)">КУПИТЬ КРУТКУ (100₽ / 1.5$)</button>
+        <button id="spin_trigger" class="buy-btn" style="display:none; margin-bottom:10px;" onclick="startSpin()">КРУТИТЬ</button>
+        <button class="buy-btn" style="background:transparent; border:1px solid var(--n); color:var(--n);" onclick="buy('CASE SPIN', 100, 0)">КУПИТЬ КРУТКУ (100₽)</button>
     </div>
 </div>
 
@@ -110,7 +112,6 @@
         <h4 style="margin:0; color:var(--n)">ОПЛАТА TON</h4>
         <code id="w-addr" onclick="copyW()" style="font-size:10px; word-break:break-all; display:block; margin:10px 0; color:#aaa;">UQAYHaet-WWovXy7HoH84ud8cz_VjENJAmuEySnVe9aiw2Dv</code>
         <a href="https://tonkeeper.com/" class="ton-btn">ОТКРЫТЬ TONKEEPER</a>
-        <p style="font-size:9px; color:orange; margin-top:8px;">ID заказа в комментарий для авто-проверки!</p>
     </div>
     <div id="h_list">Загрузка...</div>
 </div>
@@ -123,7 +124,11 @@
 </div>
 
 <div id="admin" class="page">
-    <div class="card"><input id="a_pass" type="password" placeholder="Admin Key"><button class="buy-btn" onclick="goAdmin()">ACCESS</button><div id="a_panel" style="display:none; margin-top:20px;"></div></div>
+    <div id="adm_login_box" class="card">
+        <input id="a_pass" type="password" placeholder="Master Key">
+        <button class="buy-btn" onclick="goAdmin()">ACCESS SYSTEM</button>
+    </div>
+    <div id="a_panel" style="display:none;"></div>
 </div>
 
 <div class="footer"><div class="f-links"><a href="https://t.me/bio_mozgalom">CHANNEL</a><a href="https://t.me/mozgalomovich">OWNER</a></div></div>
@@ -140,7 +145,6 @@ const db = firebase.firestore();
 
 let userSpins = 0;
 
-// АВТО-ОПЛАТА
 async function checkTon() {
     try {
         const r = await fetch(`https://toncenter.com/api/v2/getTransactions?address=${MY_WALLET}&limit=10`);
@@ -163,9 +167,7 @@ function confirmOrder(docId, days, uid) {
         let d = new Date(); d.setDate(d.getDate() + days); exp = d.toLocaleDateString();
     }
     db.collection('orders').doc(docId).update({ status: 'paid', expire_str: exp }).then(() => {
-        if(days === 0) { // Если это кейс
-            db.collection('users').doc(uid).set({ spins: firebase.firestore.FieldValue.increment(1) }, {merge:true});
-        }
+        if(days === 0) db.collection('users').doc(uid).set({ spins: firebase.firestore.FieldValue.increment(1) }, {merge:true});
     });
 }
 
@@ -179,18 +181,16 @@ function buy(name, price, days) {
         duration_days: days
     }).then(() => {
         fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent("🛒 ЗАКАЗ: "+orderId+"\n"+name)}`, {mode:'no-cors'});
-        alert("ЗАКАЗ СОЗДАН: " + orderId);
+        alert("ID ЗАКАЗА: " + orderId);
         show('history');
     });
 }
 
-// РУЛЕТКА
 const items = ["🎁", "🎟️", "💎", "🔥", "💰", "⚡", "🌟"];
 function startSpin() {
     if(userSpins <= 0) return;
     userSpins--;
     db.collection('users').doc(auth.currentUser.uid).update({ spins: userSpins });
-    
     const tape = document.getElementById('tape');
     tape.innerHTML = "";
     for(let i=0; i<60; i++) {
@@ -199,16 +199,16 @@ function startSpin() {
         div.innerText = items[Math.floor(Math.random()*items.length)];
         tape.appendChild(div);
     }
-    
     tape.style.transition = "none"; tape.style.left = "0";
     setTimeout(() => {
         tape.style.transition = "5s cubic-bezier(0.1, 0, 0.1, 1)";
         tape.style.left = `-${(50 * 80) - 180}px`;
     }, 100);
-
     setTimeout(() => {
-        const prizes = ["Скидка 30%", "PRO +3 дня", "ULTRA +1 день", "LEGEND (0.1%)", "Скидка 15%"];
-        alert("ВЫИГРЫШ: " + prizes[Math.floor(Math.random()*prizes.length)]);
+        const prizes = ["Скидка 30%", "PRO +3 дня", "ULTRA +1 день", "Скидка 15%"];
+        const win = prizes[Math.floor(Math.random()*prizes.length)];
+        alert("ВЫИГРЫШ: " + win);
+        db.collection("orders").add({ uid: auth.currentUser.uid, email: auth.currentUser.email, product: "НАГРАДА: " + win, status: "paid", timestamp: Date.now(), date_str: new Date().toLocaleString() });
     }, 5500);
 }
 
@@ -217,23 +217,46 @@ auth.onAuthStateChanged(u => {
         document.getElementById('loginCard').style.display = 'none';
         document.getElementById('uProfile').style.display = 'block';
         document.getElementById('uEmail').innerText = u.email.split('@')[0].toUpperCase();
-        
         db.collection('users').doc(u.uid).onSnapshot(doc => {
             userSpins = (doc.data() && doc.data().spins) ? doc.data().spins : 0;
-            document.getElementById('spins_display').innerText = `ДОСТУПНО КРУТОК: ${userSpins}`;
+            document.getElementById('spins_display').innerText = `КРУТОК: ${userSpins}`;
             document.getElementById('spin_trigger').style.display = userSpins > 0 ? 'block' : 'none';
         });
-
         db.collection("orders").where("uid","==",u.uid).onSnapshot(s => {
             document.getElementById("h_list").innerHTML = s.docs.sort((a,b)=>b.data().timestamp-a.data().timestamp).map(d => `
                 <div class="order-item" style="border-color: ${d.data().status=='paid'?'#0f8':'#555'}">
                     <span class="status-pill" style="color:${d.data().status=='paid'?'#0f8':'#aaa'}">${d.data().status}</span>
-                    <b>${d.data().product}</b><br><small>ID: ${d.data().code}</small>
-                    ${d.data().expire_str ? `<div class="expire-tag">ДО: ${d.data().expire_str}</div>` : ''}
+                    <b>${d.data().product}</b><br><small>ID: ${d.data().code || 'N/A'}</small>
+                    ${d.data().expire_str ? `<div style="font-size:8px; color:var(--p); margin-top:5px;">ДО: ${d.data().expire_str}</div>` : ''}
                 </div>`).join("");
         });
     }
 });
+
+function goAdmin() {
+    if(document.getElementById("a_pass").value === "rahim_45_pro") {
+        document.getElementById("adm_login_box").style.display = "none";
+        document.getElementById("a_panel").style.display = "block";
+        db.collection("orders").orderBy("timestamp", "desc").limit(30).onSnapshot(s => {
+            document.getElementById("a_panel").innerHTML = s.docs.map(d => {
+                const data = d.data();
+                const isPaid = data.status === 'paid';
+                return `
+                <div class="adm-card" style="border-left: 3px solid ${isPaid ? '#0f8' : '#f44'}">
+                    <div class="adm-badge" style="background:${isPaid ? '#0f8' : '#444'}; color:#000">${data.status.toUpperCase()}</div>
+                    <div style="font-family:Orbitron; color:var(--n)">${data.product}</div>
+                    <div><b>ID:</b> ${data.code || 'BOX'} | <b>USER:</b> ${data.email.split('@')[0]}</div>
+                    <div style="color:#777">Дата: ${data.date_str}</div>
+                    ${data.expire_str ? `<div style="color:var(--p)">Срок: ${data.expire_str}</div>` : ''}
+                    <div style="margin-top:10px;">
+                        ${!isPaid ? `<button class="adm-btn-ok" onclick="confirmOrder('${d.id}', ${data.duration_days}, '${data.uid}')">ОДОБРИТЬ</button>` : ''}
+                        <button class="adm-btn-del" onclick="db.collection('orders').doc('${d.id}').delete()">УДАЛИТЬ</button>
+                    </div>
+                </div>`;
+            }).join("");
+        });
+    }
+}
 
 function show(id) {
     document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -248,22 +271,6 @@ function doLogin() {
     auth.signInWithEmailAndPassword(nick+"@moz.me", pass).catch(() => {
         auth.createUserWithEmailAndPassword(nick+"@moz.me", pass).catch(e => alert(e.message));
     });
-}
-
-function goAdmin() {
-    if(document.getElementById("a_pass").value === "rahim_45_pro") {
-        document.getElementById("a_panel").style.display = "block";
-        db.collection("orders").orderBy("timestamp", "desc").onSnapshot(s => {
-            document.getElementById("a_panel").innerHTML = s.docs.map(d => {
-                const data = d.data();
-                return `<div style="background:#111; padding:8px; margin-bottom:5px; border-radius:10px; font-size:10px;">
-                    ${data.code} | ${data.status} | ${data.product}
-                    <button onclick="confirmOrder('${d.id}', ${data.duration_days}, '${data.uid}')">OK</button>
-                    <button onclick="db.collection('orders').doc('${d.id}').delete()">DEL</button>
-                </div>`;
-            }).join("");
-        });
-    }
 }
 
 function copyW() { navigator.clipboard.writeText(MY_WALLET); alert("Copy!"); }
